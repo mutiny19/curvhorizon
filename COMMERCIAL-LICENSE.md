@@ -29,15 +29,16 @@ for example to:
 then you must obtain a separate **commercial license** from the copyright
 holder. A commercial license grants those rights under negotiated terms.
 
-As the sole copyright holder, the author reserves the right to license this
-software commercially on any terms, and to sell, sublicense, or relicense it in
-the future. Purchasing a commercial license does not affect the AGPL release.
+As the sole copyright holder, the copyright holder reserves the right to license
+this software commercially on any terms, and to sell, sublicense, or relicense it
+in the future. Purchasing a commercial license does not affect the AGPL release.
 
 ## Contact
 
-To request a commercial license or discuss terms, contact:
+To request a commercial license or discuss terms, open an issue or use the
+contact options on the project's GitHub:
 
-- **Shane Bivens** — shanebivens@gmail.com
+- **https://github.com/mutiny19/curvhorizon**
 
 ## Sponsorship
 

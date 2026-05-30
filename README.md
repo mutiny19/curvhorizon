@@ -64,7 +64,7 @@ This project is **dual-licensed**:
   products, proprietary SaaS, resale, etc.), a separate commercial license is
   available. See [`COMMERCIAL-LICENSE.md`](COMMERCIAL-LICENSE.md).
 
-Copyright (c) 2026 Shane Bivens.
+Copyright (c) 2026 mutiny19.
 
 ## Acknowledgements
 
