@@ -55,4 +55,19 @@ No build step and no dependencies. Either:
 
 ## License
 
-See [`LICENSE`](LICENSE) if present, otherwise all rights reserved by the author.
+This project is **dual-licensed**:
+
+- **Open source:** [GNU AGPL-3.0](LICENSE). Free to use, modify, and self-host,
+  provided that if you run a modified version as a network service you make your
+  source available under the same license.
+- **Commercial:** if the AGPL's terms do not suit your use (closed-source
+  products, proprietary SaaS, resale, etc.), a separate commercial license is
+  available. See [`COMMERCIAL-LICENSE.md`](COMMERCIAL-LICENSE.md).
+
+Copyright (c) 2026 Shane Bivens.
+
+## Acknowledgements
+
+Inspired by Andy Cook's (dizzib) MIT-licensed
+[earth curve calculator](https://github.com/dizzib/earthcalc). This is an
+independent implementation; no source from that project is included.
