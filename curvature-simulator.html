@@ -177,6 +177,7 @@
         <button class="vt-btn" id="btnAimLevel">Level beam</button>
       </div>
       <div class="note" id="laserNote">A straight beam from the laser (at <b>Laser height</b>) to a detector (at <b>Detector height</b>) the set distance away. The water bulges up between them: if the bulge rises into the beam, the laser is blocked. "Level beam" instead fires perfectly horizontal and shows how far it climbs above the water.</div>
+      <div class="note" id="laserRefrNote" style="border-left:2px solid var(--accent);padding-left:7px;margin-top:6px">A beam skimming water passes through the lowest few meters of air, where the temperature gradient (and so refraction) is strongest and most variable. Raise <b>Refraction</b> toward an inversion and watch a blocked beam start to clear: near k=1 the ray bends as much as the Earth curves, so it stays level and the surface looks flat. That sensitivity is why grazing laser tests over water give different results morning vs afternoon, calm vs windy. The dependable test raises the sightline and uses equal-height targets (Wallace 1870; Rainy Lake 2018), which is what the Side and Observer views show.</div>
     </div>
     <div class="sec">
       <h3>Refraction</h3>
@@ -187,6 +188,8 @@
           <option value="0">None / Geometric (k=0)</option>
           <option value="0.25">Strong (k=0.25)</option>
           <option value="0.33">1/3 rule (k=0.33)</option>
+          <option value="0.5">Inversion (k=0.5)</option>
+          <option value="0.9">Near-ducting (k=0.9)</option>
           <option value="custom">Custom...</option>
         </select>
       </div>
@@ -260,6 +263,8 @@
         <p>The angle (reported here in arcminutes) by which the sea horizon sits <em>below</em> true level. The horizon does not "rise to eye level" as you climb; it sinks farther below it, which is exactly what this dip measures.</p>
         <p style="margin-top:6px"><strong style="color:var(--text)">Refraction (k):</strong> the coefficient of terrestrial refraction, the ratio of Earth's curvature to the light ray's curvature. The atmosphere bends rays downward, so the model replaces R with an effective radius R' = R/(1−k). k=0 geometric, k=0.13 surveying standard, k=0.17 typical visual conditions.</p>
         <p><strong style="color:var(--text)">Extreme refraction:</strong> Near the surface (especially over water) k is highly variable, measured from negative values up to far beyond 0.5 during temperature inversions. These produce <em>looming / superior mirages</em> that can briefly reveal objects normally hidden. This is a separate, intermittent effect, not steady refraction. The k=0.5 band marks the edge of this regime.</p>
+        <p style="margin-top:6px"><strong style="color:var(--text)">Laser line-of-sight over water:</strong> The Laser Test view uses the same effective-radius geometry. A straight ray clears the surface when its minimum height above the water stays positive; the bulge of the chord above the curved surface at the midpoint is d²/8R'. A level beam climbs above the surface as (R'+h)/cos(x/R') − R' ≈ h + x²/2R'. Treating the ray as straight on radius R' = R/(1−k) is exact when the refractivity gradient is constant <a href="https://www.itu.int/rec/R-REC-P.834/en" target="_blank" rel="noopener" style="color:var(--accent)">(ITU-R P.834)</a>.</p>
+        <p>Why real laser tests over water are unreliable: a grazing beam travels through the lowest few meters of air, where the temperature gradient and therefore k are largest and most variable. As k rises toward 1 (a surface inversion of roughly +0.11 °C/m) the ray bends as much as the Earth curves, so it stays level and can travel beyond the horizon as a <em>duct</em> <a href="https://aty.sdsu.edu/explain/atmos_refr/duct.html" target="_blank" rel="noopener" style="color:var(--accent)">(Young, SDSU)</a>. The same sight line then gives different results morning vs afternoon, calm vs windy. That variability is itself the signature of refraction, not flat ground. Surveyors handle the steady part with a fixed combined curvature-and-refraction correction of about 0.0675·d² m (d in km), with k ≈ 0.13 measured for over a century <a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2010JD014067" target="_blank" rel="noopener" style="color:var(--accent)">(Hirt et al. 2010)</a>. The dependable curvature test raises the sight line and uses equal-height targets, as Wallace did on the Bedford Level in 1870 and the 2018 Rainy Lake experiment repeated <a href="https://walter.bislins.ch/bloge/index.asp?page=Proof+of+Earth+Curvature%3A+The+Rainy+Lake+Experiment" target="_blank" rel="noopener" style="color:var(--accent)">(Rainy Lake)</a>; that is what the Side and Observer views model.</p>
         <p><strong style="color:var(--text)">Spherical vs parabolic:</strong> This uses exact spherical formulas. The "8 inches per mile²" rule is a parabolic approximation of <em>drop below the tangent line</em>; it ignores observer height and overstates what is hidden. The correct hidden-height formula above accounts for both.</p>
         <p><strong style="color:var(--text)">Earth model:</strong> Default radius is the IUGG mean R = 6,371 km. WGS84 mode uses the latitude-dependent geocentric radius of the reference ellipsoid (a = 6,378.137 km equator → b = 6,356.752 km poles).</p>
         <p style="margin-top:6px"><strong style="color:var(--text)">Assumptions &amp; limits:</strong></p>
@@ -508,7 +513,7 @@ function init(){
   }));
 
   // Refraction
-  const kNotes={'0':'No refraction. Pure geometric line of sight.','0.13':'Standard atmospheric refraction. The light ray curves about 13% as much as Earth\'s surface.','0.17':'Typical visual observation conditions. Slightly more bending than standard.','0.25':'Strong refraction: warm air over a cold surface (e.g. ocean).','0.33':'1/3 rule, sometimes used in surveying. Effective radius = 1.5× Earth.'};
+  const kNotes={'0':'No refraction. Pure geometric line of sight.','0.13':'Standard atmospheric refraction. The light ray curves about 13% as much as Earth\'s surface.','0.17':'Typical visual observation conditions. Slightly more bending than standard.','0.25':'Strong refraction: warm air over a cold surface (e.g. ocean).','0.33':'1/3 rule, sometimes used in surveying. Effective radius = 1.5× Earth.','0.5':'Temperature inversion over cold water. The ray bends halfway toward Earth\'s curve; targets loom higher and more is revealed.','0.9':'Near-ducting: a strong surface inversion. The ray almost follows the curve, so a level beam barely drops and the surface looks nearly flat. At k=1 the ray matches Earth\'s curvature exactly (light ducts beyond the horizon).'};
   document.getElementById('iKPreset').addEventListener('change',function(){
     const cr=document.getElementById('customKRow'),ne=document.getElementById('kNote');
     if(this.value==='custom'){cr.style.display='flex';S.k=parseFloat(document.getElementById('iK').value)||0;ne.textContent='Enter a custom refraction coefficient (0–1).';}
@@ -1143,6 +1148,12 @@ function renderLaser(R,d0,hL,hLaser,hBul){
     summary='Beam reaches the detector, clearing the water by '+fmtH(minClear)+' at its lowest  (flat earth: clearance never dips)';
   }
   sLabel(64,16,summary,blocked?'#ff6b6b':'#4facfe',12,'left');
+  // Refraction-regime note: near k=1 the ray follows the curve (looming / ducting)
+  if(S.k>=0.85){
+    sLabel(64,36,'Near-ducting (k='+S.k+'): the ray bends nearly as much as the Earth curves, so the beam stays level and the water looks flat.','#c98bff',11,'left');
+  }else if(S.k>=0.35){
+    sLabel(64,36,'Strong refraction (k='+S.k+'): an inversion is lifting the beam and revealing more than geometry alone.','#ffd93d',11,'left');
+  }
 
   flushCallouts();
   drawScaleBar();
