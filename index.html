@@ -68,6 +68,9 @@
   .scale-info{position:absolute;bottom:12px;left:12px;background:rgba(19,26,42,0.85);border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:10px;color:#667;pointer-events:none}
   .obs-only{display:none}
   .obs-active .obs-only{display:block}
+  .laser-only{display:none}
+  .laser-active .laser-only{display:block}
+  .laser-active .hide-laser{display:none}
   /* Input summary (top-right of view) */
   .summary{position:absolute;top:10px;right:10px;background:rgba(10,14,23,0.82);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:11px;color:var(--text);pointer-events:none;min-width:140px;line-height:1.55}
   .summary h5{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:4px;font-weight:600}
@@ -112,6 +115,7 @@
       <div class="view-toggle">
         <button class="vt-btn active" id="btnSide">Side View</button>
         <button class="vt-btn" id="btnObs">Observer View</button>
+        <button class="vt-btn" id="btnLaser">Laser Test</button>
       </div>
       <div class="view-toggle" style="margin-top:4px">
         <button class="vt-btn active" id="btnMetric">Metric</button>
@@ -146,7 +150,7 @@
       <h3>Target</h3>
       <div class="row"><label>Distance</label><input type="number" id="iD0" value="30" min="0.1" step="1"><span class="u">km</span></div>
       <div class="row"><label>Height</label><input type="number" id="iHT" value="100" min="0" step="1"><span class="u">m</span></div>
-      <div class="row"><label>Type</label>
+      <div class="row hide-laser"><label>Type</label>
         <select id="iType">
           <option value="mountain">Mountain</option>
           <option value="lighthouse">Lighthouse</option>
@@ -157,7 +161,7 @@
           <option value="custom">Custom</option>
         </select>
       </div>
-      <div class="presets">
+      <div class="presets hide-laser">
         <button class="pre" data-d="5" data-h="15" data-t="lighthouse">Lighthouse 5km</button>
         <button class="pre" data-d="20" data-h="30" data-t="boat">Ship 20km</button>
         <button class="pre" data-d="50" data-h="500" data-t="mountain">Mountain 50km</button>
@@ -165,6 +169,14 @@
         <button class="pre" data-d="200" data-h="3000" data-t="mountain">Range 200km</button>
         <button class="pre" data-d="443" data-h="4000" data-t="mountain">443km / 4km</button>
       </div>
+    </div>
+    <div class="sec laser-only">
+      <h3>Laser Beam</h3>
+      <div class="view-toggle">
+        <button class="vt-btn active" id="btnAimDet">Aim at detector</button>
+        <button class="vt-btn" id="btnAimLevel">Level beam</button>
+      </div>
+      <div class="note" id="laserNote">A straight beam from the laser (at <b>Laser height</b>) to a detector (at <b>Detector height</b>) the set distance away. The water bulges up between them: if the bulge rises into the beam, the laser is blocked. "Level beam" instead fires perfectly horizontal and shows how far it climbs above the water.</div>
     </div>
     <div class="sec">
       <h3>Refraction</h3>
@@ -350,7 +362,7 @@ function fmtH(m){
 }
 
 const V={cx:0,cy:0,s:1,manual:false};
-const S={h0:2,d0:30000,hT:100,type:'mountain',k:0.17,view:'side',focal:50,sensor:36,units:'metric',oblate:false,lat:45,showBands:false,tilt:0,visRange:0,extra:[]};
+const S={h0:2,d0:30000,hT:100,type:'mountain',k:0.17,view:'side',focal:50,sensor:36,units:'metric',oblate:false,lat:45,showBands:false,tilt:0,visRange:0,extra:[],laserAim:'detector'};
 // S.extra: extra target distances (metres) for multi-target observations (e.g. a line of
 // identical towers). They share the primary target's height and type. Empty for everything else.
 // Refraction bands - single source of truth for both views. k=0.5 represents
@@ -389,6 +401,18 @@ function fitSide(){
   V.cx-=(W*0.2)/V.s;
 }
 
+function fitLaser(){
+  // Frame the whole laser->detector path at true 1:1. Over these distances the
+  // vertical (metres) is tiny next to the horizontal (km), so the beam looks nearly
+  // flat - that is honest; the numbers and the scroll-to-zoom carry the detail.
+  const R=effR(S.k),d0=S.d0,midA=Math.PI/2,theta=d0/R;
+  const emX=R*Math.cos(midA+theta/2),detX=R*Math.cos(midA-theta/2);
+  const span=Math.abs(detX-emX)||d0;
+  V.s=(W*0.82)/span;
+  V.cx=0;                              // midpoint (apex) sits on the vertical centreline
+  V.cy=R+(H*0.12)/V.s;                 // drop the water line to ~62% down, leaving sky above
+}
+
 function fitObs(){
   const fovRad=2*Math.atan(S.sensor/(2*S.focal));
   V.s=W/fovRad;
@@ -419,6 +443,15 @@ function init(){
   });
   document.getElementById('btnObs').addEventListener('click',()=>{
     S.view='obs';S.tilt=0;updateViewBtns();V.manual=false;render();
+  });
+  document.getElementById('btnLaser').addEventListener('click',()=>{
+    S.view='laser';updateViewBtns();V.manual=false;render();
+  });
+  document.getElementById('btnAimDet').addEventListener('click',()=>{
+    S.laserAim='detector';updateViewBtns();V.manual=false;render();
+  });
+  document.getElementById('btnAimLevel').addEventListener('click',()=>{
+    S.laserAim='level';updateViewBtns();V.manual=false;render();
   });
 
   document.getElementById('btnMetric').addEventListener('click',()=>{
@@ -607,7 +640,7 @@ function init(){
 // ===================== GUIDED TOUR =====================
 const TOUR=[
   {sel:null,title:'Welcome',body:'This tool shows how much of a distant object Earth\'s curvature hides from a given observer, to scale. It uses exact spherical geometry, with no exaggeration. This 60-second tour points out each control.'},
-  {sel:'#btnSide',title:'Two views',body:'<b>Side View</b> is a cross-section: the curved surface, the line of sight, and the hidden/visible split on the target. <b>Observer View</b> is the first-person scene through the eye or a camera lens.'},
+  {sel:'#btnSide',title:'Three views',body:'<b>Side View</b> is a cross-section: the curved surface, the line of sight, and the hidden/visible split on the target. <b>Observer View</b> is the first-person scene through the eye or a camera lens. <b>Laser Test</b> fires a beam across water and shows whether the bulge between two points rises into it.'},
   {sel:'#btnMetric',title:'Units',body:'Switch between metric and imperial. Every input, label, and result converts automatically.'},
   {sel:'#iH0',title:'Observer height',body:'Eye height above the surface. This sets how far away your horizon is; raising the observer reveals more of a distant target. Try 2 m (standing) vs 100 m (a hill).'},
   {sel:'#iD0',title:'Target',body:'Set the target\'s distance, height, and type. The shape is drawn to scale and the curvature hides its base if it\'s far enough.'},
@@ -690,19 +723,38 @@ function syncInputsToUnits(){
 function updateViewBtns(){
   document.getElementById('btnSide').classList.toggle('active',S.view==='side');
   document.getElementById('btnObs').classList.toggle('active',S.view==='obs');
+  document.getElementById('btnLaser').classList.toggle('active',S.view==='laser');
   document.getElementById('controlsPanel').classList.toggle('obs-active',S.view==='obs');
+  document.getElementById('controlsPanel').classList.toggle('laser-active',S.view==='laser');
+  // Relabel shared inputs for the laser scenario
+  const laser=S.view==='laser';
+  const iH0=document.getElementById('iH0'),iHT=document.getElementById('iHT');
+  iH0.closest('.sec').querySelector('h3').textContent=laser?'Laser':'Observer';
+  iH0.closest('.row').querySelector('label').textContent=laser?'Laser height':'Eye height';
+  iHT.closest('.sec').querySelector('h3').textContent=laser?'Detector':'Target';
+  iHT.closest('.row').querySelector('label').textContent=laser?'Detector height':'Height';
+  document.getElementById('btnAimDet').classList.toggle('active',S.laserAim==='detector');
+  document.getElementById('btnAimLevel').classList.toggle('active',S.laserAim==='level');
 }
 
 const TYPE_LABELS={mountain:'Mountain',lighthouse:'Lighthouse',boat:'Boat / Ship',building:'Building',wind_turbine:'Wind Turbine',oil_platform:'Oil Platform',custom:'Custom'};
 function updateSummary(){
-  const rows=[
+  const laser=S.view==='laser';
+  const rows=laser?[
+    ['Laser height',fmtH(S.h0)],
+    ['Distance',fmtD(S.d0)],
+    ['Detector height',fmtH(S.hT)],
+    ['Beam',S.laserAim==='level'?'Level (horizontal)':'Aimed at detector'],
+    ['Refraction','k = '+S.k],
+    ['Earth',S.oblate?'WGS84 @ '+S.lat+'°':'Sphere 6371 km'],
+  ]:[
     ['Eye height',fmtH(S.h0)],
     ['Distance',fmtD(S.d0)],
     ['Target',fmtH(S.hT)+' '+(TYPE_LABELS[S.type]||S.type)],
     ['Refraction','k = '+S.k],
     ['Earth',S.oblate?'WGS84 @ '+S.lat+'°':'Sphere 6371 km'],
   ];
-  if(S.visRange>0)rows.push(['Visual range',fmtD(S.visRange)]);
+  if(S.visRange>0&&!laser)rows.push(['Visual range',fmtD(S.visRange)]);
   if(S.view==='obs')rows.push(['Lens',Math.round(S.focal)+' mm']);
   let html='<h5>Inputs</h5>';
   for(const[l,v]of rows)html+='<div class="sr"><span class="sl">'+l+'</span><span class="sv">'+v+'</span></div>';
@@ -768,6 +820,7 @@ function render(){
   }
 
   if(S.view==='side')renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd);
+  else if(S.view==='laser')renderLaser(R,d0,hT,h0,hBul);
   else renderObserver(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd);
 }
 
@@ -933,6 +986,165 @@ function renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
   flushCallouts();
 
   // Graphical scale bar (true 1:1 - applies to both axes)
+  drawScaleBar();
+}
+
+// ===================== LASER TEST VIEW =====================
+// A laser fired across water: a straight beam vs the curved surface bulging between
+// the emitter and a detector. Shows whether the bulge rises into the beam (blocking it),
+// the minimum clearance over the water, and how a level beam climbs away from the surface.
+function renderLaser(R,d0,hL,hLaser,hBul){
+  // hL here is the detector height (hT); hLaser is the laser height (h0)
+  const hDet=hL, hEm=hLaser;
+  if(!V.manual)fitLaser();
+  document.getElementById('scaleInfo').style.display='none';
+
+  ctx.clearRect(0,0,W,H);
+  const skyG=ctx.createLinearGradient(0,0,0,H);
+  skyG.addColorStop(0,'#060a12');skyG.addColorStop(1,'#0f1b30');
+  ctx.fillStyle=skyG;ctx.fillRect(0,0,W,H);
+
+  const featureScale=Math.max(hDet,hEm,10);
+  const lw=featureScale*0.006;
+
+  const theta=d0/R,midA=Math.PI/2;
+  const emA=midA+theta/2,detA=midA-theta/2;       // emitter (laser) and detector ends
+  const pt=(a,h)=>({x:(R+h)*Math.cos(a),y:(R+h)*Math.sin(a)});
+
+  // Earth
+  const ec=w2s(0,0);
+  ctx.beginPath();ctx.arc(ec.x,ec.y,R*V.s,0,Math.PI*2);
+  ctx.fillStyle='#0d1f12';ctx.fill();
+  ctx.strokeStyle='#1a3d2a';ctx.lineWidth=Math.max(2*lw*V.s,1);ctx.stroke();
+
+  // Surface arc + fading continuations
+  ctx.beginPath();
+  for(let i=0;i<=200;i++){const a=emA-theta*(i/200);const p=w2s(R*Math.cos(a),R*Math.sin(a));i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y)}
+  ctx.strokeStyle='#55efc4';ctx.lineWidth=Math.max(3*lw*V.s,1.5);ctx.globalAlpha=0.5;ctx.stroke();ctx.globalAlpha=1;
+  const contA=Math.max(theta*0.6,0.02);
+  ctx.strokeStyle='#55efc4';ctx.lineWidth=Math.max(3*lw*V.s,1.5);
+  for(const[startA,dir]of[[detA,-1],[emA,1]]){
+    for(let i=0;i<40;i++){
+      const a0=startA+dir*contA*(i/40),a1=startA+dir*contA*((i+1)/40);
+      const p0=w2s(R*Math.cos(a0),R*Math.sin(a0)),p1=w2s(R*Math.cos(a1),R*Math.sin(a1));
+      ctx.globalAlpha=0.45*(1-i/40);
+      ctx.beginPath();ctx.moveTo(p0.x,p0.y);ctx.lineTo(p1.x,p1.y);ctx.stroke();
+    }
+  }
+  ctx.globalAlpha=1;
+
+  // Bulge apex
+  const emSurf=pt(emA,0),detSurf=pt(detA,0),midSurf=pt(midA,0);
+  const chordMid={x:(emSurf.x+detSurf.x)/2,y:(emSurf.y+detSurf.y)/2};
+  line(chordMid,midSurf,'#ffd93d',2*lw*V.s,[5*lw*V.s,3*lw*V.s]);
+  dot(midSurf,5*lw,'#ffd93d','#fff');
+  callout(midSurf,[
+    {text:'WATER BULGE',color:'#ffd93d'},
+    {text:'Rises '+fmtH(hBul)+' between them',color:'#ffd93d'},
+    {text:fmtD(d0/2)+' from each',color:'#888'},
+  ],0,-86,10);
+
+  // Beam endpoints
+  const level=S.laserAim==='level';
+  const E=pt(emA,hEm);
+  const levelH=(R+hEm)/Math.cos(theta)-R;       // height a horizontal beam reaches at the far end
+  const beamEnd=level?pt(detA,levelH):pt(detA,hDet);
+
+  // Sample the straight beam to find minimum clearance over the water and any blockage
+  const N=300;let minClear=Infinity,minPt=null,minA=midA,minDist=d0/2,blockT=-1,blockPt=null,blockDist=0;
+  for(let i=0;i<=N;i++){
+    const t=i/N;
+    const P={x:E.x+(beamEnd.x-E.x)*t,y:E.y+(beamEnd.y-E.y)*t};
+    const aP=Math.atan2(P.y,P.x),rP=Math.hypot(P.x,P.y),clear=rP-R;
+    if(clear<minClear){minClear=clear;minPt=P;minA=aP;minDist=(emA-aP)*R;}
+    if(clear<0&&blockT<0){blockT=t;blockPt=P;blockDist=(emA-aP)*R;}
+  }
+  const blocked=blockT>=0;
+
+  // Detector mast + screen
+  const detTop=pt(detA,hDet);
+  line(detSurf,detTop,'#9fb3c8',2.4*lw*V.s);
+  {const s=w2s(detTop.x,detTop.y),n={x:Math.cos(detA),y:Math.sin(detA)};
+   ctx.save();ctx.translate(s.x,s.y);ctx.rotate(Math.atan2(-n.x,n.y));
+   const ph=Math.max(hDet*0.12,hDet>0?2:2)*V.s,pw=Math.max(featureScale*0.05*V.s,7);
+   ctx.fillStyle=blocked?'#7a8aa0':'#bfe3ff';ctx.fillRect(-pw/2,-ph,pw,ph*2);
+   ctx.restore();}
+  dot(detSurf,3*lw,'#9fb3c8');
+
+  // Laser device + mast
+  line(emSurf,E,'#9fb3c8',2.4*lw*V.s);
+  {const s=w2s(E.x,E.y),n={x:Math.cos(emA),y:Math.sin(emA)};
+   ctx.save();ctx.translate(s.x,s.y);ctx.rotate(Math.atan2(-n.x,n.y));
+   const bw=Math.max(featureScale*0.07*V.s,10),bh=Math.max(featureScale*0.04*V.s,6);
+   ctx.fillStyle='#2b3a4f';ctx.fillRect(-bw*0.2,-bh,bw,bh*2);
+   ctx.fillStyle='#ff5b5b';ctx.beginPath();ctx.arc(bw*0.8,0,Math.max(bh*0.5,2),0,Math.PI*2);ctx.fill();
+   ctx.restore();}
+  dot(emSurf,3*lw,'#9fb3c8');
+
+  // The beam (with glow). Green where it clears, red beyond a blockage.
+  const drawBeam=(a,b,color,width,glow)=>{
+    const A=w2s(a.x,a.y),B=w2s(b.x,b.y);
+    if(glow){ctx.save();ctx.strokeStyle=color;ctx.globalAlpha=0.25;ctx.lineWidth=width*4;ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();ctx.restore();}
+    ctx.save();ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();ctx.restore();
+  };
+  if(blocked){
+    drawBeam(E,blockPt,'#ff3b3b',Math.max(2.5*lw*V.s,2),true);
+    // would-be continuation, faint dashed
+    line(blockPt,beamEnd,'rgba(255,90,90,0.28)',1.5*lw*V.s,[6*lw*V.s,5*lw*V.s]);
+    dot(blockPt,6*lw,'#ff3b3b','#fff');
+    callout(blockPt,[
+      {text:'BLOCKED BY WATER',color:'#ff3b3b'},
+      {text:'beam meets surface at '+fmtD(blockDist),color:'#ff6b6b'},
+    ],0,64,11);
+  }else{
+    drawBeam(E,beamEnd,'#ff3b3b',Math.max(2.5*lw*V.s,2),true);
+    // minimum clearance marker (only meaningful for an aimed beam; a level beam just keeps rising)
+    if(minPt&&!level){
+      const Smin=pt(minA,0);
+      line(Smin,minPt,'#ffd93d',1.6*lw*V.s,[4*lw*V.s,3*lw*V.s]);
+      dot(minPt,4*lw,'#ffd93d','#fff');
+      callout(minPt,[
+        {text:'MIN CLEARANCE',color:'#ffd93d'},
+        {text:fmtH(minClear)+' above water',color:'#ffd93d'},
+        {text:'at '+fmtD(minDist),color:'#888'},
+      ],0,60,10);
+    }
+  }
+
+  // Endpoint callouts
+  callout(E,[
+    {text:'LASER',color:'#ff5b5b'},
+    {text:fmtH(hEm)+(level?' · fired level':' height'),color:'#ff5b5b'},
+  ],-30,-66,10);
+  if(level){
+    callout(beamEnd,[
+      {text:'BEAM HERE',color:'#00f2fe'},
+      {text:fmtH(levelH)+' above water',color:'#00f2fe'},
+      {text:'flat earth: stays '+fmtH(hEm),color:'#888'},
+    ],-40,54,10);
+    dot(beamEnd,5*lw,'#00f2fe','#fff');
+  }else{
+    callout(detTop,[
+      {text:'DETECTOR',color:'#00f2fe'},
+      {text:fmtH(hDet)+' height',color:'#00f2fe'},
+    ],44,-58,10);
+    dot(detTop,5*lw,'#00f2fe','#fff');
+  }
+
+  // Top summary line
+  let summary;
+  if(level){
+    summary='Level beam climbs to '+fmtH(levelH)+' over '+fmtD(d0)+'  (flat earth: would stay at '+fmtH(hEm)+')';
+  }else if(blocked){
+    summary='BLOCKED: the water bulge ('+fmtH(hBul)+') rises into the beam at '+fmtD(blockDist);
+  }else{
+    summary='Beam reaches the detector, clearing the water by '+fmtH(minClear)+' at its lowest  (flat earth: clearance never dips)';
+  }
+  sLabel(64,16,summary,blocked?'#ff6b6b':'#4facfe',12,'left');
+
+  flushCallouts();
   drawScaleBar();
 }
 
