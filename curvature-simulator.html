@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<!--
+  Earth Curvature & Horizon Simulator
+  Version 1.0.0  ·  Last revised 2026-05-30
+  Spherical/WGS84 curvature & visibility model with observer/camera view.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earth Curvature &amp; Horizon Simulator</title>
+<style>
+  :root {
+    --bg:#0a0e17; --panel:#131a2a; --border:#1e2d4a; --text:#c8d6e5;
+    --accent:#4facfe; --green:#55efc4; --red:#ff6b6b; --orange:#ffa502; --yellow:#ffd93d;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh;display:flex;flex-direction:column}
+  header{display:flex;align-items:center;justify-content:space-between;padding:8px 20px;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0}
+  header h1{font-size:16px;font-weight:600;color:var(--accent)}
+  header .sub{font-size:11px;color:#667;margin-left:10px}
+  .main{display:flex;flex:1;overflow:hidden}
+  .controls{width:300px;min-width:300px;background:var(--panel);border-right:1px solid var(--border);overflow-y:auto;padding:12px;flex-shrink:0}
+  .sec{margin-bottom:14px}
+  .sec h3{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+  .row{display:flex;align-items:center;margin-bottom:6px;gap:6px}
+  .row label{font-size:12px;width:100px;flex-shrink:0;color:#8899aa}
+  .row input[type="number"],.row select{flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:4px 6px;border-radius:4px;font-size:12px;font-family:'SF Mono','Fira Code',monospace}
+  .row input:focus,.row select:focus{outline:none;border-color:var(--accent)}
+  .row .u{font-size:11px;color:#556;width:24px;flex-shrink:0}
+  .rp{background:rgba(79,172,254,0.05);border:1px solid var(--border);border-radius:6px;padding:10px}
+  .rr{display:flex;justify-content:space-between;padding:3px 0;font-size:12px}
+  .rr .l{color:#8899aa} .rr .v{font-family:'SF Mono','Fira Code',monospace;font-weight:600}
+  .rr .v.g{color:var(--green)} .rr .v.r{color:var(--red)}
+  .rr .v.o{color:var(--orange)} .rr .v.a{color:var(--accent)} .rr .v.y{color:var(--yellow)}
+  .rd{border-top:1px solid var(--border);margin:4px 0}
+  .presets{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px}
+  .pre{font-size:10px;padding:2px 6px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:3px;cursor:pointer}
+  .pre:hover{border-color:var(--accent);color:var(--accent)}
+  .note{font-size:10px;color:#556;margin-top:4px;line-height:1.3}
+  .work{font-family:'SF Mono','Fira Code',monospace;font-size:10px;color:#7a93b0;margin:1px 0 5px 8px;line-height:1.45;word-break:break-word}
+  .cv{flex:1;position:relative;overflow:hidden;cursor:grab;background:var(--bg)}
+  .cv.drag{cursor:grabbing}
+  canvas{display:block;width:100%;height:100%}
+  .zc{position:absolute;bottom:12px;right:12px;display:flex;flex-direction:column;gap:3px}
+  .zb{width:32px;height:32px;background:var(--panel);border:1px solid var(--border);color:var(--text);font-size:16px;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .zb:hover{background:var(--border)}
+  .view-toggle{display:flex;gap:0;margin-top:4px}
+  .vt-btn{flex:1;font-size:11px;padding:5px 0;background:var(--bg);border:1px solid var(--border);color:#8899aa;cursor:pointer;text-align:center}
+  .vt-btn:first-child{border-radius:4px 0 0 4px}
+  .vt-btn:last-child{border-radius:0 4px 4px 0}
+  .vt-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .scale-info{position:absolute;bottom:12px;left:12px;background:rgba(19,26,42,0.85);border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:10px;color:#667;pointer-events:none}
+  .obs-only{display:none}
+  .obs-active .obs-only{display:block}
+  /* Input summary (top-right of view) */
+  .summary{position:absolute;top:10px;right:10px;background:rgba(10,14,23,0.82);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:11px;color:var(--text);pointer-events:none;min-width:140px;line-height:1.55}
+  .summary h5{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:4px;font-weight:600}
+  .summary .sr{display:flex;justify-content:space-between;gap:14px}
+  .summary .sr .sl{color:#8899aa}
+  .summary .sr .sv{font-family:'SF Mono','Fira Code',monospace}
+  /* Collapse / expand controls */
+  #btnCollapse{position:absolute;top:10px;left:10px;width:28px;height:28px;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:5px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;z-index:5}
+  #btnCollapse:hover{background:var(--border);border-color:var(--accent)}
+  .controls.collapsed{display:none}
+  #btnGuide{background:var(--accent);color:#06101f;border:none;font-size:11px;font-weight:600;padding:5px 12px;border-radius:5px;cursor:pointer}
+  #btnGuide:hover{background:#6fbcff}
+  /* Guided tour */
+  #tourHi{position:fixed;border:2px solid var(--accent);border-radius:6px;box-shadow:0 0 0 9999px rgba(4,8,15,0.74);pointer-events:none;z-index:1000;transition:all .25s ease;display:none}
+  #tourBox{position:fixed;width:300px;max-width:80vw;background:var(--panel);border:1px solid var(--accent);border-radius:8px;padding:14px 16px;z-index:1001;box-shadow:0 8px 30px rgba(0,0,0,0.5);display:none}
+  #tourBox h4{font-size:13px;color:var(--accent);margin-bottom:6px}
+  #tourBox p{font-size:12px;line-height:1.5;color:var(--text);margin-bottom:10px}
+  #tourBox .tour-foot{display:flex;align-items:center;justify-content:space-between}
+  #tourBox .tour-step{font-size:11px;color:#667}
+  #tourBox .tour-btns{display:flex;gap:6px}
+  #tourBox button{font-size:11px;padding:5px 12px;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:var(--bg);color:var(--text)}
+  #tourBox button.primary{background:var(--accent);color:#06101f;border-color:var(--accent);font-weight:600}
+  #tourBox button:hover{border-color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+  <div style="display:flex;align-items:baseline">
+    <h1>Earth Curvature &amp; Horizon Simulator</h1>
+    <span class="sub">Spherical model &middot; R = 6,371 km</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <span style="font-size:10px;color:#556" title="Last revised 2026-05-30">v1.0.0 &middot; 2026-05-30</span>
+    <button id="btnGuide">? How to use</button>
+    <span style="font-size:11px;color:#556">Scroll to zoom &middot; Drag to pan</span>
+  </div>
+</header>
+<div class="main">
+  <div class="controls" id="controlsPanel">
+    <div class="sec">
+      <h3>View</h3>
+      <div class="view-toggle">
+        <button class="vt-btn active" id="btnSide">Side View</button>
+        <button class="vt-btn" id="btnObs">Observer View</button>
+      </div>
+      <div class="view-toggle" style="margin-top:4px">
+        <button class="vt-btn active" id="btnMetric">Metric</button>
+        <button class="vt-btn" id="btnImperial">Imperial</button>
+      </div>
+    </div>
+    <div class="sec obs-only">
+      <h3>Optics</h3>
+      <div class="row"><label>Focal length</label><input type="number" id="iFocal" value="50" min="1" max="10000" step="1"><span class="u">mm</span></div>
+      <div class="row"><label>Sensor</label>
+        <select id="iSensor">
+          <option value="36">Full frame (36mm)</option>
+          <option value="23.5">APS-C (23.5mm)</option>
+          <option value="17.3">M4/3 (17.3mm)</option>
+          <option value="6.17">1/2.3" compact</option>
+        </select>
+      </div>
+      <div class="presets">
+        <button class="pre opre" data-f="50">Naked eye</button>
+        <button class="pre opre" data-f="200">200mm</button>
+        <button class="pre opre" data-f="600">600mm</button>
+        <button class="pre opre" data-f="1200">60× scope</button>
+        <button class="pre opre" data-f="2000">P1000</button>
+      </div>
+      <div class="note" id="opticsNote">50mm ≈ naked eye. Scrolling to zoom changes the focal length.</div>
+    </div>
+    <div class="sec">
+      <h3>Observer</h3>
+      <div class="row"><label>Eye height</label><input type="number" id="iH0" value="2" min="0" step="0.5"><span class="u">m</span></div>
+    </div>
+    <div class="sec">
+      <h3>Target</h3>
+      <div class="row"><label>Distance</label><input type="number" id="iD0" value="30" min="0.1" step="1"><span class="u">km</span></div>
+      <div class="row"><label>Height</label><input type="number" id="iHT" value="100" min="0" step="1"><span class="u">m</span></div>
+      <div class="row"><label>Type</label>
+        <select id="iType">
+          <option value="mountain">Mountain</option>
+          <option value="lighthouse">Lighthouse</option>
+          <option value="boat">Boat / Ship</option>
+          <option value="building">Building</option>
+          <option value="wind_turbine">Wind Turbine</option>
+          <option value="oil_platform">Oil Platform</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+      <div class="presets">
+        <button class="pre" data-d="5" data-h="15" data-t="lighthouse">Lighthouse 5km</button>
+        <button class="pre" data-d="20" data-h="30" data-t="boat">Ship 20km</button>
+        <button class="pre" data-d="50" data-h="500" data-t="mountain">Mountain 50km</button>
+        <button class="pre" data-d="100" data-h="1500" data-t="mountain">Peak 100km</button>
+        <button class="pre" data-d="200" data-h="3000" data-t="mountain">Range 200km</button>
+        <button class="pre" data-d="443" data-h="4000" data-t="mountain">443km / 4km</button>
+      </div>
+    </div>
+    <div class="sec">
+      <h3>Refraction</h3>
+      <div class="row"><label>Preset</label>
+        <select id="iKPreset">
+          <option value="0.17">Typical visual (k=0.17)</option>
+          <option value="0.13">Standard (k=0.13)</option>
+          <option value="0">None / Geometric (k=0)</option>
+          <option value="0.25">Strong (k=0.25)</option>
+          <option value="0.33">1/3 rule (k=0.33)</option>
+          <option value="custom">Custom...</option>
+        </select>
+      </div>
+      <div class="row" id="customKRow" style="display:none"><label>Custom k</label><input type="number" id="iK" value="0.17" min="0" max="1" step="0.01"></div>
+      <div class="note" id="kNote">Typical visual observation conditions. Slightly more bending than standard.</div>
+      <div class="row" style="margin-top:6px"><label>Show bands</label><input type="checkbox" id="iShowBands" style="width:auto;flex:0"><span class="u" style="width:auto;color:#8899aa;font-size:10px">k=0 / .13 / .25 / .5</span></div>
+      <div class="row"><label>Visual range</label><input type="number" id="iVis" value="0" min="0" step="5"><span class="u">km</span></div>
+      <div class="note">Air clarity / haze limit. 0 = ignore. Even when geometry says a target is visible, haze can hide it.</div>
+    </div>
+    <div class="sec">
+      <h3>Earth Model</h3>
+      <div class="row"><label>Shape</label>
+        <select id="iEarthModel">
+          <option value="sphere">Mean sphere (6371 km)</option>
+          <option value="wgs84">WGS84 oblate spheroid</option>
+        </select>
+      </div>
+      <div class="row" id="latRow" style="display:none"><label>Latitude</label><input type="number" id="iLat" value="45" min="-90" max="90" step="1"><span class="u">&deg;</span></div>
+      <div class="note" id="earthNote">Mean sphere R = 6,371 km.</div>
+    </div>
+    <div class="sec">
+      <h3>Famous Observations</h3>
+      <div class="presets">
+        <button class="pre obs-pre" data-d="96.5" data-h="442" data-t="building" data-h0="1.8" data-k="0.17" data-note="Chicago skyline from ~60mi across Lake Michigan. Geometrically the base is fully hidden; real sightings are a superior mirage (looming) under a temperature inversion, a separate intermittent effect, not ordinary refraction.">Chicago / Lake Michigan</button>
+        <button class="pre obs-pre" data-d="68" data-h="553" data-t="building" data-h0="2" data-k="0.13" data-note="Toronto skyline ~68km across Lake Ontario from the NY shore. Lower floors sit below the horizon; only the upper buildings and the CN Tower's top (553m) show, and only on rare clear days, since haze usually intervenes. A textbook 'partly hidden' case.">Toronto / Lake Ontario</button>
+        <button class="pre obs-pre" data-d="50" data-h="190" data-t="building" data-h0="10" data-k="0.17" data-note="Turning Torso (190m) from Copenhagen, ~50km across the Øresund. Lower floors hidden by curvature; full-tower sightings occur during inversions (looming), not ordinary refraction.">Turning Torso / Copenhagen</button>
+        <button class="pre obs-pre" data-d="24" data-h="33" data-t="custom" data-h0="2" data-k="0.13" data-multi="4,8,12,16,20" data-note="Lake Pontchartrain power-line towers (Louisiana): identical ~33m towers in a straight 24km line. Soundly's telephoto photos (2017) show the far towers sinking base-first below the horizon, curvature made directly visible. Zooming in sharpens the towers but cannot lift their hidden bases back into view.">Lake Pontchartrain towers</button>
+        <button class="pre obs-pre" data-d="15.14" data-h="60" data-t="oil_platform" data-h0="1.5" data-k="0.13" data-multi="10" data-note="The 'Black Swan' photo: an offshore oil rig at ~9.4 mi (a second sat at ~6.2 mi), shot from only ~1.5m above the shore where the horizon is just ~2.7 mi away. In that one frame the horizon appears behind the rigs; on ordinary days from the same spot it sits in front of them and cuts off their bases. The difference is day-to-day refraction over water. Toggle Show bands to watch the hidden line shift with k.">Black Swan rigs</button>
+        <button class="pre obs-pre" data-d="9.7" data-h="2" data-t="custom" data-h0="0.6" data-k="0.25" data-note="Bedford Level Experiment (1838/1870). 6 miles of still canal, sightline ~0.6m above water. Rowbotham's near-water sighting led him to the wrong conclusion; Wallace (1870) raised the sightline and corrected for refraction, measuring the curvature. Near-water sightlines are exactly where refraction is strongest and most variable.">Bedford Level (6mi)</button>
+        <button class="pre obs-pre" data-d="263" data-h="2785" data-t="mountain" data-h0="150" data-k="0.13" data-note="Mt Canigou (2785m) seen from near Marseille, ~263km. A genuine clear-air sighting: the peak is tall enough and the observer high enough that the summit clears the bulge under standard refraction.">Canigou / Marseille</button>
+        <button class="pre obs-pre" data-d="117" data-h="1227" data-t="mountain" data-h0="120" data-k="0.13" data-note="Mt Ka'ala (1,227m), the highest peak on O'ahu, seen from an elevated overlook on Kaua'i, ~117km across the Kaua'i Channel. The summit easily clears the curve and is geometrically visible; the real limiter is ocean haze, not curvature. Set a Visual range (~120–170 km) to see why it only appears on exceptionally clear days.">O'ahu from Kaua'i</button>
+        <button class="pre obs-pre" data-d="443" data-h="3883" data-t="mountain" data-h0="2826" data-k="0.17" data-note="World-record photograph (Marc Bret, 16 Jul 2016, Guinness World Records): Pic de Finestrelles in the Pyrenees → Pic Gaspard in the Alps, 443km. Both ends are high: observer 2,826m, summit 3,883m. At standard refraction it sits right at the curve; under the favorable conditions that morning, the top few hundred meters clear it as a thin summit silhouette, exactly what the photo shows. Toggle Show bands to see how sensitive it is to refraction.">Finestrelles → Gaspard 443km</button>
+        <button class="pre obs-pre" data-d="381" data-h="2744" data-t="mountain" data-h0="2784" data-k="0.17" data-note="Prior distance record (~381km): Pic du Canigou in the Pyrenees → Tête de Chabrière in the Alps. Same principle as the 443km record: two high peaks (≈2,780m and ≈2,740m) sitting above the curve. Heights approximate.">Pyrenees → Alps 381km</button>
+        <button class="pre obs-pre" data-d="370" data-h="6190" data-t="mountain" data-h0="4900" data-k="0.13" data-note="Denali (6,190m), North America's highest peak, photographed ~370km away across Alaska from high ground near Mt Sanford (~4,900m). A high-to-high pair: a giant mountain seen from altitude. It is the altitude of both peaks that makes such a distance possible despite the curve. Heights approximate.">Denali ~370km (Alaska)</button>
+      </div>
+      <div class="note" id="obsNote">Documented real-world observations &amp; record long-distance photos. Click for details on each.</div>
+    </div>
+    <div class="sec">
+      <h3>Results</h3>
+      <div class="rp">
+        <div class="rr"><span class="l">Horizon distance</span><span class="v a" id="oD1">-</span></div>
+        <div class="rr"><span class="l">Beyond horizon</span><span class="v a" id="oBH">-</span></div>
+        <div class="rd"></div>
+        <div class="rr"><span class="l">Bulge height (apex)</span><span class="v y" id="oBulge">-</span></div>
+        <div class="rr"><span class="l">Hidden height</span><span class="v r" id="oHid">-</span></div>
+        <div class="rr"><span class="l">Visible height</span><span class="v g" id="oVis">-</span></div>
+        <div class="rd"></div>
+        <div class="rr"><span class="l">Target visibility</span><span class="v" id="oStat">-</span></div>
+        <div class="rr"><span class="l">Arc angle</span><span class="v o" id="oArc">-</span></div>
+        <div class="rr"><span class="l">Drop at target</span><span class="v o" id="oDrop">-</span></div>
+        <div class="rr" id="rBandRow" style="display:none"><span class="l">Visible range (k=0–0.5)</span><span class="v y" id="oBandRange">-</span></div>
+        <div class="rr" id="rHazeRow" style="display:none"><span class="l">Through haze</span><span class="v" id="oHaze">-</span></div>
+      </div>
+    </div>
+    <div class="sec">
+      <h3 class="meth-toggle" id="methToggle" style="cursor:pointer;user-select:none">Methodology &#9654;</h3>
+      <div id="methBody" style="display:none;font-size:11px;color:#8899aa;line-height:1.6">
+        <p>All formulas use effective Earth radius R' = R/(1−k) to model atmospheric refraction. Lines in <span style="color:#7a93b0">grey</span> below each formula show the live calculation for your current inputs.</p>
+        <div id="wReff" class="work"></div>
+        <code style="display:block;font-size:10px;color:var(--accent);background:rgba(79,172,254,0.08);padding:3px 6px;border-radius:3px;margin:4px 0">d₁ = √(h² + 2R'h) &nbsp;[horizon distance]</code>
+        <div id="wHorizon" class="work"></div>
+        <p>Distance to the geometric horizon from eye height h.</p>
+        <code style="display:block;font-size:10px;color:var(--accent);background:rgba(79,172,254,0.08);padding:3px 6px;border-radius:3px;margin:4px 0">h₁ = √(d₂² + R'²) − R' &nbsp;[hidden height]</code>
+        <div id="wHidden" class="work"></div>
+        <p>Height obscured by curvature. d₂ = d₀ − d₁ is the distance beyond your horizon.</p>
+        <code style="display:block;font-size:10px;color:var(--accent);background:rgba(79,172,254,0.08);padding:3px 6px;border-radius:3px;margin:4px 0">B = R'(1 − cos(d/2R')) &nbsp;[bulge]</code>
+        <div id="wBulge" class="work"></div>
+        <p>Maximum surface rise between observer and target.</p>
+        <code style="display:block;font-size:10px;color:var(--accent);background:rgba(79,172,254,0.08);padding:3px 6px;border-radius:3px;margin:4px 0">dip = acos(R'/(R'+h)) ≈ √(2h/R') &nbsp;[horizon dip]</code>
+        <div id="wDip" class="work"></div>
+        <p>The angle by which the sea horizon sits <em>below</em> true level. The horizon does not "rise to eye level."</p>
+        <p style="margin-top:6px"><strong style="color:var(--text)">Refraction (k):</strong> the coefficient of terrestrial refraction, the ratio of Earth's curvature to the light ray's curvature. The atmosphere bends rays downward, so the model replaces R with an effective radius R' = R/(1−k). k=0 geometric, k=0.13 surveying standard, k=0.17 typical visual conditions.</p>
+        <p><strong style="color:var(--text)">Extreme refraction:</strong> Near the surface (especially over water) k is highly variable, measured from negative values up to far beyond 0.5 during temperature inversions. These produce <em>looming / superior mirages</em> that can briefly reveal objects normally hidden. This is a separate, intermittent effect, not steady refraction. The k=0.5 band marks the edge of this regime.</p>
+        <p><strong style="color:var(--text)">Spherical vs parabolic:</strong> This uses exact spherical formulas. The "8 inches per mile²" rule is a parabolic approximation of <em>drop below the tangent line</em>; it ignores observer height and overstates what is hidden. The correct hidden-height formula above accounts for both.</p>
+        <p><strong style="color:var(--text)">Earth model:</strong> Default radius is the IUGG mean R = 6,371 km. WGS84 mode uses the latitude-dependent geocentric radius of the reference ellipsoid (a = 6,378.137 km equator → b = 6,356.752 km poles).</p>
+        <p style="margin-top:6px"><strong style="color:var(--text)">Assumptions &amp; limits:</strong></p>
+        <ul style="margin:2px 0 6px 14px;padding:0">
+          <li>Smooth sphere/ellipsoid at one datum, with no terrain, waves, tides, or local elevation between observer and target.</li>
+          <li>A single uniform k along the whole path (the real atmosphere is layered; the effective-radius method is the standard approximation, best for modest distances and small k).</li>
+          <li>Heights are measured above that datum; light travels as a circular arc of radius R'/k.</li>
+          <li>Ignores haze/visual range, diffraction, and wave height, all of which affect a real sighting.</li>
+        </ul>
+        <p><strong style="color:var(--text)">Visual range (haze):</strong> Optional. Atmospheric extinction limits how far you can see at all, independent of curvature. Using the Koschmieder relation, contrast falls as exp(−3.912·d/V), where V is the meteorological visual range. Even when geometry leaves a target above the horizon, haze may erase it. Set V=0 to ignore.</p>
+        <p><strong style="color:var(--text)">What this does <em>not</em> show:</strong> it predicts the <em>geometry</em> of what curvature hides. It cannot tell you whether a specific photo is genuine clear-air, a mirage, or intervening terrain; those depend on conditions on the day.</p>
+        <p style="margin-top:6px"><strong style="color:var(--text)">Credit:</strong> The core curvature formulas follow and match the widely used <a href="https://dizzib.github.io/earth/curve-calc/" target="_blank" rel="noopener" style="color:var(--accent)">dizzib Earth curve calculator</a>; this tool adds scaled visualization, an observer/camera view, refraction bands, and visual range.</p>
+        <p style="margin-top:6px;color:#667">Version 1.0.0 &middot; last revised 2026-05-30</p>
+        <p style="margin-top:8px"><strong style="color:var(--text)">Glossary</strong> <span style="color:#667">(terms link to neutral, scientific definitions)</span></p>
+        <dl style="margin:2px 0 4px 0">
+          <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon" target="_blank" rel="noopener" style="color:var(--accent)">Horizon</a></dt>
+          <dd style="margin:0 0 0 10px">The point where your line of sight runs tangent to the surface, <em>not</em> an edge or drop-off. The surface keeps curving smoothly away beyond it; the horizon is simply the farthest point you can see, and it moves outward as you rise. Its distance grows with the square root of eye height.</dd>
+          <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon#Geometrical_horizon" target="_blank" rel="noopener" style="color:var(--accent)">Hidden height</a></dt>
+          <dd style="margin:0 0 0 10px">How much of a distant object sits below the horizon, obscured by the Earth's curve.</dd>
+          <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Figure_of_the_Earth" target="_blank" rel="noopener" style="color:var(--accent)">Bulge</a></dt>
+          <dd style="margin:0 0 0 10px">The rise of the surface midway between two points: the "hump" a line of sight must clear.</dd>
+          <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon#Curvature_of_the_horizon" target="_blank" rel="noopener" style="color:var(--accent)">Horizon dip</a></dt>
+          <dd style="margin:0 0 0 10px">The small angle by which the true horizon sits below eye level for a raised observer.</dd>
+          <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Atmospheric_refraction" target="_blank" rel="noopener" style="color:var(--accent)">Atmospheric refraction</a></dt>
+          <dd style="margin:0 0 0 10px">Bending of light through air of changing density, making distant objects appear slightly higher.</dd>
+          <dt style="margin-top:5px"><a href="https://aty.sdsu.edu/explain/atmos_refr/dip.html" target="_blank" rel="noopener" style="color:var(--accent)">Refraction coefficient (k)</a></dt>
+          <dd style="margin:0 0 0 10px">Ratio of Earth's curvature to the light ray's curvature; ~0.13 standard, but highly variable near the surface.</dd>
+          <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Earth_bulge" target="_blank" rel="noopener" style="color:var(--accent)">Effective Earth radius (R')</a></dt>
+          <dd style="margin:0 0 0 10px">An inflated radius R/(1−k) that folds steady refraction into the geometry.</dd>
+          <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Looming_and_similar_refraction_phenomena" target="_blank" rel="noopener" style="color:var(--accent)">Looming / superior mirage</a></dt>
+          <dd style="margin:0 0 0 10px">Strong refraction in a temperature inversion that lifts hidden objects into view; intermittent, not steady.</dd>
+          <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Visibility#Meteorological_visibility" target="_blank" rel="noopener" style="color:var(--accent)">Meteorological visibility / visual range</a></dt>
+          <dd style="margin:0 0 0 10px">Distance at which contrast fades to the detection threshold (Koschmieder relation). Haze limit.</dd>
+          <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Reference_ellipsoid" target="_blank" rel="noopener" style="color:var(--accent)">Reference ellipsoid (WGS84)</a></dt>
+          <dd style="margin:0 0 0 10px">The oblate-spheroid model of Earth used for precise, latitude-dependent radii.</dd>
+          <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Earth_radius" target="_blank" rel="noopener" style="color:var(--accent)">Earth radius</a></dt>
+          <dd style="margin:0 0 0 10px">Earth is not a perfect sphere; its radius ranges ~6,357 km (poles) to ~6,378 km (equator), mean ~6,371 km.</dd>
+          <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Line-of-sight_propagation" target="_blank" rel="noopener" style="color:var(--accent)">Line of sight / slant range</a></dt>
+          <dd style="margin:0 0 0 10px">The straight path from observer to target, slightly longer than the distance measured along the ground.</dd>
+        </dl>
+        <p style="margin-top:6px"><strong style="color:var(--text)">Sources:</strong>
+          <a href="https://en.wikipedia.org/wiki/Earth_radius#Mean_radius" target="_blank" rel="noopener" style="color:var(--accent)">IUGG mean radius</a> ·
+          <a href="https://en.wikipedia.org/wiki/World_Geodetic_System#WGS_84" target="_blank" rel="noopener" style="color:var(--accent)">WGS84 (NGA)</a> ·
+          <a href="https://en.wikipedia.org/wiki/Atmospheric_refraction#Terrestrial_refraction" target="_blank" rel="noopener" style="color:var(--accent)">terrestrial refraction</a> ·
+          <a href="https://aty.sdsu.edu/explain/atmos_refr/terrestrial.html" target="_blank" rel="noopener" style="color:var(--accent)">refraction coefficient (van der Werf/Young)</a> ·
+          <a href="https://en.wikipedia.org/wiki/Visibility#Koschmieder_equation" target="_blank" rel="noopener" style="color:var(--accent)">Koschmieder visibility</a> ·
+          <a href="https://en.wikipedia.org/wiki/Bedford_Level_experiment" target="_blank" rel="noopener" style="color:var(--accent)">Bedford Level experiment</a>
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="cv" id="ctnr">
+    <canvas id="c"></canvas>
+    <button id="btnCollapse" title="Hide / show controls">&#10094;</button>
+    <div class="summary" id="summary"></div>
+    <div class="scale-info" id="scaleInfo"></div>
+    <div class="zc">
+      <button class="zb" id="zi">+</button>
+      <button class="zb" id="zo">&minus;</button>
+      <button class="zb" id="zf" title="Fit">&#8982;</button>
+    </div>
+  </div>
+</div>
+<div id="tourHi"></div>
+<div id="tourBox">
+  <h4 id="tourTitle"></h4>
+  <p id="tourBody"></p>
+  <div class="tour-foot">
+    <span class="tour-step" id="tourStep"></span>
+    <div class="tour-btns">
+      <button id="tourPrev">Back</button>
+      <button id="tourNext" class="primary">Next</button>
+    </div>
+  </div>
+</div>
+<script>
+const RE=6371000;
+const WGS84_A=6378137.0,WGS84_B=6356752.314;
+function wgs84R(lat){const p=lat*Math.PI/180,c2=Math.cos(p)**2,s2=Math.sin(p)**2;return Math.sqrt((WGS84_A**4*c2+WGS84_B**4*s2)/(WGS84_A**2*c2+WGS84_B**2*s2))}
+function baseR(){return S.oblate?wgs84R(S.lat):RE}
+const C=document.getElementById('c');
+const ctx=C.getContext('2d');
+const ctnr=document.getElementById('ctnr');
+
+function hDist(h,R){return Math.sqrt(h*h+2*R*h)}
+function hHide(d0,h0,R){const d1=hDist(h0,R);if(d0<=d1)return 0;const d2=d0-d1;return Math.sqrt(d2*d2+R*R)-R}
+function bHeight(d0,R){return R*(1-Math.cos(d0/(2*R)))}
+function effR(k){return baseR()/(1-Math.max(0,Math.min(k,0.99)))}
+function dropArc(x,R){const a=x/R;return R*(1-Math.cos(a))}
+// Koschmieder: fraction of contrast surviving over distance d through visual range V (metres)
+function clarity(d,V){return V>0?Math.exp(-3.912*d/V):1}
+const M2FT=3.28084,M2MI=0.000621371;
+function fmtD(m){
+  if(S.units==='imp'){const ft=m*M2FT;return ft>=5280?(ft/5280).toFixed(2)+' mi':ft.toFixed(0)+' ft';}
+  return m>=1000?(m/1000).toFixed(2)+' km':m.toFixed(1)+' m';
+}
+function fmtH(m){
+  if(S.units==='imp'){const ft=Math.abs(m)*M2FT;return ft>=5280?(ft/5280).toFixed(3)+' mi':ft>=1?ft.toFixed(2)+' ft':(ft*12).toFixed(1)+' in';}
+  return Math.abs(m)>=1000?(m/1000).toFixed(3)+' km':Math.abs(m)>=1?m.toFixed(2)+' m':(m*100).toFixed(1)+' cm';
+}
+
+const V={cx:0,cy:0,s:1,manual:false};
+const S={h0:2,d0:30000,hT:100,type:'mountain',k:0.17,view:'side',focal:50,sensor:36,units:'metric',oblate:false,lat:45,showBands:false,tilt:0,visRange:0,extra:[]};
+// S.extra: extra target distances (metres) for multi-target observations (e.g. a line of
+// identical towers). They share the primary target's height and type. Empty for everything else.
+// Refraction bands - single source of truth for both views. k=0.5 represents
+// the rare temperature-inversion / mirage regime, where near-surface k can run far higher.
+const BAND_DEFS=[
+  {k:0,   color:'#ff6666',lbl:'k=0 geometric'},
+  {k:0.13,color:'#ffcc33',lbl:'k=0.13 standard'},
+  {k:0.25,color:'#66ccff',lbl:'k=0.25 strong'},
+  {k:0.5, color:'#c98bff',lbl:'k=0.5 inversion'},
+];
+let W,H;
+
+function resize(){
+  const r=ctnr.getBoundingClientRect();
+  const dpr=window.devicePixelRatio||1;
+  const nw=r.width,nh=r.height;
+  if(nw===W&&nh===H&&C.width===nw*dpr)return;
+  W=nw;H=nh;
+  C.width=W*dpr;C.height=H*dpr;
+  C.style.width=W+'px';C.style.height=H+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+
+function w2s(wx,wy){return{x:W/2+(wx-V.cx)*V.s,y:H/2-(wy-V.cy)*V.s}}
+function s2w(sx,sy){return{x:V.cx+(sx-W/2)/V.s,y:V.cy-(sy-H/2)/V.s}}
+
+function fitSide(){
+  const R=effR(S.k),d0=S.d0,hT=S.hT,h0=S.h0;
+  const theta=d0/R,midA=Math.PI/2;
+  const tgtA=midA-theta/2,obsA=midA+theta/2;
+  const pt=(a,h)=>({x:(R+h)*Math.cos(a),y:(R+h)*Math.sin(a)});
+  const tgtSurf=pt(tgtA,0),tgtTop=pt(tgtA,hT);
+  V.s=(H*0.4)/Math.max(hT,h0,10);
+  V.cx=(tgtSurf.x+tgtTop.x)/2;
+  V.cy=(tgtSurf.y+tgtTop.y)/2;
+  V.cx-=(W*0.2)/V.s;
+}
+
+function fitObs(){
+  const fovRad=2*Math.atan(S.sensor/(2*S.focal));
+  V.s=W/fovRad;
+  V.cx=0;
+  // Center vertically on the midpoint between horizon (0) and visible target top
+  const R=effR(S.k),d0=S.d0,hT=S.hT,h0=S.h0;
+  const hHid=hHide(d0,h0,R);
+  const hVis=Math.max(0,hT-hHid);
+  const dE=dropArc(d0,R);
+  const sD=Math.sqrt(d0*d0+(h0-dE)*(h0-dE));
+  const topAngle=hVis>0?Math.atan2(hVis,sD):0;
+  const baseAngle=hHid>0?-Math.atan2(hHid,sD):0;
+  V.cy=(topAngle+baseAngle)/2;
+}
+
+function focalFromScale(){
+  const fovRad=W/V.s;
+  return S.sensor/(2*Math.tan(fovRad/2));
+}
+
+function init(){
+  resize();
+  let resizeTimer;
+  window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{resize();V.manual=false;render()},50)});
+
+  document.getElementById('btnSide').addEventListener('click',()=>{
+    S.view='side';updateViewBtns();V.manual=false;render();
+  });
+  document.getElementById('btnObs').addEventListener('click',()=>{
+    S.view='obs';S.tilt=0;updateViewBtns();V.manual=false;render();
+  });
+
+  document.getElementById('btnMetric').addEventListener('click',()=>{
+    S.units='metric';
+    document.getElementById('btnMetric').classList.add('active');
+    document.getElementById('btnImperial').classList.remove('active');
+    syncInputsToUnits();render();
+  });
+  document.getElementById('btnImperial').addEventListener('click',()=>{
+    S.units='imp';
+    document.getElementById('btnImperial').classList.add('active');
+    document.getElementById('btnMetric').classList.remove('active');
+    syncInputsToUnits();render();
+  });
+
+  const binds={iH0:'h0',iD0:'d0_dist',iHT:'hT'};
+  for(const[id,key]of Object.entries(binds)){
+    document.getElementById(id).addEventListener('input',function(){
+      const raw=parseFloat(this.value)||0;
+      const v=Math.max(key==='d0_dist'?0.001:0, raw);
+      if(S.units==='imp'){
+        if(key==='d0_dist')S.d0=v/M2MI;
+        else S[key]=v/M2FT;
+      }else{
+        if(key==='d0_dist')S.d0=v*1000;
+        else S[key]=v;
+      }
+      if(key==='d0_dist'||key==='hT')S.extra=[]; // redefining the target ends a multi-target set
+      V.manual=false;render();
+    });
+  }
+  document.getElementById('iType').addEventListener('input',function(){S.type=this.value;S.extra=[];render()});
+
+  // Visual range (haze) - stored in metres, displayed in current distance unit
+  document.getElementById('iVis').addEventListener('input',function(){
+    const v=Math.max(0,parseFloat(this.value)||0);
+    S.visRange=S.units==='imp'?v/M2MI:v*1000;
+    render();
+  });
+
+  // Optics
+  document.getElementById('iFocal').addEventListener('input',function(){
+    S.focal=Math.max(1,parseFloat(this.value)||50);
+    V.manual=false;render();
+  });
+  document.getElementById('iSensor').addEventListener('change',function(){
+    S.sensor=parseFloat(this.value);
+    V.manual=false;render();
+  });
+  document.querySelectorAll('.opre').forEach(b=>b.addEventListener('click',()=>{
+    S.focal=parseFloat(b.dataset.f);
+    document.getElementById('iFocal').value=S.focal;
+    V.manual=false;render();
+  }));
+
+  // Refraction
+  const kNotes={'0':'No refraction. Pure geometric line of sight.','0.13':'Standard atmospheric refraction. The light ray curves about 13% as much as Earth\'s surface.','0.17':'Typical visual observation conditions. Slightly more bending than standard.','0.25':'Strong refraction: warm air over a cold surface (e.g. ocean).','0.33':'1/3 rule, sometimes used in surveying. Effective radius = 1.5× Earth.'};
+  document.getElementById('iKPreset').addEventListener('change',function(){
+    const cr=document.getElementById('customKRow'),ne=document.getElementById('kNote');
+    if(this.value==='custom'){cr.style.display='flex';S.k=parseFloat(document.getElementById('iK').value)||0;ne.textContent='Enter a custom refraction coefficient (0–1).';}
+    else{cr.style.display='none';S.k=parseFloat(this.value);document.getElementById('iK').value=this.value;ne.textContent=kNotes[this.value]||'';}
+    V.manual=false;render();
+  });
+  document.getElementById('iK').addEventListener('input',function(){S.k=parseFloat(this.value)||0;V.manual=false;render()});
+
+  document.querySelectorAll('.pre:not(.opre)').forEach(b=>b.addEventListener('click',()=>{
+    if(!b.dataset.d)return;
+    S.d0=parseFloat(b.dataset.d)*1000;S.hT=parseFloat(b.dataset.h);S.type=b.dataset.t;S.h0=2;S.extra=[];
+    document.getElementById('iType').value=b.dataset.t;
+    syncInputsToUnits();V.manual=false;render();
+  }));
+
+  ctnr.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const f=e.deltaY>0?0.9:1.11;
+    if(S.view==='obs'){
+      V.s*=f;
+      S.focal=focalFromScale();
+      document.getElementById('iFocal').value=Math.round(S.focal);
+      V.manual=true;
+    }else{
+      const r=ctnr.getBoundingClientRect();
+      const mx=e.clientX-r.left,my=e.clientY-r.top;
+      const wb=s2w(mx,my);
+      V.s*=f;
+      const wa=s2w(mx,my);
+      V.cx-=(wa.x-wb.x);V.cy-=(wa.y-wb.y);
+      V.manual=true;
+    }
+    render();
+  },{passive:false});
+
+  let drag=false,lx,ly,downX,downY,moved=0;
+  ctnr.addEventListener('mousedown',e=>{drag=true;lx=e.clientX;ly=e.clientY;downX=e.clientX;downY=e.clientY;moved=0;ctnr.classList.add('drag')});
+  window.addEventListener('mousemove',e=>{
+    if(!drag)return;
+    moved+=Math.abs(e.clientX-lx)+Math.abs(e.clientY-ly);
+    if(S.view==='obs'){
+      // Vertical drag tilts the view up/down (horizontal locked on target)
+      S.tilt+=(e.clientY-ly)/V.s;
+      const maxTilt=80*Math.PI/180;
+      S.tilt=Math.max(-maxTilt,Math.min(maxTilt,S.tilt));
+      lx=e.clientX;ly=e.clientY;render();
+      return;
+    }
+    V.cx-=(e.clientX-lx)/V.s;V.cy+=(e.clientY-ly)/V.s;
+    lx=e.clientX;ly=e.clientY;V.manual=true;render();
+  });
+  window.addEventListener('mouseup',e=>{
+    if(drag&&moved<5){ // treat as a click - centre on a callout if one was hit
+      const r=ctnr.getBoundingClientRect();
+      const c=calloutAt(downX-r.left,downY-r.top);
+      if(c)centerOnCallout(c);
+    }
+    drag=false;ctnr.classList.remove('drag');
+  });
+  // Hover cursor over clickable callouts
+  ctnr.addEventListener('mousemove',e=>{
+    if(drag)return;
+    const r=ctnr.getBoundingClientRect();
+    ctnr.style.cursor=calloutAt(e.clientX-r.left,e.clientY-r.top)?'pointer':'';
+  });
+
+  function zoomBtn(f){
+    V.s*=f;V.manual=true;
+    if(S.view==='obs'){S.focal=focalFromScale();document.getElementById('iFocal').value=Math.round(S.focal);}
+    render();
+  }
+  document.getElementById('zi').addEventListener('click',()=>zoomBtn(1.4));
+  document.getElementById('zo').addEventListener('click',()=>zoomBtn(0.7));
+  document.getElementById('zf').addEventListener('click',()=>{V.manual=false;S.tilt=0;render()});
+
+  // Refraction bands
+  document.getElementById('iShowBands').addEventListener('change',function(){S.showBands=this.checked;render()});
+
+  // WGS84
+  document.getElementById('iEarthModel').addEventListener('change',function(){
+    S.oblate=this.value==='wgs84';
+    document.getElementById('latRow').style.display=S.oblate?'flex':'none';
+    updateEarthNote();V.manual=false;render();
+  });
+  document.getElementById('iLat').addEventListener('input',function(){
+    S.lat=parseFloat(this.value)||0;updateEarthNote();V.manual=false;render();
+  });
+
+  // Famous observations
+  document.querySelectorAll('.obs-pre').forEach(b=>b.addEventListener('click',()=>{
+    S.d0=parseFloat(b.dataset.d)*1000;S.hT=parseFloat(b.dataset.h);
+    S.h0=parseFloat(b.dataset.h0);S.k=parseFloat(b.dataset.k);S.type=b.dataset.t;
+    S.extra=b.dataset.multi?b.dataset.multi.split(',').map(v=>parseFloat(v)*1000):[];
+    document.getElementById('iType').value=b.dataset.t;
+    const kStr=String(b.dataset.k);
+    const kSelect=document.getElementById('iKPreset');
+    if([...kSelect.options].some(o=>o.value===kStr)){kSelect.value=kStr;document.getElementById('customKRow').style.display='none';}
+    else{kSelect.value='custom';document.getElementById('customKRow').style.display='flex';document.getElementById('iK').value=kStr;}
+    document.getElementById('obsNote').textContent=b.dataset.note||b.title;
+    syncInputsToUnits();V.manual=false;render();
+  }));
+
+  // Methodology toggle
+  document.getElementById('methToggle').addEventListener('click',function(){
+    const body=document.getElementById('methBody');
+    const open=body.style.display==='none';
+    body.style.display=open?'block':'none';
+    this.innerHTML='Methodology '+(open?'&#9660;':'&#9654;');
+    if(open)render(); // populate the live worked lines
+  });
+
+  // Guided tour
+  document.getElementById('btnGuide').addEventListener('click',()=>startTour());
+  document.getElementById('tourNext').addEventListener('click',()=>tourGo(1));
+  document.getElementById('tourPrev').addEventListener('click',()=>tourGo(-1));
+
+  // Collapse / expand control panel
+  document.getElementById('btnCollapse').addEventListener('click',function(){
+    const panel=document.getElementById('controlsPanel');
+    const hidden=panel.classList.toggle('collapsed');
+    this.innerHTML=hidden?'&#10095;':'&#10094;';
+    this.title=hidden?'Show controls':'Hide controls';
+    resize();V.manual=false;render();
+  });
+
+  render();
+}
+
+// ===================== GUIDED TOUR =====================
+const TOUR=[
+  {sel:null,title:'Welcome',body:'This tool shows how much of a distant object Earth\'s curvature hides from a given observer, to scale. It uses exact spherical geometry, with no exaggeration. This 60-second tour points out each control.'},
+  {sel:'#btnSide',title:'Two views',body:'<b>Side View</b> is a cross-section: the curved surface, the line of sight, and the hidden/visible split on the target. <b>Observer View</b> is the first-person scene through the eye or a camera lens.'},
+  {sel:'#btnMetric',title:'Units',body:'Switch between metric and imperial. Every input, label, and result converts automatically.'},
+  {sel:'#iH0',title:'Observer height',body:'Eye height above the surface. This sets how far away your horizon is; raising the observer reveals more of a distant target. Try 2 m (standing) vs 100 m (a hill).'},
+  {sel:'#iD0',title:'Target',body:'Set the target\'s distance, height, and type. The shape is drawn to scale and the curvature hides its base if it\'s far enough.'},
+  {sel:'.presets',title:'Quick presets',body:'One-click scenarios: a lighthouse, a ship, mountain ranges at increasing distance. Watch how much hides as distance grows.'},
+  {sel:'#iKPreset',title:'Refraction: the key honesty control',body:'Air bends light slightly downward, revealing a bit more than pure geometry. <b>Show bands</b> draws the hidden line for several refraction values at once (k=0 to 0.5), so you see the full range, including the extreme inversion regime that produces mirages.'},
+  {sel:'#iEarthModel',title:'Earth model',body:'Use the mean 6371 km sphere, or the WGS84 oblate spheroid with a latitude-dependent radius (6357–6378 km) for precise work.'},
+  {sel:'.obs-pre',title:'Famous observations',body:'Real, photographed long-distance sightings: Chicago across Lake Michigan, Mt Canigou from Marseille, the Bedford Level canal. Click one and read the note: it explains whether the sighting is ordinary refraction or a temperature-inversion mirage.'},
+  {sel:'#methToggle',title:'Methodology',body:'Expand this for the exact formulas used, the refraction model, and why the "8 inches per mile²" rule overstates what is hidden.'},
+  {sel:'.cv',title:'Navigate the view',body:'<b>Scroll</b> to zoom, <b>drag</b> to pan. In Observer View, zooming changes the camera focal length like a real lens: the horizon stays put while the target magnifies (proof a zoom can\'t recover something truly hidden). <b>Dragging up or down tilts</b> your line of sight like raising or lowering a camera, and the Fit button recenters and levels the view.'},
+  {sel:null,title:'You\'re set',body:'Explore freely. The Results panel always shows horizon distance, hidden and visible height, and the bulge. Reopen this tour at any time with the “? How to use” button.'},
+];
+let _tourI=0;
+function startTour(){_tourI=0;tourShow();}
+function tourGo(d){
+  _tourI+=d;
+  if(_tourI<0)_tourI=0;
+  if(_tourI>=TOUR.length){tourEnd();return;}
+  tourShow();
+}
+function tourEnd(){
+  document.getElementById('tourHi').style.display='none';
+  document.getElementById('tourBox').style.display='none';
+}
+function tourShow(){
+  const step=TOUR[_tourI];
+  const hi=document.getElementById('tourHi'),box=document.getElementById('tourBox');
+  document.getElementById('tourTitle').textContent=step.title;
+  document.getElementById('tourBody').innerHTML=step.body;
+  document.getElementById('tourStep').textContent=(_tourI+1)+' / '+TOUR.length;
+  document.getElementById('tourPrev').style.visibility=_tourI===0?'hidden':'visible';
+  document.getElementById('tourNext').textContent=_tourI===TOUR.length-1?'Done':'Next';
+  box.style.display='block';
+
+  const el=step.sel?document.querySelector(step.sel):null;
+  if(!el){
+    // Centered, no highlight
+    hi.style.display='none';
+    box.style.left=(window.innerWidth/2-box.offsetWidth/2)+'px';
+    box.style.top=(window.innerHeight/2-box.offsetHeight/2)+'px';
+    return;
+  }
+  el.scrollIntoView({block:'center',behavior:'instant'});
+  // scrollIntoView is synchronous; getBoundingClientRect reflects the new position
+  const r=el.getBoundingClientRect();
+  hi.style.display='block';
+  hi.style.left=(r.left-4)+'px';hi.style.top=(r.top-4)+'px';
+  hi.style.width=(r.width+8)+'px';hi.style.height=(r.height+8)+'px';
+  // Position box: to the right of left-panel items, else flip left, else below
+  const bw=box.offsetWidth,bh=box.offsetHeight,gap=14;
+  let bx=r.right+gap, by=r.top;
+  if(bx+bw>window.innerWidth-10) bx=r.left-bw-gap;
+  if(bx<10){bx=Math.min(r.left,window.innerWidth-bw-10); by=r.bottom+gap;}
+  by=Math.max(10,Math.min(by,window.innerHeight-bh-10));
+  box.style.left=bx+'px';box.style.top=by+'px';
+}
+
+function updateEarthNote(){
+  const r=S.oblate?wgs84R(S.lat):RE;
+  document.getElementById('earthNote').textContent=S.oblate
+    ?'WGS84 geocentric R at '+S.lat+'°: '+(r/1000).toFixed(1)+' km'
+    :'Mean sphere R = 6,371 km.';
+  document.querySelector('header .sub').textContent=
+    (S.oblate?'WGS84 oblate':'Spherical model')+' · R = '+(r/1000).toFixed(0)+' km';
+}
+
+function syncInputsToUnits(){
+  const imp=S.units==='imp';
+  // Convert displayed input values
+  document.getElementById('iH0').value=imp?(S.h0*M2FT).toFixed(1):S.h0;
+  document.getElementById('iD0').value=imp?(S.d0*M2MI).toFixed(2):(S.d0/1000);
+  document.getElementById('iHT').value=imp?(S.hT*M2FT).toFixed(1):S.hT;
+  document.getElementById('iVis').value=S.visRange<=0?0:(imp?(S.visRange*M2MI).toFixed(1):(S.visRange/1000));
+  // Update unit labels
+  document.querySelectorAll('.row .u').forEach(u=>{
+    if(u.textContent==='m'||u.textContent==='ft')u.textContent=imp?'ft':'m';
+    if(u.textContent==='km'||u.textContent==='mi')u.textContent=imp?'mi':'km';
+  });
+}
+
+function updateViewBtns(){
+  document.getElementById('btnSide').classList.toggle('active',S.view==='side');
+  document.getElementById('btnObs').classList.toggle('active',S.view==='obs');
+  document.getElementById('controlsPanel').classList.toggle('obs-active',S.view==='obs');
+}
+
+const TYPE_LABELS={mountain:'Mountain',lighthouse:'Lighthouse',boat:'Boat / Ship',building:'Building',wind_turbine:'Wind Turbine',oil_platform:'Oil Platform',custom:'Custom'};
+function updateSummary(){
+  const rows=[
+    ['Eye height',fmtH(S.h0)],
+    ['Distance',fmtD(S.d0)],
+    ['Target',fmtH(S.hT)+' '+(TYPE_LABELS[S.type]||S.type)],
+    ['Refraction','k = '+S.k],
+    ['Earth',S.oblate?'WGS84 @ '+S.lat+'°':'Sphere 6371 km'],
+  ];
+  if(S.visRange>0)rows.push(['Visual range',fmtD(S.visRange)]);
+  if(S.view==='obs')rows.push(['Lens',Math.round(S.focal)+' mm']);
+  let html='<h5>Inputs</h5>';
+  for(const[l,v]of rows)html+='<div class="sr"><span class="sl">'+l+'</span><span class="sv">'+v+'</span></div>';
+  document.getElementById('summary').innerHTML=html;
+}
+
+// Live worked calculations under the methodology formulas (SI / metres)
+function updateMethodologyWork(Reff,d0,h0,d1,hHid,hBul){
+  const nf=x=>Math.round(x).toLocaleString('en-US');
+  const m2=x=>(Math.round(x*100)/100).toLocaleString('en-US')+' m';
+  const k=Math.max(0,Math.min(S.k,0.99));
+  const g=id=>document.getElementById(id);
+  g('wReff').textContent='= '+nf(baseR())+' / (1 − '+k+') = '+nf(Reff)+' m';
+  g('wHorizon').textContent='= √('+h0+'² + 2·'+nf(Reff)+'·'+h0+') = '+nf(d1)+' m';
+  if(d0>d1){
+    const d2=d0-d1;
+    g('wHidden').textContent='d₂ = '+nf(d0)+' − '+nf(d1)+' = '+nf(d2)+' m;  h₁ = √('+nf(d2)+'² + '+nf(Reff)+'²) − '+nf(Reff)+' = '+m2(hHid);
+  }else{
+    g('wHidden').textContent='d₀ ≤ d₁: the target is within the horizon → h₁ = 0';
+  }
+  g('wBulge').textContent='= '+nf(Reff)+'·(1 − cos('+nf(d0)+' / '+nf(2*Reff)+')) = '+m2(hBul);
+  const dip=Math.acos(Reff/(Reff+h0));
+  g('wDip').textContent='= acos('+nf(Reff)+' / '+nf(Reff+h0)+') = '+(dip*180/Math.PI).toFixed(4)+'° = '+(dip*180/Math.PI*60).toFixed(2)+'′';
+}
+
+function render(){
+  resize();
+  const R=effR(S.k),d0=S.d0,hT=S.hT,h0=S.h0;
+  const d1=hDist(h0,R),hHid=hHide(d0,h0,R),hBul=bHeight(d0,R);
+  const hVis=Math.max(0,hT-hHid),dropEnd=dropArc(d0,R);
+
+  updateSummary();
+  if(document.getElementById('methBody').style.display!=='none')updateMethodologyWork(R,d0,h0,d1,hHid,hBul);
+
+  document.getElementById('oD1').textContent=fmtD(d1);
+  document.getElementById('oBH').textContent=d0>d1?fmtD(d0-d1):'within horizon';
+  document.getElementById('oBulge').textContent=fmtH(hBul);
+  document.getElementById('oHid').textContent=fmtH(hHid);
+  document.getElementById('oVis').textContent=fmtH(hVis);
+  document.getElementById('oArc').textContent=((d0/R)*180/Math.PI).toFixed(4)+'°';
+  document.getElementById('oDrop').textContent=fmtH(dropEnd);
+  const se=document.getElementById('oStat');
+  if(hHid<=0){se.textContent='Fully visible';se.className='v g'}
+  else if(hHid>=hT){se.textContent='Fully hidden';se.className='v r'}
+  else{se.textContent=((hVis/hT)*100).toFixed(1)+'% visible';se.className='v o'}
+
+  // Refraction bands range
+  document.getElementById('rBandRow').style.display=S.showBands?'':'none';
+  if(S.showBands){
+    const vis=BAND_DEFS.map(b=>{const bR=baseR()/(1-Math.min(b.k,0.99));return Math.max(0,hT-hHide(d0,h0,bR))});
+    const pcts=vis.map(v=>hT>0?Math.round((v/hT)*100):0);
+    document.getElementById('oBandRange').textContent=Math.min(...pcts)+'% – '+Math.max(...pcts)+'%';
+  }
+
+  // Atmospheric haze / visual range
+  document.getElementById('rHazeRow').style.display=S.visRange>0?'':'none';
+  if(S.visRange>0){
+    const c=clarity(d0,S.visRange);
+    const he=document.getElementById('oHaze');
+    if(d0>=S.visRange){he.textContent='Beyond visual range';he.className='v r';}
+    else if(c<0.4){he.textContent='Hazy ('+Math.round(c*100)+'% contrast)';he.className='v o';}
+    else{he.textContent='Clear ('+Math.round(c*100)+'% contrast)';he.className='v g';}
+  }
+
+  if(S.view==='side')renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd);
+  else renderObserver(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd);
+}
+
+// ===================== SIDE VIEW =====================
+function renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
+  if(!V.manual)fitSide();
+  // A canvas scale bar (drawn at end) replaces the text readout in this view
+  document.getElementById('scaleInfo').style.display='none';
+
+  ctx.clearRect(0,0,W,H);
+  const skyG=ctx.createLinearGradient(0,0,0,H);
+  skyG.addColorStop(0,'#060a12');skyG.addColorStop(1,'#0f1b30');
+  ctx.fillStyle=skyG;ctx.fillRect(0,0,W,H);
+
+  const featureScale=Math.max(hT,h0,10);
+  const lw=featureScale*0.006;
+
+  const theta=d0/R,midA=Math.PI/2;
+  const obsA=midA+theta/2,tgtA=midA-theta/2;
+  const hrzA=obsA-d1/R;
+  const pt=(a,h)=>({x:(R+h)*Math.cos(a),y:(R+h)*Math.sin(a)});
+
+  const obsSurf=pt(obsA,0),obsEye=pt(obsA,h0);
+  const tgtSurf=pt(tgtA,0),tgtTop=pt(tgtA,hT);
+  const tgtHidPt=pt(tgtA,hHid);
+  const hrzPt=pt(hrzA,0),midSurf=pt(midA,0);
+  const chordMid={x:(obsSurf.x+tgtSurf.x)/2,y:(obsSurf.y+tgtSurf.y)/2};
+
+  // Earth
+  const ec=w2s(0,0);
+  ctx.beginPath();ctx.arc(ec.x,ec.y,R*V.s,0,Math.PI*2);
+  ctx.fillStyle='#0d1f12';ctx.fill();
+  ctx.strokeStyle='#1a3d2a';ctx.lineWidth=Math.max(2*lw*V.s,1);ctx.stroke();
+
+  // Surface arc (observer → target)
+  ctx.beginPath();
+  for(let i=0;i<=200;i++){const a=obsA-theta*(i/200);const p=w2s(R*Math.cos(a),R*Math.sin(a));i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y)}
+  ctx.strokeStyle='#55efc4';ctx.lineWidth=Math.max(3*lw*V.s,1.5);ctx.globalAlpha=0.5;ctx.stroke();ctx.globalAlpha=1;
+
+  // Fading continuations past each end - the surface keeps curving away; the horizon is not an edge
+  const contA=Math.max(theta*0.6,0.02);
+  ctx.strokeStyle='#55efc4';ctx.lineWidth=Math.max(3*lw*V.s,1.5);
+  for(const[startA,dir]of[[tgtA,-1],[obsA,1]]){
+    for(let i=0;i<40;i++){
+      const a0=startA+dir*contA*(i/40),a1=startA+dir*contA*((i+1)/40);
+      const p0=w2s(R*Math.cos(a0),R*Math.sin(a0)),p1=w2s(R*Math.cos(a1),R*Math.sin(a1));
+      ctx.globalAlpha=0.45*(1-i/40);
+      ctx.beginPath();ctx.moveTo(p0.x,p0.y);ctx.lineTo(p1.x,p1.y);ctx.stroke();
+    }
+  }
+  ctx.globalAlpha=1;
+
+  // Chord
+  line(obsSurf,tgtSurf,'rgba(255,255,255,0.12)',1*lw*V.s,[8*lw*V.s,4*lw*V.s]);
+
+  // Bulge
+  line(chordMid,midSurf,'#ffd93d',2*lw*V.s,[5*lw*V.s,3*lw*V.s]);
+  dot(midSurf,5*lw,'#ffd93d','#fff');
+
+  // Apex callout
+  callout(midSurf,[
+    {text:'SURFACE APEX',color:'#ffd93d'},
+    {text:'Bulge: '+fmtH(hBul),color:'#ffd93d'},
+    {text:fmtD(d0/2)+' from each',color:'#888'},
+  ],0,-80,10);
+
+  // Observer figure
+  drawObserverFigure(obsSurf,obsEye,obsA,h0,lw);
+  callout(obsEye,[
+    {text:'OBSERVER',color:'#4facfe'},
+    {text:fmtH(h0)+' eye height',color:'#4facfe'},
+  ],-30,-70,10);
+
+  // Extra targets (multi-target observations: a line of identical objects receding into the distance)
+  for(const di of S.extra){
+    if(di<=0||di>=d0+1)continue;
+    const aI=obsA-di/R;
+    const hHidI=hHide(di,h0,R),hVisI=Math.max(0,hT-hHidI);
+    const sI=pt(aI,0),tI=pt(aI,hT),hI=pt(aI,hHidI);
+    const nI={x:Math.cos(aI),y:Math.sin(aI)};
+    drawTargetShapeSide(sI,tI,nI,S.type,lw);
+    if(hHidI>0&&hHidI<hT){
+      line(sI,hI,'#ff6b6b',3.5*lw*V.s,null,0.8);line(hI,tI,'#55efc4',3.5*lw*V.s);
+      dot(hI,3.5*lw,'#ffa502','#fff');
+    }else if(hHidI>=hT){line(sI,tI,'#ff6b6b',3.5*lw*V.s,null,0.55);}
+    else{line(sI,tI,'#55efc4',3.5*lw*V.s);}
+    dot(tI,4*lw,'#00f2fe','#fff');dot(sI,3*lw,'#55efc4');
+    const lp=pt(aI,hT+Math.max(hT*0.25,5));
+    const lps=w2s(lp.x,lp.y);
+    sLabel(lps.x,lps.y,fmtD(di),'#88a',9);
+  }
+
+  // Target shape + bars (primary)
+  const tgtN={x:Math.cos(tgtA),y:Math.sin(tgtA)};
+  drawTargetShapeSide(tgtSurf,tgtTop,tgtN,S.type,lw);
+
+  if(hHid>0&&hHid<hT){
+    line(tgtSurf,tgtHidPt,'#ff6b6b',5*lw*V.s,null,0.85);
+    line(tgtHidPt,tgtTop,'#55efc4',5*lw*V.s);
+    dot(tgtHidPt,5*lw,'#ffa502','#fff');
+    callout(tgtHidPt,[
+      {text:'Visible: '+fmtH(hVis),color:'#55efc4'},
+      {text:'Hidden: '+fmtH(hHid),color:'#ff6b6b'},
+    ],50,10,10);
+  }else if(hHid>=hT){
+    line(tgtSurf,tgtTop,'#ff6b6b',5*lw*V.s,null,0.6);
+    callout(tgtTop,[{text:'FULLY HIDDEN',color:'#ff6b6b'}],50,10,11);
+  }else{
+    line(tgtSurf,tgtTop,'#55efc4',5*lw*V.s);
+  }
+
+  dot(tgtTop,6*lw,'#00f2fe','#fff');dot(tgtSurf,4*lw,'#55efc4');
+  callout(tgtTop,[
+    {text:'TARGET',color:'#00f2fe'},
+    {text:fmtH(hT)+' tall',color:'#00f2fe'},
+  ],40,-70,10);
+
+  // Line of sight
+  line(obsEye,tgtTop,'rgba(79,172,254,0.2)',1*lw*V.s,[8*lw*V.s,4*lw*V.s]);
+  if(d0>d1){
+    line(obsEye,hrzPt,'rgba(85,239,196,0.7)',2.5*lw*V.s);
+    if(hHid>0)line(hrzPt,tgtHidPt,'rgba(255,107,107,0.35)',1.5*lw*V.s,[5*lw*V.s,3*lw*V.s]);
+    dot(hrzPt,7*lw,'#ffa502','#ffd93d');
+    callout(hrzPt,[
+      {text:'HORIZON',color:'#ffa502'},
+      {text:fmtD(d1)+' from observer',color:'#ffa502'},
+      {text:'tangent point, not an edge',color:'#998'},
+    ],0,-70,10);
+  }else{
+    line(obsEye,tgtTop,'rgba(85,239,196,0.7)',2.5*lw*V.s);
+  }
+
+  // Refraction bands - show hidden-level markers on the target
+  if(S.showBands){
+    const bandDefs=BAND_DEFS;
+    for(const bd of bandDefs){
+      if(Math.abs(bd.k-S.k)<0.005)continue;
+      const bR=baseR()/(1-Math.min(bd.k,0.99));
+      const bHid=hHide(d0,h0,bR);
+      const bVis=Math.max(0,hT-bHid);
+      if(bHid<=0)continue;
+      // Mark on target at this band's hidden level
+      const bHidPt=pt(tgtA,bHid);
+      const bHP=w2s(bHidPt.x,bHidPt.y);
+      // Horizontal tick mark
+      ctx.beginPath();ctx.moveTo(bHP.x-12,bHP.y);ctx.lineTo(bHP.x+12,bHP.y);
+      ctx.strokeStyle=bd.color;ctx.lineWidth=2.5;ctx.stroke();
+      // Triangle pointer
+      ctx.beginPath();ctx.moveTo(bHP.x+12,bHP.y);ctx.lineTo(bHP.x+18,bHP.y-4);ctx.lineTo(bHP.x+18,bHP.y+4);ctx.closePath();
+      ctx.fillStyle=bd.color;ctx.fill();
+      // Label - same style as other data points
+      callout(bHidPt,[
+        {text:bd.lbl,color:bd.color},
+        {text:fmtH(bHid)+' hidden',color:bd.color},
+      ],60,0,10);
+    }
+  }
+
+  // Surface distance (fixed at top)
+  sLabel(W/2,16,'Surface distance: '+fmtD(d0),'#4facfe',12);
+
+  // Resolve callout overlaps and draw
+  flushCallouts();
+
+  // Graphical scale bar (true 1:1 - applies to both axes)
+  drawScaleBar();
+}
+
+// A cartographic scale bar: a round real-world length drawn to scale, ~110px target
+function drawScaleBar(){
+  const targetPx=110;
+  const raw=targetPx/V.s; // metres spanned by targetPx
+  const pow=Math.pow(10,Math.floor(Math.log10(raw)));
+  const f=raw/pow;
+  const nice=(f<1.5?1:f<3.5?2:f<7.5?5:10)*pow;
+  const px=nice*V.s;
+  const x0=18,y0=H-20;
+  ctx.globalAlpha=0.92;
+  ctx.strokeStyle='#c8d6e5';ctx.lineWidth=2;ctx.lineCap='butt';
+  ctx.beginPath();
+  ctx.moveTo(x0,y0-6);ctx.lineTo(x0,y0);ctx.lineTo(x0+px,y0);ctx.lineTo(x0+px,y0-6);
+  ctx.stroke();
+  ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0+px/2,y0-4);ctx.lineTo(x0+px/2,y0);ctx.stroke();
+  ctx.globalAlpha=1;
+  sLabel(x0+px/2,y0-14,fmtD(nice),'#c8d6e5',11);
+  sLabel(x0+px/2,y0+10,'true 1:1 scale','#778',8);
+}
+
+// ===================== OBSERVER VIEW =====================
+function renderObserver(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
+  if(!V.manual)fitObs();
+  // Horizontal locked on the target; vertical center = target midpoint + manual tilt
+  V.cx=0;
+  const slantD=Math.sqrt(d0*d0+(h0-dropEnd)*(h0-dropEnd));
+  const visAng=hVis>0?Math.atan2(hVis,slantD):0;
+  const hidAng=hHid>0?-Math.atan2(hHid,slantD):0;
+  V.cy=(visAng+hidAng)/2+S.tilt;
+
+  const fovRad=W/V.s;
+  const fovDeg=fovRad*180/Math.PI;
+  const mag=S.focal/50;
+  const si=document.getElementById('scaleInfo');
+  si.style.display='';
+  const tiltStr=Math.abs(S.tilt)<1e-6?'level':(S.tilt>0?'+':'')+(S.tilt*180/Math.PI).toFixed(1)+'° tilt';
+  si.textContent=Math.round(S.focal)+'mm · '+fovDeg.toFixed(1)+'° FOV · '+mag.toFixed(1)+'× mag · '+tiltStr;
+
+  const noteEl=document.getElementById('opticsNote');
+  if(S.focal<=55)noteEl.textContent='Naked eye equivalent (~46° FOV).';
+  else if(S.focal<=250)noteEl.textContent='Telephoto lens. '+mag.toFixed(1)+'× magnification vs naked eye.';
+  else if(S.focal<=1000)noteEl.textContent='Super-telephoto / spotting scope range.';
+  else noteEl.textContent='Extreme magnification ('+mag.toFixed(0)+'×). Requires a tripod and stable atmosphere.';
+
+  ctx.clearRect(0,0,W,H);
+
+  const hrzY=H/2+V.cy*V.s;
+  const skyG=ctx.createLinearGradient(0,0,0,Math.max(hrzY,1));
+  skyG.addColorStop(0,'#060a12');skyG.addColorStop(1,'#1a2a4a');
+  ctx.fillStyle=skyG;ctx.fillRect(0,0,W,Math.max(0,hrzY));
+  const gndG=ctx.createLinearGradient(0,Math.max(hrzY,0),0,H);
+  gndG.addColorStop(0,'#0d1f12');gndG.addColorStop(1,'#071209');
+  ctx.fillStyle=gndG;ctx.fillRect(0,Math.max(0,hrzY),W,H);
+
+  // Horizon line
+  if(hrzY>0&&hrzY<H){
+    ctx.beginPath();ctx.moveTo(0,hrzY);ctx.lineTo(W,hrzY);
+    ctx.strokeStyle='#ffa502';ctx.lineWidth=1.5;ctx.stroke();
+  }
+
+  const dipAngle=Math.acos(R/(R+h0));
+  const angularVis2=hVis>0?Math.atan2(hVis,slantD):0;
+  const angularHid2=hHid>0?Math.atan2(hHid,slantD):0;
+  const topAngle=angularVis2,baseAngle=-angularHid2;
+
+  const ay=a=>H/2-(a-V.cy)*V.s;
+  const topY=ay(topAngle),baseY=ay(baseAngle),hrz=ay(0);
+  const cx2=W/2;
+  const tgtH=Math.abs(baseY-topY);
+  const tgtW=Math.max(tgtH*0.35,4);
+
+  // Multi-target observations (a line of identical objects): draw the lineup and skip the single-target render
+  const multi=S.extra.length>0;
+  if(multi) drawObserverMulti(R,h0,hT,d0,hrz,ay);
+
+  // Draw target shape - only visible portion above horizon (what you'd actually see)
+  if(!multi&&hHid>0&&hVis>0){
+    // Clip to above horizon (1px margin to prevent sub-pixel bleed)
+    ctx.save();ctx.beginPath();ctx.rect(0,0,W,hrz-1);ctx.clip();
+    drawTargetShapeObs(cx2,topY,baseY,hrz,tgtW,tgtH,S.type,hHid,hVis,hT);
+    ctx.restore();
+    // Fade edge at horizon to show the cutoff
+    const fadeH=Math.min(20,Math.abs(hrz-topY)*0.15);
+    const fadeG=ctx.createLinearGradient(0,hrz-fadeH,0,hrz);
+    fadeG.addColorStop(0,'rgba(13,31,18,0)');
+    fadeG.addColorStop(1,'rgba(13,31,18,0.6)');
+    ctx.fillStyle=fadeG;ctx.fillRect(cx2-tgtW*2,hrz-fadeH,tgtW*4,fadeH);
+    // Draw hidden portion below horizon in red
+    ctx.save();ctx.beginPath();ctx.rect(0,hrz,W,H-hrz);ctx.clip();
+    ctx.globalAlpha=0.35;
+    drawTargetShapeObs(cx2,topY,baseY,hrz,tgtW,tgtH,S.type,hHid,hVis,hT);
+    ctx.globalAlpha=1;
+    // Red wash over the hidden shape
+    ctx.fillStyle='rgba(255,60,60,0.3)';
+    ctx.fillRect(cx2-tgtW*2,hrz,tgtW*4,baseY-hrz);
+    ctx.restore();
+  } else if(!multi&&hHid>=hT){
+    // Fully hidden - draw entire shape in red below horizon
+    ctx.save();ctx.beginPath();ctx.rect(0,hrz,W,H-hrz);ctx.clip();
+    ctx.globalAlpha=0.3;
+    drawTargetShapeObs(cx2,topY,baseY,hrz,tgtW,tgtH,S.type,hHid,hVis,hT);
+    ctx.globalAlpha=1;
+    ctx.fillStyle='rgba(255,60,60,0.3)';
+    ctx.fillRect(cx2-tgtW*2,hrz,tgtW*4,baseY-hrz);
+    ctx.restore();
+  } else if(!multi){
+    drawTargetShapeObs(cx2,topY,baseY,hrz,tgtW,tgtH,S.type,hHid,hVis,hT);
+  }
+
+  // Side bar indicator + target callouts (single-target only)
+  const barX=cx2-tgtW-8;
+  if(!multi){
+    if(hHid>0&&hHid<hT){
+      ctx.beginPath();ctx.moveTo(barX,hrz);ctx.lineTo(barX,baseY);
+      ctx.strokeStyle='#ff6b6b';ctx.lineWidth=3;ctx.stroke();
+      ctx.beginPath();ctx.moveTo(barX,topY);ctx.lineTo(barX,hrz);
+      ctx.strokeStyle='#55efc4';ctx.lineWidth=3;ctx.stroke();
+    }else if(hHid>=hT){
+      ctx.beginPath();ctx.moveTo(barX,topY);ctx.lineTo(barX,baseY);
+      ctx.strokeStyle='#ff6b6b';ctx.lineWidth=3;ctx.stroke();
+    }else{
+      ctx.beginPath();ctx.moveTo(barX,topY);ctx.lineTo(barX,baseY);
+      ctx.strokeStyle='#55efc4';ctx.lineWidth=3;ctx.stroke();
+    }
+  }
+
+  // Labels - all through collision-avoidance system
+  if(hrzY>0&&hrzY<H){
+    screenCallout(60,hrz,[
+      {text:'HORIZON',color:'#ffa502'},
+      {text:'Dip: '+(dipAngle*180/Math.PI*60).toFixed(2)+"'",color:'#ffa502'},
+      {text:'limit of sight, surface curves on',color:'#998'},
+    ],-40,0,10);
+  }
+
+  if(!multi){
+    screenCallout(cx2,topY,[
+      {text:'TARGET',color:'#00f2fe'},
+      {text:fmtH(hT)+' tall',color:'#00f2fe'},
+    ],tgtW+20,-20,10);
+
+    if(hHid>0&&hHid<hT){
+      const visMidY=(topY+hrz)/2;
+      const hidMidY=(hrz+baseY)/2;
+      screenCallout(cx2,visMidY,[
+        {text:'Visible: '+fmtH(hVis),color:'#55efc4'},
+      ],tgtW+20,0,10);
+      screenCallout(cx2,hidMidY,[
+        {text:'Hidden: '+fmtH(hHid),color:'#ff6b6b'},
+      ],tgtW+20,0,10);
+    }else if(hHid>=hT){
+      screenCallout(cx2,(topY+baseY)/2,[
+        {text:'FULLY HIDDEN',color:'#ff6b6b'},
+        {text:'below horizon by '+fmtH(hHid-hT),color:'#ff6b6b'},
+      ],0,0,11);
+    }else{
+      screenCallout(cx2,(topY+baseY)/2,[
+        {text:'Fully visible',color:'#55efc4'},
+      ],tgtW+20,0,10);
+    }
+
+    screenCallout(cx2,Math.min(topY-30,hrz-50),[
+      {text:'Distance: '+fmtD(d0),color:'#4facfe'},
+    ],0,0,11);
+  }
+
+  screenCallout(30,H-24,[
+    {text:'Observer eye: '+fmtH(h0),color:'#4facfe'},
+    {text:'Horizon: '+fmtD(d1),color:'#ffa502'},
+  ],0,0,9,'left');
+
+  // Angular scale ticks
+  const marks=[0.0001,0.0005,0.001,0.005,0.01,0.05,0.1,0.5,1,5*Math.PI/180];
+  for(const a of marks){
+    const py=ay(a),ny=ay(-a);
+    if(py>30&&py<H-30){
+      ctx.beginPath();ctx.moveTo(W-50,py);ctx.lineTo(W-40,py);
+      ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=1;ctx.stroke();
+      let tickLabel;
+      if(a>=Math.PI/180)tickLabel=(a*180/Math.PI).toFixed(1)+'°';
+      else if(a>=0.01)tickLabel=(a*180/Math.PI).toFixed(2)+'°';
+      else tickLabel=(a*180/Math.PI*60).toFixed(1)+"'";
+      sLabel(W-25,py,tickLabel,'#556',8);
+    }
+    if(ny>30&&ny<H-30){
+      ctx.beginPath();ctx.moveTo(W-50,ny);ctx.lineTo(W-40,ny);
+      ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=1;ctx.stroke();
+    }
+  }
+
+  // Atmospheric haze veil - strongest at the horizon (longest air path)
+  if(S.visRange>0){
+    const veil=Math.min(0.9,1-clarity(d0,S.visRange));
+    if(veil>0.01){
+      const hp=Math.max(0.02,Math.min(0.98,hrzY/H));
+      const g=ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'rgba(168,182,200,'+(veil*0.55).toFixed(3)+')');
+      g.addColorStop(hp,'rgba(178,192,210,'+veil.toFixed(3)+')');
+      g.addColorStop(1,'rgba(120,135,150,'+(veil*0.3).toFixed(3)+')');
+      ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    }
+  }
+
+  // Lens vignette if beyond naked eye
+  if(S.focal>55){
+    const vigR=Math.min(W,H)*0.46;
+    const grad=ctx.createRadialGradient(W/2,H/2,vigR*0.7,W/2,H/2,vigR);
+    grad.addColorStop(0,'rgba(0,0,0,0)');
+    grad.addColorStop(0.7,'rgba(0,0,0,0)');
+    grad.addColorStop(1,'rgba(0,0,0,0.85)');
+    ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+
+    // Scope ring
+    ctx.beginPath();ctx.arc(W/2,H/2,vigR,0,Math.PI*2);
+    ctx.strokeStyle='rgba(255,255,255,0.15)';ctx.lineWidth=2;ctx.stroke();
+
+    // Crosshair (subtle)
+    ctx.globalAlpha=0.1;
+    ctx.beginPath();ctx.moveTo(W/2-vigR,H/2);ctx.lineTo(W/2+vigR,H/2);ctx.strokeStyle='#fff';ctx.lineWidth=0.5;ctx.stroke();
+    ctx.beginPath();ctx.moveTo(W/2,H/2-vigR);ctx.lineTo(W/2,H/2+vigR);ctx.stroke();
+    ctx.globalAlpha=1;
+  }
+
+  // Refraction bands - drawn after vignette so they're visible on top
+  if(S.showBands){
+    const bandDefs=BAND_DEFS;
+    for(const bd of bandDefs){
+      if(Math.abs(bd.k-S.k)<0.005)continue;
+      const bR=baseR()/(1-Math.min(bd.k,0.99));
+      const bHid=hHide(d0,h0,bR);
+      if(bHid<=0)continue;
+      // The cut for this k sits at physical height bHid on the target. Map it into the
+      // current view: a point at height y appears at atan2(y-hHid, slantD) from the horizon.
+      // More refraction (less hidden) → below horizon (you'd see more); less → above.
+      const bandAngle=Math.atan2(bHid-hHid,slantD);
+      const bY=ay(bandAngle);
+      if(bY<30||bY>H-30)continue;
+      // Full-width dashed line
+      ctx.beginPath();ctx.moveTo(0,bY);ctx.lineTo(W,bY);
+      ctx.strokeStyle=bd.color;ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.stroke();ctx.setLineDash([]);
+      // Anchor dot
+      ctx.beginPath();ctx.arc(cx2+Math.min(tgtW,80)+10,bY,3,0,Math.PI*2);
+      ctx.fillStyle=bd.color;ctx.fill();
+      // Label
+      screenCallout(cx2+Math.min(tgtW,80)+10,bY,[
+        {text:bd.lbl,color:bd.color},
+        {text:fmtH(bHid)+' hidden',color:bd.color},
+      ],40,0,10);
+    }
+  }
+
+  // Resolve callout overlaps and draw
+  flushCallouts();
+}
+
+// Observer-view multi-target lineup: a row of identical objects at increasing distance,
+// each at its true angular size and hidden/visible split, sharing the one horizon line.
+function drawObserverMulti(R,h0,hT,d0,hrz,ay){
+  const dists=[...S.extra,d0].filter(d=>d>0).sort((a,b)=>a-b);
+  const n=dists.length;
+  const step=Math.min(W*0.14,(W*0.82)/Math.max(n,1));
+  const startX=W/2-step*(n-1)/2;
+  for(let i=0;i<n;i++){
+    const di=dists[i];
+    const drop=dropArc(di,R);
+    const slant=Math.sqrt(di*di+(h0-drop)*(h0-drop));
+    const hHidI=hHide(di,h0,R),hVisI=Math.max(0,hT-hHidI);
+    const tY=ay(hVisI>0?Math.atan2(hVisI,slant):0);
+    const bY=ay(hHidI>0?-Math.atan2(hHidI,slant):0);
+    const h=Math.abs(bY-tY),w=Math.max(Math.min(h*0.35,step*0.32),2);
+    const cx=startX+i*step;
+    // Visible part above the horizon
+    ctx.save();ctx.beginPath();ctx.rect(0,0,W,hrz-0.5);ctx.clip();
+    drawTargetShapeObs(cx,tY,bY,hrz,w,h,S.type,hHidI,hVisI,hT);
+    ctx.restore();
+    // Hidden part below the horizon, washed red
+    if(hHidI>0){
+      ctx.save();ctx.beginPath();ctx.rect(0,hrz,W,H-hrz);ctx.clip();
+      ctx.globalAlpha=0.3;drawTargetShapeObs(cx,tY,bY,hrz,w,h,S.type,hHidI,hVisI,hT);ctx.globalAlpha=1;
+      ctx.fillStyle='rgba(255,60,60,0.22)';ctx.fillRect(cx-w*1.7,hrz,w*3.4,bY-hrz);
+      ctx.restore();
+    }
+    sLabel(cx,H-46,fmtD(di),'#9ab',9);
+    if(hHidI>0)sLabel(cx,H-34,'−'+fmtH(hHidI),'#ff8a8a',8);
+  }
+  screenCallout(W/2,hrz,[
+    {text:n+' identical targets, '+fmtH(hT)+' each',color:'#00f2fe'},
+    {text:'farther = more hidden below the horizon',color:'#998'},
+  ],0,-58,10);
+}
+
+// ===================== TARGET SHAPES =====================
+
+function drawObserverFigure(surf,eye,angle,h0,lw){
+  const ps=w2s(surf.x,surf.y),pe=w2s(eye.x,eye.y);
+  const h=Math.abs(ps.y-pe.y);
+  if(h<4)return;
+
+  // Person is ~1.7m tall with eyes at ~1.6m. Scale the figure to person height.
+  // In screen coords, y increases downward. pe.y < ps.y (eye above surface).
+  const personH=Math.min(h,1.7/h0*h);
+  const headR=personH*0.08;
+  const headTopY=pe.y-headR*2.5; // top of head above the eye
+  const personBot=headTopY+personH; // feet
+  const cx=ps.x;
+
+  // If eye height > 2m, draw elevated ground under person
+  if(h0>2){
+    const groundTop=personBot;
+    const gw=Math.max(personH*0.8,12);
+    // Cliff / elevation
+    ctx.globalAlpha=0.7;
+    ctx.beginPath();
+    ctx.moveTo(cx-gw*1.5,ps.y);
+    ctx.lineTo(cx-gw*0.8,ps.y);
+    ctx.lineTo(cx-gw*0.6,groundTop);
+    ctx.lineTo(cx+gw*0.6,groundTop);
+    ctx.lineTo(cx+gw*0.8,ps.y);
+    ctx.lineTo(cx+gw*1.5,ps.y);
+    ctx.closePath();
+    ctx.fillStyle='#3a5040';ctx.fill();
+    ctx.strokeStyle='#5a8060';ctx.lineWidth=1;ctx.stroke();
+    // Height marker line from ground level to platform
+    ctx.globalAlpha=0.4;
+    ctx.beginPath();ctx.moveTo(cx+gw*0.8,ps.y);ctx.lineTo(cx+gw*0.8,groundTop);
+    ctx.strokeStyle='#4facfe';ctx.lineWidth=1;ctx.setLineDash([3,2]);ctx.stroke();ctx.setLineDash([]);
+    // Height label
+    const elevH=h0-1.7;
+    if(elevH>0.5){
+      sLabel(cx+Math.max(personH*0.8,12)+16,(ps.y+groundTop)/2,'Elevation: '+fmtH(elevH),'#4facfe',9,'left');
+    }
+    ctx.globalAlpha=1;
+  }
+
+  // Body layout from head down
+  const headCY=headTopY+headR*1.2; // head center
+  const neckY=headCY+headR*1.3;
+  const shoulderY=neckY+personH*0.02;
+  const waistY=headTopY+personH*0.5;
+  const bw=personH*0.12;
+
+  // Legs
+  ctx.globalAlpha=0.8;
+  ctx.beginPath();
+  ctx.moveTo(cx-bw*0.3,waistY);ctx.lineTo(cx-bw*0.6,personBot);
+  ctx.strokeStyle='#2a5a8a';ctx.lineWidth=Math.max(bw*0.5,1.5);ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx+bw*0.3,waistY);ctx.lineTo(cx+bw*0.6,personBot);
+  ctx.stroke();
+
+  // Torso
+  ctx.beginPath();
+  ctx.moveTo(cx-bw,shoulderY);ctx.lineTo(cx+bw,shoulderY);
+  ctx.lineTo(cx+bw*0.6,waistY);ctx.lineTo(cx-bw*0.6,waistY);
+  ctx.closePath();
+  ctx.fillStyle='#3a7abb';ctx.fill();
+
+  // Arms
+  ctx.beginPath();
+  ctx.moveTo(cx+bw,shoulderY);ctx.lineTo(cx+bw*2,shoulderY+personH*0.1);
+  ctx.strokeStyle='#3a7abb';ctx.lineWidth=Math.max(bw*0.4,1);ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx-bw,shoulderY);ctx.lineTo(cx-bw*1.5,shoulderY+personH*0.12);
+  ctx.stroke();
+
+  // Head
+  ctx.beginPath();ctx.arc(cx,headCY,headR,0,Math.PI*2);
+  ctx.fillStyle='#d4a574';ctx.fill();
+  ctx.strokeStyle='#b8866a';ctx.lineWidth=Math.max(headR*0.15,0.5);ctx.stroke();
+
+  // Eye dot (at actual eye level = pe.y)
+  ctx.beginPath();ctx.arc(cx+headR*0.35,pe.y,Math.max(headR*0.18,1.5),0,Math.PI*2);
+  ctx.fillStyle='#222';ctx.fill();
+
+  ctx.globalAlpha=1;
+}
+
+function drawTargetShapeSide(surf,top,n,type,lw){
+  const ps=w2s(surf.x,surf.y),pt2=w2s(top.x,top.y);
+  const h=Math.abs(ps.y-pt2.y);
+  const bw=Math.max(h*0.35,4);
+
+  if(type==='mountain'){
+    // Back range
+    ctx.globalAlpha=0.5;ctx.beginPath();
+    ctx.moveTo(ps.x-bw*2,ps.y);
+    ctx.lineTo(ps.x-bw*0.8,ps.y-h*0.5);
+    ctx.lineTo(ps.x-bw*0.2,ps.y-h*0.35);
+    ctx.lineTo(ps.x+bw*0.6,ps.y-h*0.55);
+    ctx.lineTo(ps.x+bw*2,ps.y);
+    ctx.closePath();ctx.fillStyle='#2a4a35';ctx.fill();
+    // Main peak
+    ctx.globalAlpha=0.85;ctx.beginPath();
+    ctx.moveTo(ps.x-bw*1.5,ps.y);
+    ctx.lineTo(ps.x-bw*0.3,ps.y-h*0.6);
+    ctx.lineTo(pt2.x-bw*0.1,pt2.y+h*0.05);
+    ctx.lineTo(pt2.x,pt2.y);
+    ctx.lineTo(pt2.x+bw*0.15,pt2.y+h*0.08);
+    ctx.lineTo(ps.x+bw*0.5,ps.y-h*0.35);
+    ctx.lineTo(ps.x+bw*1.5,ps.y);
+    ctx.closePath();ctx.fillStyle='#3d6b4a';ctx.fill();
+    ctx.strokeStyle='#6aaa7a';ctx.lineWidth=1.5;ctx.stroke();
+    // Snow cap
+    if(h>20){
+      ctx.globalAlpha=0.5;ctx.beginPath();
+      ctx.moveTo(pt2.x-bw*0.2,pt2.y+h*0.15);
+      ctx.lineTo(pt2.x,pt2.y);
+      ctx.lineTo(pt2.x+bw*0.2,pt2.y+h*0.12);
+      ctx.closePath();ctx.fillStyle='#dde8ee';ctx.fill();
+    }
+  }else if(type==='lighthouse'){
+    const tw=bw*0.15,bww=bw*0.25;
+    // Tower body
+    ctx.globalAlpha=0.9;ctx.beginPath();
+    ctx.moveTo(ps.x-bww,ps.y);ctx.lineTo(pt2.x-tw,pt2.y+h*0.1);
+    ctx.lineTo(pt2.x-tw*1.5,pt2.y+h*0.1);ctx.lineTo(pt2.x-tw*1.5,pt2.y);
+    ctx.lineTo(pt2.x+tw*1.5,pt2.y);ctx.lineTo(pt2.x+tw*1.5,pt2.y+h*0.1);
+    ctx.lineTo(pt2.x+tw,pt2.y+h*0.1);ctx.lineTo(ps.x+bww,ps.y);
+    ctx.closePath();ctx.fillStyle='#e8dcc8';ctx.fill();
+    ctx.strokeStyle='#aaa';ctx.lineWidth=1;ctx.stroke();
+    // Red stripes
+    ctx.globalAlpha=0.6;ctx.fillStyle='#cc3333';
+    for(let i=1;i<6;i+=2){
+      const y1=ps.y-h*(i/7),y2=ps.y-h*((i+1)/7);
+      const w1=bww-(bww-tw)*(i/7),w2=bww-(bww-tw)*((i+1)/7);
+      ctx.fillRect(ps.x-w1,y2,w1+w2,y1-y2);
+    }
+    // Light housing (glass)
+    ctx.globalAlpha=0.8;ctx.fillStyle='#ffeebb';
+    ctx.fillRect(pt2.x-tw*1.5,pt2.y,tw*3,h*0.1);
+    ctx.strokeStyle='#aa8833';ctx.lineWidth=1;ctx.strokeRect(pt2.x-tw*1.5,pt2.y,tw*3,h*0.1);
+    // Light beams
+    ctx.globalAlpha=0.2;ctx.fillStyle='#ffd93d';
+    ctx.beginPath();ctx.moveTo(pt2.x,pt2.y+h*0.05);ctx.lineTo(pt2.x-bw*4,pt2.y-h*0.1);ctx.lineTo(pt2.x-bw*4,pt2.y+h*0.2);ctx.fill();
+    ctx.beginPath();ctx.moveTo(pt2.x,pt2.y+h*0.05);ctx.lineTo(pt2.x+bw*4,pt2.y-h*0.1);ctx.lineTo(pt2.x+bw*4,pt2.y+h*0.2);ctx.fill();
+  }else if(type==='boat'){
+    const hullH=h*0.2,cabinH=h*0.3;
+    // Hull
+    ctx.globalAlpha=0.85;ctx.beginPath();
+    ctx.moveTo(ps.x-bw*1.4,ps.y);ctx.lineTo(ps.x+bw*1.4,ps.y);
+    ctx.lineTo(ps.x+bw*1.1,ps.y-hullH);ctx.lineTo(ps.x-bw*1.0,ps.y-hullH);
+    ctx.closePath();ctx.fillStyle='#2a3a4a';ctx.fill();
+    ctx.strokeStyle='#5588aa';ctx.lineWidth=1.5;ctx.stroke();
+    // Waterline
+    ctx.globalAlpha=0.5;ctx.beginPath();
+    ctx.moveTo(ps.x-bw*1.3,ps.y-hullH*0.3);ctx.lineTo(ps.x+bw*1.3,ps.y-hullH*0.3);
+    ctx.strokeStyle='#cc3333';ctx.lineWidth=1;ctx.stroke();
+    // Cabin / superstructure
+    ctx.globalAlpha=0.8;ctx.fillStyle='#4a5a6a';
+    ctx.fillRect(ps.x-bw*0.5,ps.y-hullH-cabinH,bw*1.0,cabinH);
+    ctx.strokeStyle='#7799aa';ctx.lineWidth=1;ctx.strokeRect(ps.x-bw*0.5,ps.y-hullH-cabinH,bw*1.0,cabinH);
+    // Bridge windows
+    ctx.globalAlpha=0.6;ctx.fillStyle='#aaddff';
+    ctx.fillRect(ps.x-bw*0.4,ps.y-hullH-cabinH+cabinH*0.15,bw*0.8,cabinH*0.25);
+    // Mast
+    ctx.globalAlpha=0.7;ctx.beginPath();ctx.moveTo(ps.x,ps.y-hullH);ctx.lineTo(pt2.x,pt2.y);
+    ctx.strokeStyle='#aaa';ctx.lineWidth=Math.max(bw*0.05,1.5);ctx.stroke();
+    // Funnel
+    ctx.globalAlpha=0.8;ctx.fillStyle='#cc3333';
+    ctx.fillRect(ps.x+bw*0.15,ps.y-hullH-cabinH*1.4,bw*0.2,cabinH*0.6);
+    ctx.fillStyle='#222';ctx.fillRect(ps.x+bw*0.15,ps.y-hullH-cabinH*1.4,bw*0.2,cabinH*0.12);
+  }else if(type==='building'){
+    const floorH=Math.max(h/Math.max(Math.round(h/(bw*0.4)),3),2);
+    const bldgW=bw*0.6;
+    // Main structure
+    ctx.globalAlpha=0.85;ctx.fillStyle='#4a5565';
+    ctx.fillRect(ps.x-bldgW/2,pt2.y,bldgW,h);
+    ctx.strokeStyle='#8899aa';ctx.lineWidth=1.5;ctx.strokeRect(ps.x-bldgW/2,pt2.y,bldgW,h);
+    // Roof
+    ctx.fillStyle='#3a4555';ctx.fillRect(ps.x-bldgW*0.55,pt2.y-h*0.02,bldgW*1.1,h*0.04);
+    // Windows
+    ctx.globalAlpha=0.5;ctx.fillStyle='#ffd93d';
+    const nFloors=Math.min(Math.round(h/floorH),30);
+    for(let i=0;i<nFloors;i++){
+      const fy=pt2.y+i*floorH+floorH*0.2;
+      for(let j=-1;j<=1;j++){
+        ctx.fillRect(ps.x+j*bldgW*0.25-bldgW*0.06,fy,bldgW*0.12,floorH*0.5);
+      }
+    }
+  }else if(type==='wind_turbine'){
+    // Tower
+    ctx.globalAlpha=0.8;ctx.beginPath();
+    ctx.moveTo(ps.x-bw*0.1,ps.y);ctx.lineTo(pt2.x-bw*0.035,pt2.y);
+    ctx.lineTo(pt2.x+bw*0.035,pt2.y);ctx.lineTo(ps.x+bw*0.1,ps.y);
+    ctx.closePath();ctx.fillStyle='#c0c8cc';ctx.fill();
+    ctx.strokeStyle='#ddd';ctx.lineWidth=1;ctx.stroke();
+    // Nacelle
+    ctx.globalAlpha=0.85;ctx.fillStyle='#d8dde0';
+    ctx.fillRect(pt2.x-bw*0.15,pt2.y-bw*0.05,bw*0.3,bw*0.1);
+    ctx.strokeStyle='#aaa';ctx.lineWidth=1;ctx.strokeRect(pt2.x-bw*0.15,pt2.y-bw*0.05,bw*0.3,bw*0.1);
+    // Blades
+    ctx.globalAlpha=0.75;ctx.strokeStyle='#e8eaec';ctx.lineWidth=Math.max(bw*0.04,1.5);
+    const bladeL=h*0.4;
+    for(let i=0;i<3;i++){
+      const a=i*120*Math.PI/180-Math.PI/6;
+      ctx.beginPath();ctx.moveTo(pt2.x,pt2.y);
+      ctx.lineTo(pt2.x+Math.cos(a)*bladeL*0.3,pt2.y+Math.sin(a)*bladeL);
+      ctx.stroke();
+    }
+    // Hub
+    ctx.globalAlpha=0.85;ctx.beginPath();ctx.arc(pt2.x,pt2.y,bw*0.04,0,Math.PI*2);
+    ctx.fillStyle='#bbb';ctx.fill();
+  }else if(type==='oil_platform'){
+    const deckY=ps.y-h*0.4,deckH=h*0.07,deckW=bw*1.4,by=deckY-deckH;
+    // Jacket legs (lattice down to the water)
+    ctx.globalAlpha=0.75;ctx.strokeStyle='#c9a23f';ctx.lineWidth=Math.max(bw*0.05,1.5);
+    ctx.beginPath();
+    ctx.moveTo(ps.x-bw*0.8,ps.y);ctx.lineTo(ps.x-bw*0.55,deckY);
+    ctx.moveTo(ps.x+bw*0.8,ps.y);ctx.lineTo(ps.x+bw*0.55,deckY);
+    ctx.stroke();
+    ctx.lineWidth=Math.max(bw*0.025,0.8);ctx.beginPath();
+    ctx.moveTo(ps.x-bw*0.8,ps.y);ctx.lineTo(ps.x+bw*0.55,deckY);
+    ctx.moveTo(ps.x+bw*0.8,ps.y);ctx.lineTo(ps.x-bw*0.55,deckY);
+    ctx.moveTo(ps.x-bw*0.68,ps.y-h*0.2);ctx.lineTo(ps.x+bw*0.68,ps.y-h*0.2);
+    ctx.stroke();
+    // Deck
+    ctx.globalAlpha=0.9;ctx.fillStyle='#3a4a55';ctx.fillRect(ps.x-deckW/2,by,deckW,deckH);
+    ctx.strokeStyle='#7799aa';ctx.lineWidth=1;ctx.strokeRect(ps.x-deckW/2,by,deckW,deckH);
+    // Deck module
+    ctx.globalAlpha=0.85;ctx.fillStyle='#556677';ctx.fillRect(ps.x-bw*0.62,by-h*0.12,bw*0.55,h*0.12);
+    // Derrick (drilling tower) to the top
+    ctx.globalAlpha=0.8;ctx.strokeStyle='#cfd6da';ctx.lineWidth=Math.max(bw*0.03,1);
+    const dl=ps.x+bw*0.06,dr=ps.x+bw*0.45,dtl=pt2.x-bw*0.03,dtr=pt2.x+bw*0.03;
+    ctx.beginPath();ctx.moveTo(dl,by);ctx.lineTo(dtl,pt2.y);ctx.moveTo(dr,by);ctx.lineTo(dtr,pt2.y);
+    for(let i=1;i<=3;i++){const t=i/4;ctx.moveTo(dl+(dtl-dl)*t,by+(pt2.y-by)*t);ctx.lineTo(dr+(dtr-dr)*t,by+(pt2.y-by)*t);}
+    ctx.stroke();
+    // Flare boom + flame
+    ctx.globalAlpha=0.7;ctx.strokeStyle='#aaa';ctx.lineWidth=Math.max(bw*0.03,1);
+    ctx.beginPath();ctx.moveTo(ps.x-bw*0.6,by);ctx.lineTo(ps.x-bw*1.3,pt2.y+h*0.08);ctx.stroke();
+    ctx.globalAlpha=0.5;ctx.fillStyle='#ff8833';
+    ctx.beginPath();ctx.moveTo(ps.x-bw*1.3,pt2.y+h*0.08);ctx.lineTo(ps.x-bw*1.42,pt2.y-h*0.02);ctx.lineTo(ps.x-bw*1.16,pt2.y+h*0.03);ctx.closePath();ctx.fill();
+  }else{
+    ctx.globalAlpha=0.7;ctx.fillStyle='#55efc4';ctx.fillRect(ps.x-bw*0.3,pt2.y,bw*0.6,h);
+    ctx.strokeStyle='#55efc4';ctx.lineWidth=1.5;ctx.strokeRect(ps.x-bw*0.3,pt2.y,bw*0.6,h);
+  }
+  ctx.globalAlpha=1;
+}
+
+function drawTargetShapeObs(cx,topY,baseY,hrzY,w,h,type,hHid,hVis,hT){
+  if(h<2)return;
+  if(type==='mountain'){
+    ctx.globalAlpha=0.5;ctx.beginPath();
+    ctx.moveTo(cx-w*1.8,baseY);ctx.lineTo(cx-w*0.9,baseY-h*0.45);
+    ctx.lineTo(cx-w*0.3,baseY-h*0.3);ctx.lineTo(cx+w*0.7,baseY-h*0.5);
+    ctx.lineTo(cx+w*1.8,baseY);ctx.closePath();
+    ctx.fillStyle='#2a4a35';ctx.fill();
+    ctx.globalAlpha=0.85;ctx.beginPath();
+    ctx.moveTo(cx-w*1.3,baseY);ctx.lineTo(cx-w*0.4,baseY-h*0.55);
+    ctx.lineTo(cx-w*0.1,baseY-h*0.85);ctx.lineTo(cx,topY);
+    ctx.lineTo(cx+w*0.15,topY+h*0.08);ctx.lineTo(cx+w*0.5,baseY-h*0.3);
+    ctx.lineTo(cx+w*1.3,baseY);ctx.closePath();
+    ctx.fillStyle='#3d6b4a';ctx.fill();
+    ctx.strokeStyle='#6aaa7a';ctx.lineWidth=1;ctx.stroke();
+    if(h>30){
+      ctx.globalAlpha=0.45;ctx.beginPath();
+      ctx.moveTo(cx-w*0.18,topY+h*0.15);ctx.lineTo(cx,topY);
+      ctx.lineTo(cx+w*0.2,topY+h*0.12);ctx.closePath();
+      ctx.fillStyle='#dde8ee';ctx.fill();
+    }
+  }else if(type==='lighthouse'){
+    const tw=w*0.15,bww=w*0.25;
+    ctx.globalAlpha=0.9;ctx.beginPath();
+    ctx.moveTo(cx-bww,baseY);ctx.lineTo(cx-tw,topY+h*0.1);
+    ctx.lineTo(cx-tw*1.3,topY+h*0.1);ctx.lineTo(cx-tw*1.3,topY);
+    ctx.lineTo(cx+tw*1.3,topY);ctx.lineTo(cx+tw*1.3,topY+h*0.1);
+    ctx.lineTo(cx+tw,topY+h*0.1);ctx.lineTo(cx+bww,baseY);ctx.closePath();
+    ctx.fillStyle='#e8dcc8';ctx.fill();ctx.strokeStyle='#aaa';ctx.lineWidth=1;ctx.stroke();
+    ctx.globalAlpha=0.6;ctx.fillStyle='#cc3333';
+    for(let i=1;i<6;i+=2){const y1=baseY-h*(i/7),y2=baseY-h*((i+1)/7);ctx.fillRect(cx-bww*0.8,y2,bww*1.6,y1-y2)}
+    ctx.globalAlpha=0.8;ctx.fillStyle='#ffeebb';ctx.fillRect(cx-tw*1.3,topY,tw*2.6,h*0.1);
+    ctx.globalAlpha=0.2;ctx.fillStyle='#ffd93d';
+    ctx.beginPath();ctx.moveTo(cx,topY+h*0.05);ctx.lineTo(cx-w*4,topY-h*0.1);ctx.lineTo(cx-w*4,topY+h*0.2);ctx.fill();
+    ctx.beginPath();ctx.moveTo(cx,topY+h*0.05);ctx.lineTo(cx+w*4,topY-h*0.1);ctx.lineTo(cx+w*4,topY+h*0.2);ctx.fill();
+  }else if(type==='boat'){
+    const hullTop=baseY-h*0.2;
+    ctx.globalAlpha=0.85;ctx.beginPath();
+    ctx.moveTo(cx-w*1.4,baseY);ctx.lineTo(cx+w*1.4,baseY);
+    ctx.lineTo(cx+w*1.1,hullTop);ctx.lineTo(cx-w*1.0,hullTop);ctx.closePath();
+    ctx.fillStyle='#2a3a4a';ctx.fill();ctx.strokeStyle='#5588aa';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.globalAlpha=0.5;ctx.beginPath();ctx.moveTo(cx-w*1.3,baseY-h*0.06);ctx.lineTo(cx+w*1.3,baseY-h*0.06);
+    ctx.strokeStyle='#cc3333';ctx.lineWidth=1;ctx.stroke();
+    ctx.globalAlpha=0.8;ctx.fillStyle='#4a5a6a';ctx.fillRect(cx-w*0.5,hullTop-h*0.25,w,h*0.25);
+    ctx.strokeStyle='#7799aa';ctx.lineWidth=1;ctx.strokeRect(cx-w*0.5,hullTop-h*0.25,w,h*0.25);
+    ctx.globalAlpha=0.6;ctx.fillStyle='#aaddff';ctx.fillRect(cx-w*0.4,hullTop-h*0.22,w*0.8,h*0.06);
+    ctx.globalAlpha=0.7;ctx.beginPath();ctx.moveTo(cx,hullTop);ctx.lineTo(cx,topY);
+    ctx.strokeStyle='#aaa';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.globalAlpha=0.8;ctx.fillStyle='#cc3333';ctx.fillRect(cx+w*0.15,hullTop-h*0.38,w*0.2,h*0.16);
+    ctx.fillStyle='#222';ctx.fillRect(cx+w*0.15,hullTop-h*0.38,w*0.2,h*0.03);
+  }else if(type==='building'){
+    const bldgW=w*0.5;
+    ctx.globalAlpha=0.85;ctx.fillStyle='#4a5565';ctx.fillRect(cx-bldgW,topY,bldgW*2,h);
+    ctx.strokeStyle='#8899aa';ctx.lineWidth=1.5;ctx.strokeRect(cx-bldgW,topY,bldgW*2,h);
+    ctx.fillStyle='#3a4555';ctx.fillRect(cx-bldgW*1.1,topY-h*0.02,bldgW*2.2,h*0.04);
+    ctx.globalAlpha=0.5;ctx.fillStyle='#ffd93d';
+    const nF=Math.min(Math.round(h/12),40),fh=h/Math.max(nF,1);
+    for(let i=0;i<nF;i++){const fy=topY+i*fh+fh*0.2;for(let j=-2;j<=2;j++)ctx.fillRect(cx+j*bldgW*0.35-bldgW*0.08,fy,bldgW*0.16,fh*0.5)}
+  }else if(type==='wind_turbine'){
+    ctx.globalAlpha=0.8;ctx.beginPath();
+    ctx.moveTo(cx-w*0.07,baseY);ctx.lineTo(cx-w*0.025,topY);
+    ctx.lineTo(cx+w*0.025,topY);ctx.lineTo(cx+w*0.07,baseY);ctx.closePath();
+    ctx.fillStyle='#c0c8cc';ctx.fill();ctx.strokeStyle='#ddd';ctx.lineWidth=1;ctx.stroke();
+    ctx.globalAlpha=0.85;ctx.fillStyle='#d8dde0';ctx.fillRect(cx-w*0.12,topY-3,w*0.24,6);
+    ctx.globalAlpha=0.75;ctx.strokeStyle='#e8eaec';ctx.lineWidth=1.5;
+    const bl=h*0.35;for(let i=0;i<3;i++){const a=i*120*Math.PI/180-Math.PI/6;ctx.beginPath();ctx.moveTo(cx,topY);ctx.lineTo(cx+Math.cos(a)*w*0.3,topY+Math.sin(a)*bl);ctx.stroke()}
+    ctx.globalAlpha=0.85;ctx.beginPath();ctx.arc(cx,topY,3,0,Math.PI*2);ctx.fillStyle='#bbb';ctx.fill();
+  }else if(type==='oil_platform'){
+    const deckY=baseY-h*0.4,deckH=h*0.07,deckW=w*1.4,by=deckY-deckH;
+    ctx.globalAlpha=0.75;ctx.strokeStyle='#c9a23f';ctx.lineWidth=Math.max(w*0.05,1.5);
+    ctx.beginPath();
+    ctx.moveTo(cx-w*0.8,baseY);ctx.lineTo(cx-w*0.55,deckY);
+    ctx.moveTo(cx+w*0.8,baseY);ctx.lineTo(cx+w*0.55,deckY);
+    ctx.stroke();
+    ctx.lineWidth=Math.max(w*0.025,0.8);ctx.beginPath();
+    ctx.moveTo(cx-w*0.8,baseY);ctx.lineTo(cx+w*0.55,deckY);
+    ctx.moveTo(cx+w*0.8,baseY);ctx.lineTo(cx-w*0.55,deckY);
+    ctx.moveTo(cx-w*0.68,baseY-h*0.2);ctx.lineTo(cx+w*0.68,baseY-h*0.2);
+    ctx.stroke();
+    ctx.globalAlpha=0.9;ctx.fillStyle='#3a4a55';ctx.fillRect(cx-deckW/2,by,deckW,deckH);
+    ctx.strokeStyle='#7799aa';ctx.lineWidth=1;ctx.strokeRect(cx-deckW/2,by,deckW,deckH);
+    ctx.globalAlpha=0.85;ctx.fillStyle='#556677';ctx.fillRect(cx-w*0.62,by-h*0.12,w*0.55,h*0.12);
+    ctx.globalAlpha=0.8;ctx.strokeStyle='#cfd6da';ctx.lineWidth=Math.max(w*0.03,1);
+    const dl=cx+w*0.06,dr=cx+w*0.45,dtl=cx-w*0.03,dtr=cx+w*0.03;
+    ctx.beginPath();ctx.moveTo(dl,by);ctx.lineTo(dtl,topY);ctx.moveTo(dr,by);ctx.lineTo(dtr,topY);
+    for(let i=1;i<=3;i++){const t=i/4;ctx.moveTo(dl+(dtl-dl)*t,by+(topY-by)*t);ctx.lineTo(dr+(dtr-dr)*t,by+(topY-by)*t);}
+    ctx.stroke();
+    ctx.globalAlpha=0.7;ctx.strokeStyle='#aaa';ctx.lineWidth=Math.max(w*0.03,1);
+    ctx.beginPath();ctx.moveTo(cx-w*0.6,by);ctx.lineTo(cx-w*1.3,topY+h*0.08);ctx.stroke();
+    ctx.globalAlpha=0.5;ctx.fillStyle='#ff8833';
+    ctx.beginPath();ctx.moveTo(cx-w*1.3,topY+h*0.08);ctx.lineTo(cx-w*1.42,topY-h*0.02);ctx.lineTo(cx-w*1.16,topY+h*0.03);ctx.closePath();ctx.fill();
+  }else{
+    ctx.globalAlpha=0.7;ctx.fillStyle='#55efc4';ctx.fillRect(cx-w*0.3,topY,w*0.6,h);
+    ctx.globalAlpha=0.4;ctx.strokeStyle='#55efc4';ctx.lineWidth=1;
+    ctx.strokeRect(cx-w*0.3,topY,w*0.6,h);
+  }
+  ctx.globalAlpha=1;
+}
+
+// ===================== DRAWING HELPERS =====================
+function line(a,b,color,width,dash,alpha){
+  const pa=w2s(a.x,a.y),pb=w2s(b.x,b.y);
+  ctx.beginPath();ctx.moveTo(pa.x,pa.y);ctx.lineTo(pb.x,pb.y);
+  ctx.strokeStyle=color;ctx.lineWidth=Math.max(width,0.5);
+  if(dash)ctx.setLineDash(dash.map(d=>Math.max(d,1)));
+  if(alpha!==undefined)ctx.globalAlpha=alpha;
+  ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+}
+
+function dot(p,r,fill,stroke){
+  const sp=w2s(p.x,p.y),sr=Math.max(r*V.s,1.5);
+  ctx.beginPath();ctx.arc(sp.x,sp.y,sr,0,Math.PI*2);
+  ctx.fillStyle=fill;ctx.fill();
+  if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=Math.max(sr*0.2,1);ctx.stroke()}
+}
+
+function sLabel(x,y,text,color,size,align){
+  ctx.font=(size||11)+"px 'Segoe UI',system-ui,sans-serif";
+  ctx.textAlign=align||'center';ctx.textBaseline='middle';
+  ctx.strokeStyle='#0a0e17';ctx.lineWidth=3;ctx.lineJoin='round';
+  ctx.strokeText(text,x,y);ctx.fillStyle=color;ctx.fillText(text,x,y);
+}
+
+// Queued callout system with collision avoidance
+let _callouts=[];
+let _drawnCallouts=[]; // screen bboxes + anchors of the last-drawn callouts (for click-to-centre)
+
+function callout(worldPt,lines,dx,dy,fs,align){
+  _callouts.push({worldPt,lines,dx,dy,fs:fs||11,align:align||'left'});
+}
+function screenCallout(sx,sy,lines,dx,dy,fs,align){
+  _callouts.push({screenPt:{x:sx,y:sy},lines,dx:dx||0,dy:dy||0,fs:fs||11,align:align||'left'});
+}
+
+function flushCallouts(){
+  const pad=6,gap=8,edge=8;
+  // Compute bounding boxes for every callout. Off-screen anchors are pinned to
+  // the nearest screen edge so the label stays visible (leader points to the edge).
+  const items=_callouts.map(c=>{
+    const rawP=c.screenPt||w2s(c.worldPt.x,c.worldPt.y);
+    const off=rawP.x<edge||rawP.x>W-edge||rawP.y<edge||rawP.y>H-edge;
+    // Anchor used for the leader line: clamp to a margin inside the canvas
+    const p={x:Math.max(edge,Math.min(W-edge,rawP.x)),y:Math.max(edge,Math.min(H-edge,rawP.y))};
+    const lh=c.fs+4;
+    const totalH=c.lines.length*lh;
+    ctx.font=c.fs+"px 'Segoe UI',system-ui,sans-serif";
+    let maxW=0;
+    for(const l of c.lines){const m=ctx.measureText(l.text).width;if(m>maxW)maxW=m;}
+    // For off-screen anchors, place the label beside the clamped anchor (no large dx)
+    const dx=off?(rawP.x>W-edge?-20:rawP.x<edge?20:c.dx):c.dx;
+    const dy=off?0:c.dy;
+    const lx=p.x+dx, ly=p.y+dy;
+    const bgW=maxW+pad*2, bgH=totalH+pad*2;
+    const bgX=c.align==='right'?lx-maxW-pad:c.align==='center'?lx-maxW/2-pad:lx-pad;
+    const bgY=ly-lh*0.5-pad;
+    return{...c,p,off,lx,ly,dx,dy,lh,totalH,maxW,bgX,bgY,bgW,bgH};
+  });
+
+  // Resolve overlaps - push apart vertically
+  for(let pass=0;pass<20;pass++){
+    let moved=false;
+    for(let i=0;i<items.length;i++){
+      for(let j=i+1;j<items.length;j++){
+        const a=items[i],b=items[j];
+        const ox=Math.min(a.bgX+a.bgW,b.bgX+b.bgW)-Math.max(a.bgX,b.bgX);
+        const oy=Math.min(a.bgY+a.bgH,b.bgY+b.bgH)-Math.max(a.bgY,b.bgY);
+        if(ox>0&&oy>0){
+          const pushY=(oy/2)+gap;
+          if(a.bgY<b.bgY){
+            a.ly-=pushY;a.bgY-=pushY;a.dy-=pushY;
+            b.ly+=pushY;b.bgY+=pushY;b.dy+=pushY;
+          }else{
+            b.ly-=pushY;b.bgY-=pushY;b.dy-=pushY;
+            a.ly+=pushY;a.bgY+=pushY;a.dy+=pushY;
+          }
+          moved=true;
+        }
+      }
+    }
+    if(!moved)break;
+  }
+
+  // Clamp to canvas bounds
+  for(const it of items){
+    if(it.bgY<4){const d=4-it.bgY;it.ly+=d;it.bgY+=d;it.dy+=d;}
+    if(it.bgY+it.bgH>H-4){const d=(it.bgY+it.bgH)-(H-4);it.ly-=d;it.bgY-=d;it.dy-=d;}
+    if(it.bgX<4){const d=4-it.bgX;it.lx+=d;it.bgX+=d;it.dx+=d;}
+    if(it.bgX+it.bgW>W-4){const d=(it.bgX+it.bgW)-(W-4);it.lx-=d;it.bgX-=d;it.dx-=d;}
+  }
+
+  // Draw all, and record clickable boxes (anchor = original world/screen point)
+  _drawnCallouts=[];
+  for(const it of items){
+    drawCallout(it);
+    _drawnCallouts.push({bgX:it.bgX,bgY:it.bgY,bgW:it.bgW,bgH:it.bgH,worldPt:it.worldPt,screenPt:it.screenPt});
+  }
+  _callouts=[];
+}
+
+// Hit-test a screen point against the drawn callout pills (topmost first)
+function calloutAt(mx,my){
+  for(let i=_drawnCallouts.length-1;i>=0;i--){
+    const c=_drawnCallouts[i];
+    if(mx>=c.bgX-3&&mx<=c.bgX+c.bgW+3&&my>=c.bgY-3&&my<=c.bgY+c.bgH+3)return c;
+  }
+  return null;
+}
+
+// Recentre the view on a clicked callout's data point
+function centerOnCallout(c){
+  if(c.worldPt){
+    V.cx=c.worldPt.x;V.cy=c.worldPt.y;V.manual=true;render();
+  }else if(c.screenPt){
+    if(S.view==='obs'){
+      // tilt so the anchor's elevation is centred vertically
+      S.tilt+=(H/2-c.screenPt.y)/V.s;
+      const maxTilt=80*Math.PI/180;S.tilt=Math.max(-maxTilt,Math.min(maxTilt,S.tilt));
+      render();
+    }else{
+      const w=s2w(c.screenPt.x,c.screenPt.y);
+      V.cx=w.x;V.cy=w.y;V.manual=true;render();
+    }
+  }
+}
+
+function drawCallout(it){
+  const{p,lx,ly,lh,totalH,maxW,bgX,bgY,bgW,bgH,lines,fs,align}=it;
+  const pad=5;
+
+  // Leader line
+  const elbowX=p.x+(it.dx>0?14:it.dx<0?-14:0);
+  const elbowY=p.y+(it.dy>0?14:it.dy<0?-14:0);
+  ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(elbowX,elbowY);
+  ctx.lineTo(it.dx>=0?bgX:bgX+bgW, ly+totalH/2-lh/2);
+  ctx.strokeStyle='rgba(255,255,255,0.35)';ctx.lineWidth=1;ctx.stroke();
+
+  // Anchor dot
+  ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,0.5)';ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,0.3)';ctx.lineWidth=1;ctx.stroke();
+
+  // Background pill
+  ctx.globalAlpha=0.8;ctx.fillStyle='#0a0e17';
+  const r=3;
+  ctx.beginPath();
+  ctx.moveTo(bgX+r,bgY);ctx.lineTo(bgX+bgW-r,bgY);ctx.quadraticCurveTo(bgX+bgW,bgY,bgX+bgW,bgY+r);
+  ctx.lineTo(bgX+bgW,bgY+bgH-r);ctx.quadraticCurveTo(bgX+bgW,bgY+bgH,bgX+bgW-r,bgY+bgH);
+  ctx.lineTo(bgX+r,bgY+bgH);ctx.quadraticCurveTo(bgX,bgY+bgH,bgX,bgY+bgH-r);
+  ctx.lineTo(bgX,bgY+r);ctx.quadraticCurveTo(bgX,bgY,bgX+r,bgY);
+  ctx.fill();
+  ctx.globalAlpha=0.35;ctx.strokeStyle=lines[0].color||'#555';ctx.lineWidth=1;ctx.stroke();
+  ctx.globalAlpha=1;
+
+  // Text
+  for(let i=0;i<lines.length;i++){
+    const yy=ly+i*lh;
+    ctx.font=(i===0?'600 '+fs+'px ':(fs-1)+'px ')+'Segoe UI,system-ui,sans-serif';
+    ctx.textAlign=align;ctx.textBaseline='middle';
+    ctx.fillStyle=lines[i].color||'#ccc';
+    ctx.fillText(lines[i].text,lx,yy);
+  }
+}
+
+window.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>

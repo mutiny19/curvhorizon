@@ -1,0 +1,58 @@
+# Earth Curvature & Horizon Simulator
+
+A single-file, dependency-free web app that renders the geometry of the horizon and
+how distant targets are progressively hidden by the curvature of the Earth — at true
+1:1 scale, with selectable atmospheric refraction.
+
+**Live:** open `index.html` in any modern browser (or enable GitHub Pages on this repo).
+
+## Features
+
+- **Side view & observer view** — switch between a true-to-scale cross-section and a
+  through-the-lens view of what an observer actually sees.
+- **True 1:1 scale** — no vertical exaggeration. Zoom and pan to inspect detail.
+- **Telescopic observer view** — set focal length and sensor size; the view behaves like
+  a real camera lens (FOV, magnification), with tilt up/down.
+- **Atmospheric refraction** — selectable coefficient *k* (geometric, standard, typical
+  visual, strong, inversion) or manual entry, modeled via the effective-radius method
+  R' = R / (1 − k).
+- **Hidden vs. visible** — the obstructed portion below the horizon is drawn in red; the
+  visible portion above in the target color, with callouts for distance, height, hidden
+  amount, horizon distance, bulge, and dip.
+- **Target types** — mountain, lighthouse, boat/ship, building, wind turbine, oil
+  platform, or custom, each drawn to scale.
+- **Multiple targets** — selected observations (e.g. the Lake Pontchartrain transmission
+  towers, the Black Swan oil rigs) render a receding line of identical targets, each
+  base sinking progressively below the horizon.
+- **Famous observations** — built-in presets for well-documented long-distance sightings
+  (Chicago skyline across Lake Michigan, Toronto across Lake Ontario, Turning Torso,
+  Canigou from Marseille, O'ahu from Kaua'i, Finestrelles → Pic Gaspard 443 km, Pyrenees
+  → Alps, Denali, and more).
+- **Earth model** — mean sphere (R = 6,371 km) or WGS84 oblate spheroid (geocentric
+  radius by latitude).
+- **Refraction bands** — overlay line-of-sight at multiple *k* values to show the range.
+- **Visibility / haze limit** — optional Koschmieder air-clarity cutoff.
+- **Methodology** — collapsible section with the governing formulas, live worked
+  calculations for the current scene, citations, and a glossary.
+
+## Math
+
+| Quantity | Formula |
+| --- | --- |
+| Effective radius | R' = R / (1 − k) |
+| Horizon distance | d₁ = √(h² + 2·R'·h) |
+| Hidden height | h₁ = √(d₂² + R'²) − R',  d₂ = d₀ − d₁ |
+| Bulge | B = R'·(1 − cos(d / 2R')) |
+| Horizon dip | dip = arccos( R' / (R' + h) ) |
+| Haze contrast (Koschmieder) | C = exp(−3.912·d / V) |
+
+## Usage
+
+No build step and no dependencies. Either:
+
+- Open `index.html` directly, or
+- Serve the folder: `npx serve .` and visit the printed URL.
+
+## License
+
+See [`LICENSE`](LICENSE) if present, otherwise all rights reserved by the author.
