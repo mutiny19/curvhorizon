@@ -235,7 +235,7 @@
         <p>Maximum surface rise between observer and target.</p>
         <code style="display:block;font-size:10px;color:var(--accent);background:rgba(79,172,254,0.08);padding:3px 6px;border-radius:3px;margin:4px 0">dip = acos(R'/(R'+h)) ≈ √(2h/R') &nbsp;[horizon dip]</code>
         <div id="wDip" class="work"></div>
-        <p>The angle by which the sea horizon sits <em>below</em> true level. The horizon does not "rise to eye level."</p>
+        <p>The angle (reported here in arcminutes) by which the sea horizon sits <em>below</em> true level. The horizon does not "rise to eye level" as you climb; it sinks farther below it, which is exactly what this dip measures.</p>
         <p style="margin-top:6px"><strong style="color:var(--text)">Refraction (k):</strong> the coefficient of terrestrial refraction, the ratio of Earth's curvature to the light ray's curvature. The atmosphere bends rays downward, so the model replaces R with an effective radius R' = R/(1−k). k=0 geometric, k=0.13 surveying standard, k=0.17 typical visual conditions.</p>
         <p><strong style="color:var(--text)">Extreme refraction:</strong> Near the surface (especially over water) k is highly variable, measured from negative values up to far beyond 0.5 during temperature inversions. These produce <em>looming / superior mirages</em> that can briefly reveal objects normally hidden. This is a separate, intermittent effect, not steady refraction. The k=0.5 band marks the edge of this regime.</p>
         <p><strong style="color:var(--text)">Spherical vs parabolic:</strong> This uses exact spherical formulas. The "8 inches per mile²" rule is a parabolic approximation of <em>drop below the tangent line</em>; it ignores observer height and overstates what is hidden. The correct hidden-height formula above accounts for both.</p>
@@ -260,7 +260,7 @@
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Figure_of_the_Earth" target="_blank" rel="noopener" style="color:var(--accent)">Bulge</a></dt>
           <dd style="margin:0 0 0 10px">The rise of the surface midway between two points: the "hump" a line of sight must clear.</dd>
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon#Curvature_of_the_horizon" target="_blank" rel="noopener" style="color:var(--accent)">Horizon dip</a></dt>
-          <dd style="margin:0 0 0 10px">The small angle by which the true horizon sits below eye level for a raised observer.</dd>
+          <dd style="margin:0 0 0 10px">The small <em>angle</em> (measured in arcminutes, not a distance) by which the visible horizon sits below true eye level for a raised observer. Look out perfectly level and the sea horizon is actually a touch below your gaze; this is by how much.</dd>
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Atmospheric_refraction" target="_blank" rel="noopener" style="color:var(--accent)">Atmospheric refraction</a></dt>
           <dd style="margin:0 0 0 10px">Bending of light through air of changing density, making distant objects appear slightly higher.</dd>
           <dt style="margin-top:5px"><a href="https://aty.sdsu.edu/explain/atmos_refr/dip.html" target="_blank" rel="noopener" style="color:var(--accent)">Refraction coefficient (k)</a></dt>
@@ -715,7 +715,7 @@ function updateMethodologyWork(Reff,d0,h0,d1,hHid,hBul){
   }
   g('wBulge').textContent='= '+nf(Reff)+'·(1 − cos('+nf(d0)+' / '+nf(2*Reff)+')) = '+m2(hBul);
   const dip=Math.acos(Reff/(Reff+h0));
-  g('wDip').textContent='= acos('+nf(Reff)+' / '+nf(Reff+h0)+') = '+(dip*180/Math.PI).toFixed(4)+'° = '+(dip*180/Math.PI*60).toFixed(2)+'′';
+  g('wDip').textContent='= acos('+nf(Reff)+' / '+nf(Reff+h0)+') = '+(dip*180/Math.PI).toFixed(4)+'° = '+(dip*180/Math.PI*60).toFixed(2)+' arcmin';
 }
 
 function render(){
@@ -1056,8 +1056,8 @@ function renderObserver(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
   if(hrzY>0&&hrzY<H){
     screenCallout(60,hrz,[
       {text:'HORIZON',color:'#ffa502'},
-      {text:'Dip: '+(dipAngle*180/Math.PI*60).toFixed(2)+"'",color:'#ffa502'},
-      {text:'limit of sight, surface curves on',color:'#998'},
+      {text:'Dip: '+(dipAngle*180/Math.PI*60).toFixed(2)+' arcmin below eye level',color:'#ffa502'},
+      {text:'(angle, not distance; farthest surface point in view)',color:'#998'},
     ],-40,0,10);
   }
 
