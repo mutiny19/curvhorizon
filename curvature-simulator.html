@@ -279,7 +279,7 @@
         <p style="margin-top:8px"><strong style="color:var(--text)">Glossary</strong> <span style="color:#667">(terms link to neutral, scientific definitions)</span></p>
         <dl style="margin:2px 0 4px 0">
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon" target="_blank" rel="noopener" style="color:var(--accent)">Horizon</a></dt>
-          <dd style="margin:0 0 0 10px">The farthest point on the surface itself that you can see, where your line of sight grazes it tangentially. It is <em>not</em> an edge or drop-off: the surface keeps curving smoothly away beyond it, and tall objects past it (mountains, ships' masts) still rise into view above it. The horizon moves outward as you rise, its distance growing with the square root of eye height.</dd>
+          <dd style="margin:0 0 0 10px">The circle all around you where your line of sight grazes the surface tangentially. It is <em>not</em> a single point, an edge, or a wall: in every direction the surface simply curves out of view at this distance and keeps going beyond it, so tall objects past it (mountains, ships' masts) still rise above it. As you climb, this circle widens, its distance growing with the square root of eye height.</dd>
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon#Geometrical_horizon" target="_blank" rel="noopener" style="color:var(--accent)">Hidden height</a></dt>
           <dd style="margin:0 0 0 10px">How much of a distant object sits below the horizon, obscured by the Earth's curve.</dd>
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Figure_of_the_Earth" target="_blank" rel="noopener" style="color:var(--accent)">Bulge</a></dt>
@@ -1285,7 +1285,7 @@ function renderObserver(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
     screenCallout(60,hrz,[
       {text:'HORIZON',color:'#ffa502'},
       {text:'Dip: '+(dipAngle*180/Math.PI*60).toFixed(2)+' arcmin below eye level',color:'#ffa502'},
-      {text:'(angle, not distance; farthest surface point in view)',color:'#998'},
+      {text:'(angle, not distance; where the surface grazes out of view)',color:'#998'},
     ],-40,0,10);
   }
 
