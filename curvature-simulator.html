@@ -172,12 +172,10 @@
     </div>
     <div class="sec laser-only">
       <h3>Laser Beam</h3>
-      <div class="view-toggle">
-        <button class="vt-btn active" id="btnAimDet">Aim at detector</button>
-        <button class="vt-btn" id="btnAimLevel">Level beam</button>
-      </div>
-      <div class="note" id="laserNote">A straight beam from the laser (at <b>Laser height</b>) to a detector (at <b>Detector height</b>) the set distance away. The water bulges up between them: if the bulge rises into the beam, the laser is blocked. "Level beam" instead fires perfectly horizontal and shows how far it climbs above the water.</div>
-      <div class="note" id="laserRefrNote" style="border-left:2px solid var(--accent);padding-left:7px;margin-top:6px">A beam skimming water passes through the lowest few meters of air, where the temperature gradient (and so refraction) is strongest and most variable. Raise <b>Refraction</b> toward an inversion and watch a blocked beam start to clear: near k=1 the ray bends as much as the Earth curves, so it stays level and the surface looks flat. That sensitivity is why grazing laser tests over water give different results morning vs afternoon, calm vs windy. The dependable test raises the sightline and uses equal-height targets (Wallace 1870; Rainy Lake 2018), which is what the Side and Observer views show.</div>
+      <div class="note" id="laserNote">A straight beam from the laser (at <b>Laser height</b>) to a detector (at <b>Detector height</b>) the set distance away. The water bulges up between them; if the bulge rises into the beam, the beam is blocked.</div>
+      <div class="row" style="margin-top:8px"><label>Refraction</label><input type="range" id="iLaserK" min="0" max="0.95" step="0.01" value="0.13" style="flex:1;padding:0"></div>
+      <div class="note" id="laserKReadout" style="color:var(--accent);font-weight:600">k = 0.13</div>
+      <div class="note" id="laserRefrNote" style="border-left:2px solid var(--accent);padding-left:7px;margin-top:6px">Drag the slider. A beam skimming water travels through the lowest few meters of air, where the temperature gradient (and so refraction) is strongest and most changeable. Raise refraction toward an inversion and a blocked beam clears: near k=1 the ray bends as much as the Earth curves, so it stays level and the surface looks flat. That sensitivity is why the same grazing sight line gives different results morning vs afternoon, calm vs windy. The dependable test raises the sight line and uses equal-height targets (Wallace 1870; Rainy Lake 2018), which is what the Side and Observer views show.</div>
     </div>
     <div class="sec">
       <h3>Refraction</h3>
@@ -263,7 +261,7 @@
         <p>The angle (reported here in arcminutes) by which the sea horizon sits <em>below</em> true level. The horizon does not "rise to eye level" as you climb; it sinks farther below it, which is exactly what this dip measures.</p>
         <p style="margin-top:6px"><strong style="color:var(--text)">Refraction (k):</strong> the coefficient of terrestrial refraction, the ratio of Earth's curvature to the light ray's curvature. The atmosphere bends rays downward, so the model replaces R with an effective radius R' = R/(1−k). k=0 geometric, k=0.13 surveying standard, k=0.17 typical visual conditions.</p>
         <p><strong style="color:var(--text)">Extreme refraction:</strong> Near the surface (especially over water) k is highly variable, measured from negative values up to far beyond 0.5 during temperature inversions. These produce <em>looming / superior mirages</em> that can briefly reveal objects normally hidden. This is a separate, intermittent effect, not steady refraction. The k=0.5 band marks the edge of this regime.</p>
-        <p style="margin-top:6px"><strong style="color:var(--text)">Laser line-of-sight over water:</strong> The Laser Test view uses the same effective-radius geometry. A straight ray clears the surface when its minimum height above the water stays positive; the bulge of the chord above the curved surface at the midpoint is d²/8R'. A level beam climbs above the surface as (R'+h)/cos(x/R') − R' ≈ h + x²/2R'. Treating the ray as straight on radius R' = R/(1−k) is exact when the refractivity gradient is constant <a href="https://www.itu.int/rec/R-REC-P.834/en" target="_blank" rel="noopener" style="color:var(--accent)">(ITU-R P.834)</a>.</p>
+        <p style="margin-top:6px"><strong style="color:var(--text)">Laser line-of-sight over water:</strong> The Laser Test view uses the same effective-radius geometry. A straight ray clears the surface when its minimum height above the water stays positive; the bulge of the chord above the curved surface at the midpoint is d²/8R'. A horizontal ray rises above the surface as (R'+h)/cos(x/R') − R' ≈ h + x²/2R'. Treating the ray as straight on radius R' = R/(1−k) is exact when the refractivity gradient is constant <a href="https://www.itu.int/rec/R-REC-P.834/en" target="_blank" rel="noopener" style="color:var(--accent)">(ITU-R P.834)</a>.</p>
         <p>Why real laser tests over water are unreliable: a grazing beam travels through the lowest few meters of air, where the temperature gradient and therefore k are largest and most variable. As k rises toward 1 (a surface inversion of roughly +0.11 °C/m) the ray bends as much as the Earth curves, so it stays level and can travel beyond the horizon as a <em>duct</em> <a href="https://aty.sdsu.edu/explain/atmos_refr/duct.html" target="_blank" rel="noopener" style="color:var(--accent)">(Young, SDSU)</a>. The same sight line then gives different results morning vs afternoon, calm vs windy, which is the signature of changing refraction rather than a fixed geometry. Surveyors handle the steady part with a fixed combined curvature-and-refraction correction of about 0.0675·d² m (d in km), with k ≈ 0.13 measured for over a century <a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2010JD014067" target="_blank" rel="noopener" style="color:var(--accent)">(Hirt et al. 2010)</a>. The dependable curvature test raises the sight line and uses equal-height targets, as Wallace did on the Bedford Level in 1870 and the 2018 Rainy Lake experiment repeated <a href="https://walter.bislins.ch/bloge/index.asp?page=Proof+of+Earth+Curvature%3A+The+Rainy+Lake+Experiment" target="_blank" rel="noopener" style="color:var(--accent)">(Rainy Lake)</a>; that is what the Side and Observer views model.</p>
         <p><strong style="color:var(--text)">Spherical vs parabolic:</strong> This uses exact spherical formulas. The "8 inches per mile²" rule is a parabolic approximation of <em>drop below the tangent line</em>; it ignores observer height and overstates what is hidden. The correct hidden-height formula above accounts for both.</p>
         <p><strong style="color:var(--text)">Earth model:</strong> Default radius is the IUGG mean R = 6,371 km. WGS84 mode uses the latitude-dependent geocentric radius of the reference ellipsoid (a = 6,378.137 km equator → b = 6,356.752 km poles).</p>
@@ -367,7 +365,7 @@ function fmtH(m){
 }
 
 const V={cx:0,cy:0,s:1,manual:false};
-const S={h0:2,d0:30000,hT:100,type:'mountain',k:0.17,view:'side',focal:50,sensor:36,units:'metric',oblate:false,lat:45,showBands:false,tilt:0,visRange:0,extra:[],laserAim:'detector'};
+const S={h0:2,d0:30000,hT:100,type:'mountain',k:0.17,view:'side',focal:50,sensor:36,units:'metric',oblate:false,lat:45,showBands:false,tilt:0,visRange:0,extra:[]};
 // S.extra: extra target distances (metres) for multi-target observations (e.g. a line of
 // identical towers). They share the primary target's height and type. Empty for everything else.
 // Refraction bands - single source of truth for both views. k=0.5 represents
@@ -452,12 +450,6 @@ function init(){
   document.getElementById('btnLaser').addEventListener('click',()=>{
     S.view='laser';updateViewBtns();V.manual=false;render();
   });
-  document.getElementById('btnAimDet').addEventListener('click',()=>{
-    S.laserAim='detector';updateViewBtns();V.manual=false;render();
-  });
-  document.getElementById('btnAimLevel').addEventListener('click',()=>{
-    S.laserAim='level';updateViewBtns();V.manual=false;render();
-  });
 
   document.getElementById('btnMetric').addEventListener('click',()=>{
     S.units='metric';
@@ -513,14 +505,35 @@ function init(){
   }));
 
   // Refraction
-  const kNotes={'0':'No refraction. Pure geometric line of sight.','0.13':'Standard atmospheric refraction. The light ray curves about 13% as much as Earth\'s surface.','0.17':'Typical visual observation conditions. Slightly more bending than standard.','0.25':'Strong refraction: warm air over a cold surface (e.g. ocean).','0.33':'1/3 rule, sometimes used in surveying. Effective radius = 1.5× Earth.','0.5':'Temperature inversion over cold water. The ray bends halfway toward Earth\'s curve; targets loom higher and more is revealed.','0.9':'Near-ducting: a strong surface inversion. The ray almost follows the curve, so a level beam barely drops and the surface looks nearly flat. At k=1 the ray matches Earth\'s curvature exactly (light ducts beyond the horizon).'};
+  const kNotes={'0':'No refraction. Pure geometric line of sight.','0.13':'Standard atmospheric refraction. The light ray curves about 13% as much as Earth\'s surface.','0.17':'Typical visual observation conditions. Slightly more bending than standard.','0.25':'Strong refraction: warm air over a cold surface (e.g. ocean).','0.33':'1/3 rule, sometimes used in surveying. Effective radius = 1.5× Earth.','0.5':'Temperature inversion over cold water. The ray bends halfway toward Earth\'s curve; targets loom higher and more is revealed.','0.9':'Near-ducting: a strong surface inversion. The ray almost follows the curve, so a grazing beam barely drops and the surface looks nearly flat. At k=1 the ray matches Earth\'s curvature exactly (light ducts beyond the horizon).'};
+  // One place that reflects S.k into every refraction control (preset, custom field, laser slider, readouts)
+  window.syncKUI=function(){
+    const kStr=String(S.k);
+    const sel=document.getElementById('iKPreset'),cr=document.getElementById('customKRow'),ne=document.getElementById('kNote');
+    const isPreset=[...sel.options].some(o=>o.value===kStr&&o.value!=='custom');
+    if(isPreset){sel.value=kStr;cr.style.display='none';ne.textContent=kNotes[kStr]||'';}
+    else{sel.value='custom';cr.style.display='flex';ne.textContent='Custom refraction coefficient (0–1).';}
+    document.getElementById('iK').value=S.k;
+    const sl=document.getElementById('iLaserK');if(sl)sl.value=Math.min(S.k,0.95);
+    const ro=document.getElementById('laserKReadout');
+    if(ro){
+      let d;const k=+S.k;
+      if(k<0.05)d='no refraction (pure geometry)';
+      else if(k<0.10)d='less than standard air';
+      else if(k<0.20)d='standard air';
+      else if(k<0.35)d='strong refraction';
+      else if(k<0.70)d='inversion over cold water';
+      else d='near-ducting: the ray nearly follows the curve';
+      ro.textContent='k = '+k.toFixed(2)+' · '+d;
+    }
+  };
   document.getElementById('iKPreset').addEventListener('change',function(){
-    const cr=document.getElementById('customKRow'),ne=document.getElementById('kNote');
-    if(this.value==='custom'){cr.style.display='flex';S.k=parseFloat(document.getElementById('iK').value)||0;ne.textContent='Enter a custom refraction coefficient (0–1).';}
-    else{cr.style.display='none';S.k=parseFloat(this.value);document.getElementById('iK').value=this.value;ne.textContent=kNotes[this.value]||'';}
-    V.manual=false;render();
+    if(this.value==='custom'){S.k=parseFloat(document.getElementById('iK').value)||0;}
+    else{S.k=parseFloat(this.value);}
+    syncKUI();V.manual=false;render();
   });
-  document.getElementById('iK').addEventListener('input',function(){S.k=parseFloat(this.value)||0;V.manual=false;render()});
+  document.getElementById('iK').addEventListener('input',function(){S.k=parseFloat(this.value)||0;syncKUI();V.manual=false;render()});
+  document.getElementById('iLaserK').addEventListener('input',function(){S.k=parseFloat(this.value)||0;syncKUI();V.manual=false;render()});
 
   document.querySelectorAll('.pre:not(.opre)').forEach(b=>b.addEventListener('click',()=>{
     if(!b.dataset.d)return;
@@ -608,10 +621,7 @@ function init(){
     S.h0=parseFloat(b.dataset.h0);S.k=parseFloat(b.dataset.k);S.type=b.dataset.t;
     S.extra=b.dataset.multi?b.dataset.multi.split(',').map(v=>parseFloat(v)*1000):[];
     document.getElementById('iType').value=b.dataset.t;
-    const kStr=String(b.dataset.k);
-    const kSelect=document.getElementById('iKPreset');
-    if([...kSelect.options].some(o=>o.value===kStr)){kSelect.value=kStr;document.getElementById('customKRow').style.display='none';}
-    else{kSelect.value='custom';document.getElementById('customKRow').style.display='flex';document.getElementById('iK').value=kStr;}
+    S.k=parseFloat(b.dataset.k)||0;syncKUI();
     document.getElementById('obsNote').textContent=b.dataset.note||b.title;
     syncInputsToUnits();V.manual=false;render();
   }));
@@ -738,8 +748,7 @@ function updateViewBtns(){
   iH0.closest('.row').querySelector('label').textContent=laser?'Laser height':'Eye height';
   iHT.closest('.sec').querySelector('h3').textContent=laser?'Detector':'Target';
   iHT.closest('.row').querySelector('label').textContent=laser?'Detector height':'Height';
-  document.getElementById('btnAimDet').classList.toggle('active',S.laserAim==='detector');
-  document.getElementById('btnAimLevel').classList.toggle('active',S.laserAim==='level');
+  if(window.syncKUI)window.syncKUI();
 }
 
 const TYPE_LABELS={mountain:'Mountain',lighthouse:'Lighthouse',boat:'Boat / Ship',building:'Building',wind_turbine:'Wind Turbine',oil_platform:'Oil Platform',custom:'Custom'};
@@ -749,7 +758,6 @@ function updateSummary(){
     ['Laser height',fmtH(S.h0)],
     ['Distance',fmtD(S.d0)],
     ['Detector height',fmtH(S.hT)],
-    ['Beam',S.laserAim==='level'?'Level (horizontal)':'Aimed at detector'],
     ['Refraction','k = '+S.k],
     ['Earth',S.oblate?'WGS84 @ '+S.lat+'°':'Sphere 6371 km'],
   ]:[
@@ -997,7 +1005,7 @@ function renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
 // ===================== LASER TEST VIEW =====================
 // A laser fired across water: a straight beam vs the curved surface bulging between
 // the emitter and a detector. Shows whether the bulge rises into the beam (blocking it),
-// the minimum clearance over the water, and how a level beam climbs away from the surface.
+// the minimum clearance over the water, and whether the bulge blocks the beam.
 function renderLaser(R,d0,hL,hLaser,hBul){
   // hL here is the detector height (hT); hLaser is the laser height (h0)
   const hDet=hL, hEm=hLaser;
@@ -1049,11 +1057,9 @@ function renderLaser(R,d0,hL,hLaser,hBul){
     {text:fmtD(d0/2)+' from each',color:'#888'},
   ],0,-86,10);
 
-  // Beam endpoints
-  const level=S.laserAim==='level';
+  // Beam endpoints: a straight ray from the laser to the detector
   const E=pt(emA,hEm);
-  const levelH=(R+hEm)/Math.cos(theta)-R;       // height a horizontal beam reaches at the far end
-  const beamEnd=level?pt(detA,levelH):pt(detA,hDet);
+  const beamEnd=pt(detA,hDet);
 
   // Sample the straight beam to find minimum clearance over the water and any blockage
   const N=300;let minClear=Infinity,minPt=null,minA=midA,minDist=d0/2,blockT=-1,blockPt=null,blockDist=0;
@@ -1105,8 +1111,8 @@ function renderLaser(R,d0,hL,hLaser,hBul){
     ],0,64,11);
   }else{
     drawBeam(E,beamEnd,'#ff3b3b',Math.max(2.5*lw*V.s,2),true);
-    // minimum clearance marker (only meaningful for an aimed beam; a level beam just keeps rising)
-    if(minPt&&!level){
+    // minimum clearance marker
+    if(minPt){
       const Smin=pt(minA,0);
       line(Smin,minPt,'#ffd93d',1.6*lw*V.s,[4*lw*V.s,3*lw*V.s]);
       dot(minPt,4*lw,'#ffd93d','#fff');
@@ -1121,28 +1127,17 @@ function renderLaser(R,d0,hL,hLaser,hBul){
   // Endpoint callouts
   callout(E,[
     {text:'LASER',color:'#ff5b5b'},
-    {text:fmtH(hEm)+(level?' · fired level':' height'),color:'#ff5b5b'},
+    {text:fmtH(hEm)+' height',color:'#ff5b5b'},
   ],-30,-66,10);
-  if(level){
-    callout(beamEnd,[
-      {text:'BEAM HERE',color:'#00f2fe'},
-      {text:fmtH(levelH)+' above water',color:'#00f2fe'},
-      {text:'no curvature: stays '+fmtH(hEm),color:'#888'},
-    ],-40,54,10);
-    dot(beamEnd,5*lw,'#00f2fe','#fff');
-  }else{
-    callout(detTop,[
-      {text:'DETECTOR',color:'#00f2fe'},
-      {text:fmtH(hDet)+' height',color:'#00f2fe'},
-    ],44,-58,10);
-    dot(detTop,5*lw,'#00f2fe','#fff');
-  }
+  callout(detTop,[
+    {text:'DETECTOR',color:'#00f2fe'},
+    {text:fmtH(hDet)+' height',color:'#00f2fe'},
+  ],44,-58,10);
+  dot(detTop,5*lw,'#00f2fe','#fff');
 
   // Top summary line
   let summary;
-  if(level){
-    summary='Level beam climbs to '+fmtH(levelH)+' over '+fmtD(d0)+'  (without curvature it would stay at '+fmtH(hEm)+')';
-  }else if(blocked){
+  if(blocked){
     summary='BLOCKED: the water bulge ('+fmtH(hBul)+') rises into the beam at '+fmtD(blockDist);
   }else{
     summary='Beam reaches the detector, clearing the water by '+fmtH(minClear)+' at its lowest  (without curvature the clearance would stay constant)';
