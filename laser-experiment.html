@@ -278,11 +278,11 @@
       <p>The experiment does not assume an answer. It records what the surface does beneath a straight line of light, and it reports whatever the numbers report. Flat is a result. Curved is a result. Neither is the goal.</p>
 
       <h4>What it can show, and what it cannot</h4>
-      <p>This is not the one test that ends an argument. There is no such test. What it is, is a measurement of three quantities that are independent of one another: the angle to Polaris, the drone's height above the ground, and the tilt of the laser at its mount. Each can come out level, or changing, or somewhere that needs explaining. Read together, across a measured distance, they describe what the surface did. Nothing more, and nothing less.</p>
-      <p>One run settles nothing on its own. Run it again. On another night, in another season, from another latitude, and the reading either holds or it does not. That is the only test a result has to pass: whether it survives being repeated. The cost of admission is a few hundred dollars and a stretch of open ground, which is the point. Anyone can check the work.</p>
+      <p>This is not the one test that ends an argument. There is no such test. What it is, is a measurement of three quantities that are independent of one another: the angle to Polaris, the drone's height above the water, and the tilt of the laser at its mount. Each can come out level, or changing, or somewhere that needs explaining. Read together, across a measured distance, they describe what the surface did. Nothing more, and nothing less.</p>
+      <p>One run settles nothing on its own. Run it again. On another night, in another season, from another latitude, and the reading either holds or it does not. That is the only test a result has to pass: whether it survives being repeated. The cost of admission is a few hundred dollars and a stretch of open water, which is the point. Anyone can check the work.</p>
 
       <div class="subhead">WHY NO MAP</div>
-      <p>A map is not the world. It is a picture of the world, and every map is built from choices: what to keep, what to leave out, which projection to flatten it through, which names to print. That holds for a hand sketch, and it holds for a satellite mosaic, which is stitched, reprojected, and color-corrected before anyone sees it. No map escapes those choices, and it is fair to distrust any claim that leans on one (Harley, 1989). This protocol leans on none. The drone is told nothing about where the world goes. It follows a beam of light and writes down physical quantities: an angle to a star, a height above the ground, the tilt of a mount, the temperature and pressure of the air. A measurement carries assumptions of its own, and the answer to that is not to pretend it does not. It is to name them, and to read instruments that fail in different ways, so no single assumption decides the result. What the protocol asks you to trust is not a chart, and not a picture of the Earth taken by anyone. It is the reading built in front of you.</p>
+      <p>A map is not the world. It is a picture of the world, and every map is built from choices: what to keep, what to leave out, which projection to flatten it through, which names to print. That holds for a hand sketch, and it holds for a satellite mosaic, which is stitched, reprojected, and color-corrected before anyone sees it. No map escapes those choices, and it is fair to distrust any claim that leans on one (Harley, 1989). This protocol leans on none. The drone is told nothing about where the world goes. It follows a beam of light and writes down physical quantities: an angle to a star, a height above the water, the tilt of a mount, the temperature and pressure of the air. A measurement carries assumptions of its own, and the answer to that is not to pretend it does not. It is to name them, and to read instruments that fail in different ways, so no single assumption decides the result. What the protocol asks you to trust is not a chart, and not a picture of the Earth taken by anyone. It is the reading built in front of you. Even the surface it reads against is open water, which settles to its own level and needs no survey, so no terrain map stands between the instrument and the result.</p>
 
       <div class="subhead">WHY A DRONE, NOT A PERSON</div>
       <p>A person walking makes a thousand small choices a second. Where to step. How fast. Whether that faint smear of green is the beam or just a tired eye. Every choice is a place where expectation can steer the outcome. The drone makes one choice and makes it again: keep the beam centered. The flight controller does it mechanically, with no stake in the answer. It cannot hope for one. That is the reason it holds the instrument and not a person.</p>
@@ -323,7 +323,7 @@
       <li><span class="item-text">Digital clinometer  0.1 degree resolution</span><span class="cost">$30 – $65</span></li>
       <li><span class="item-text">Weather sensors  temp + humidity + pressure  drone and origin</span><span class="cost">$20 – $60</span></li>
       <li><span class="item-text">Datalogger + microSD  origin weather and tilt log</span><span class="cost">$15 – $40</span></li>
-      <li><span class="item-text">Surveyor measuring wheel  backup distance log</span><span class="cost">$20 – $50</span></li>
+      <li><span class="item-text">Range markers / buoys  backup distance over water</span><span class="cost">$20 – $50</span></li>
       <li><span class="item-text">Walkie-talkies  operator to chase crew</span><span class="cost">$25 – $50</span></li>
       <li><span class="item-text">Miscellaneous  batteries  cable ties  notebook</span><span class="cost">$30 – $60</span></li>
     </ul>
@@ -347,7 +347,7 @@
       <p>Four photodiodes in a cross, around a center aperture. Beam on center, all four read the same. Beam drifts up, the top pair brightens. The difference between them tells the flight controller which way to nudge. This is the quiet trick of the whole rig: the drone never has to know which way is east. It only has to keep four numbers equal.</p>
 
       <div class="subhead">OPTICAL FLOW + DOWNWARD RANGEFINDER</div>
-      <p>A combined module like the Matek 3901-L0X carries two instruments looking down. A camera tracks position by reading the texture of the ground passing beneath it. A laser rangefinder reads the height to that ground. Together they give you distance traveled along the real path and the running altitude that becomes Measurement 2. Both look at the ground directly. Neither asks a satellite anything.</p>
+      <p>A combined module like the Matek 3901-L0X carries two instruments looking down. A laser rangefinder reads the height to the surface, the running value that becomes Measurement 2. A camera tracks distance traveled by reading the texture of the surface passing beneath it, though over calm water there is little texture, so on a glassy night markers at measured ranges carry the distance instead. Both look down directly. Neither asks a satellite anything.</p>
 
       <div class="subhead">CLINOMETER</div>
       <p>A digital inclinometer good to 0.1 degrees is enough. That resolution catches a Polaris shift of about 7 miles of north/south travel, which is the scale this protocol works at. Sextants reach finer, into the arcminutes, but they cost more and ask more of the hands holding them. For a protocol meant to be repeated by ordinary people, 0.1 degrees is the floor that still works.</p>
@@ -356,7 +356,7 @@
       <p>A 200 mW green laser is bright enough to injure an eye, so everyone on the crew wears 532 nm goggles rated OD 4 or better, and the beam is kept above head height once it is lit. The mount rides on a surveyor tripod with a leveling head, because a beam that drifts only because its platform sagged is noise you cannot take back out later. And the origin needs a small datalogger with a microSD card to timestamp the mount's weather and tilt readings, so the two ends of the run can be lined up second for second when it is over.</p>
 
       <div class="subhead">WEATHER SENSORS (BOTH ENDS)</div>
-      <p>A combined module like the BME280 reads temperature, relative humidity, and barometric pressure from one small chip, for a few dollars. Carry one at the origin, mounted at beam height on the ridge, and one on the drone at the far end. Those three numbers fix the refractivity of the air the beam crosses: N = 77.6·P/T + 3.73 × 10⁵ · e/T², where P is the pressure in hPa, T the temperature in kelvin, and e the water-vapor pressure that the humidity reading gives (Hirt et al., 2010). Logged at both ends through the run, they turn the refraction correction from an estimate into a measured quantity. Let the flight controller record the drone's and add a small datalogger at the mount; two modules and a logger cost about the price of a meal.</p>
+      <p>A combined module like the BME280 reads temperature, relative humidity, and barometric pressure from one small chip, for a few dollars. Carry one at the origin, mounted at beam height on the bluff, and one on the drone at the far end. Those three numbers fix the refractivity of the air the beam crosses: N = 77.6·P/T + 3.73 × 10⁵ · e/T², where P is the pressure in hPa, T the temperature in kelvin, and e the water-vapor pressure that the humidity reading gives (Hirt et al., 2010). Logged at both ends through the run, they turn the refraction correction from an estimate into a measured quantity. Let the flight controller record the drone's and add a small datalogger at the mount; two modules and a logger cost about the price of a meal.</p>
 
       <div class="subhead">OPTIONAL EXTRAS FOR THE REFRACTION CONTROLS</div>
       <p>The refraction section describes checks that ask for a little more gear. A second laser in another color, red at 635 nm, runs the two-color test for roughly $40 to $90. A second drone, about the price of the first, lets you fly the run in reverse at the same time. Neither is needed for a first run. Both turn a bounded estimate of the bending into a measured one, so budget for them if the early numbers come out close.</p>
@@ -374,12 +374,12 @@
   <div class="diagram">
     <svg viewBox="0 0 1000 400" xmlns="http://www.w3.org/2000/svg">
       <rect x="0"   y="0"   width="1000" height="340" fill="#f0f4fc"/>
-      <rect x="0"   y="340" width="1000" height="60"  fill="#e4ded2"/>
-      <line x1="0" y1="340" x2="1000" y2="340" stroke="#969692" stroke-width="2"/>
-      <text x="14" y="358" font-family="ui-monospace,monospace" font-size="11" fill="#969692" letter-spacing="0.1em">GROUND LEVEL</text>
+      <rect x="0"   y="340" width="1000" height="60"  fill="#cdddec"/>
+      <line x1="0" y1="340" x2="1000" y2="340" stroke="#7fa6c4" stroke-width="2"/>
+      <text x="640" y="362" font-family="ui-monospace,monospace" font-size="11" fill="#5d83a0" letter-spacing="0.1em">OPEN WATER  (LEVEL DATUM)</text>
 
-      <polygon points="60,340 100,260 160,200 220,260 260,340" fill="#c3bcac" stroke="#969692" stroke-width="1"/>
-      <text x="160" y="358" font-family="ui-monospace,monospace" font-size="10" fill="#969692" text-anchor="middle" letter-spacing="0.08em">RIDGE</text>
+      <polygon points="0,340 0,248 100,252 160,200 220,262 258,340" fill="#c3bcac" stroke="#969692" stroke-width="1"/>
+      <text x="70" y="330" font-family="ui-monospace,monospace" font-size="10" fill="#7a7468" text-anchor="middle" letter-spacing="0.08em">BLUFF / SHORE</text>
 
       <g transform="translate(160,200)">
         <line x1="-14" y1="-6" x2="0" y2="-50" stroke="#3c3c38" stroke-width="1.5"/>
@@ -445,18 +445,19 @@
 
       <text x="900" y="378" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" text-anchor="middle" letter-spacing="0.06em">DRONE</text>
     </svg>
-    <div class="dist-caption">DISTANCE BOUNDED BY LASER RANGE ON A CLEAR LOW-REFRACTION NIGHT</div>
+    <div class="dist-caption">BEAM OVER OPEN WATER  ·  DISTANCE BOUNDED BY LASER RANGE ON A CALM, LOW-REFRACTION NIGHT</div>
   </div>
 
   <div class="detail" id="diagram">
     <div class="detail-inner">
       <div class="subhead">THE GEOMETRY</div>
-      <p>The diagram is a side view. The operator stands on a ridge, high enough that the beam clears whatever terrain lies between the two ends and the horizon never enters the picture. The drone starts at the elevation of the beam.</p>
-      <p>Hold two possibilities side by side, and give each the same weight. If the surface beneath the beam is flat, the drone keeps its starting altitude the whole way. The beam runs parallel to the ground. The tilt encoder stays at zero. The clinometer reads the same angle to Polaris at the end as it did at the start.</p>
-      <p>If the surface curves away instead, the ground falls below where it began. The drone climbs to stay on the beam, because the beam is a straight line and the ground is not. The rangefinder logs the climb. The encoder logs the operator tilting up to follow. The clinometer reads a different angle to Polaris, because the drone has moved along the surface. The protocol does not decide between these in advance. It builds the apparatus that can tell them apart, and then it reads the dials.</p>
+      <p>The diagram is a side view. The operator stands on a height overlooking open water, a sea cliff or a lakeside bluff, high enough that the beam rides well clear of the surface and the horizon never enters the picture. The drone starts at the elevation of the beam and flies out over the water.</p>
+      <p>Hold two possibilities side by side, and give each the same weight. If the water beneath the beam is flat, the drone keeps its starting height above the surface the whole way. The beam runs parallel to the water. The tilt encoder stays at zero. The clinometer reads the same angle to Polaris at the end as it did at the start.</p>
+      <p>If the surface curves away instead, the water falls below where it began. The drone climbs to stay on the beam, because the beam is a straight line and the water surface is not. The rangefinder logs the climb. The encoder logs the operator tilting up to follow. The clinometer reads a different angle to Polaris, because the drone has moved along the surface. The protocol does not decide between these in advance. It builds the apparatus that can tell them apart, and then it reads the dials.</p>
 
-      <div class="subhead">WHY THE RIDGE MATTERS</div>
-      <p>Over long distances a hill or a swell in the land can block the beam, and a blocked beam ends the run. A ridge of even modest height, 50 to 200 metres, clears most of that. It also lifts the beam above the boundary layer near the ground, where the temperature gradient and the bending it causes are strongest (Young, n.d.). And it gives the equipment a platform that will not shift underneath it during the run.</p>
+      <div class="subhead">WHY HEIGHT, AND WHY WATER</div>
+      <p>Two choices of venue do real work. The first is height. A sea cliff or bluff of even modest rise, 50 to 200 metres, keeps obstructions out of the beam and lifts it above the boundary layer near the surface, where the temperature gradient and the bending it causes are strongest (Young, n.d.). It also gives the equipment a platform that will not shift during the run.</p>
+      <p>The second is water. The surface the drone measures against has to be level, or its own rise and fall reads as a curve that is not there. Land has topography, and to take that back out you would need a survey of the ground beneath the whole path, which is a map by another name. Calm water needs no survey. It settles to an equipotential surface, the very surface whose shape is in question, so the height above it is a clean reading. Where no water is reachable, a large dry lakebed is the only good substitute, flat and level for the same reason. Fire from the height, out over the water.</p>
 
       <div class="subhead">WHY EAST</div>
       <p>East keeps the beam running roughly along a line of latitude. Point the beam north or south and a latitude change rides directly into the path, tangling the variables together. East and west keep that one signal clean. East over west is arbitrary. West would do the same job.</p>
@@ -473,7 +474,7 @@
       <rect x="0" y="0" width="1000" height="400" fill="#f0f4fc"/>
       <rect x="0" y="400" width="1000" height="60" fill="#e4ded2"/>
       <line x1="0" y1="400" x2="1000" y2="400" stroke="#969692" stroke-width="2"/>
-      <text x="14" y="418" font-family="ui-monospace,monospace" font-size="11" fill="#969692" letter-spacing="0.1em">GROUND (RIDGE)</text>
+      <text x="14" y="418" font-family="ui-monospace,monospace" font-size="11" fill="#969692" letter-spacing="0.1em">ON THE BLUFF, ABOVE THE WATER</text>
 
       <!-- Polaris + clinometer -->
       <g stroke="#3c3c38" stroke-width="1.4">
@@ -515,7 +516,7 @@
       <!-- beams east -->
       <line x1="618" y1="230" x2="1000" y2="230" stroke="#1e8c50" stroke-width="2.4"/>
       <polygon points="958,230 946,225 946,235" fill="#1e8c50"/>
-      <text x="996" y="221" font-family="ui-monospace,monospace" font-size="11" fill="#1e8c50" text-anchor="end" letter-spacing="0.04em">BEAM → EAST (TO DRONE)</text>
+      <text x="996" y="221" font-family="ui-monospace,monospace" font-size="11" fill="#1e8c50" text-anchor="end" letter-spacing="0.04em">BEAM → EAST, OVER WATER (TO DRONE)</text>
       <line x1="602" y1="244" x2="1000" y2="244" stroke="#a03228" stroke-width="1" stroke-dasharray="5 4"/>
       <text x="996" y="258" font-family="ui-monospace,monospace" font-size="9" fill="#a03228" text-anchor="end">RED LASER (OPTIONAL, TWO-COLOR)</text>
 
@@ -543,12 +544,12 @@
       <line x1="528" y1="300" x2="658" y2="344" stroke="#969692" stroke-width="0.8"/>
       <text x="664" y="347" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" letter-spacing="0.04em">SURVEYOR TRIPOD + LEVELING HEAD</text>
     </svg>
-    <div class="dist-caption">SIDE VIEW  ·  THE ORIGIN STATION ON THE RIDGE  ·  THE LASER SETS THE LINE, THE REST LOG WHAT IT AND THE AIR DID</div>
+    <div class="dist-caption">SIDE VIEW  ·  THE ORIGIN STATION ON THE BLUFF  ·  THE LASER SETS THE LINE, THE REST LOG WHAT IT AND THE AIR DID</div>
   </div>
 
   <div class="detail" id="laserstation">
     <div class="detail-inner">
-      <p>A side view of the operator's station on the ridge. The laser sets the line. Every other instrument either logs what the laser and the air did, or fixes the latitude the run started from.</p>
+      <p>A side view of the operator's station on the bluff above the water. The laser sets the line. Every other instrument either logs what the laser and the air did, or fixes the latitude the run started from.</p>
 
       <div class="subhead">GREEN LASER (532 NM)</div>
       <p>The instrument the whole rig answers to. It fires east and holds its line, and the drone follows the light, not a heading. A compass points the first shot east, then comes off the mount. From there nothing about the path comes from a map or a compass.</p>
@@ -581,9 +582,9 @@
   <div class="diagram">
     <svg viewBox="0 0 1000 460" xmlns="http://www.w3.org/2000/svg">
       <rect x="0" y="0" width="1000" height="400" fill="#f0f4fc"/>
-      <rect x="0" y="400" width="1000" height="60" fill="#e4ded2"/>
-      <line x1="0" y1="400" x2="1000" y2="400" stroke="#969692" stroke-width="2"/>
-      <text x="14" y="418" font-family="ui-monospace,monospace" font-size="11" fill="#969692" letter-spacing="0.1em">GROUND</text>
+      <rect x="0" y="400" width="1000" height="60" fill="#cdddec"/>
+      <line x1="0" y1="400" x2="1000" y2="400" stroke="#7fa6c4" stroke-width="2"/>
+      <text x="14" y="418" font-family="ui-monospace,monospace" font-size="11" fill="#5d83a0" letter-spacing="0.1em">WATER (LEVEL DATUM)</text>
 
       <!-- incoming beam from origin (west) -->
       <line x1="0" y1="236" x2="430" y2="236" stroke="#1e8c50" stroke-width="2.4"/>
@@ -654,9 +655,9 @@
 
       <line x1="506" y1="262" x2="604" y2="358" stroke="#969692" stroke-width="0.8"/>
       <text x="610" y="354" font-family="ui-monospace,monospace" font-size="10" fill="#a06e14" letter-spacing="0.04em">OPTICAL FLOW + RANGEFINDER</text>
-      <text x="610" y="368" font-family="ui-monospace,monospace" font-size="9" fill="#969692">looks down: ground texture + height</text>
+      <text x="610" y="368" font-family="ui-monospace,monospace" font-size="9" fill="#969692">looks down: height to water (+ surface texture)</text>
     </svg>
-    <div class="dist-caption">SIDE VIEW  ·  DRONE FLYING EAST  ·  EACH INSTRUMENT POINTS AT ONE THING: THE BEAM, THE GROUND, OR THE AIR</div>
+    <div class="dist-caption">SIDE VIEW  ·  DRONE FLYING EAST  ·  EACH INSTRUMENT POINTS AT ONE THING: THE BEAM, THE WATER, OR THE AIR</div>
   </div>
 
   <div class="detail" id="dronelayout">
@@ -667,10 +668,10 @@
       <p>The sensor faces back along the beam, toward the origin in the west. Four photodiodes around a center aperture read the light; when all four match, the beam is centered, and keeping them matched is the flight controller's whole job. Mounting it at the rear keeps it square to the incoming beam through the run.</p>
 
       <div class="subhead">RETROREFLECTOR (REAR)</div>
-      <p>Beside the sensor, a retroreflector sends part of the beam straight back to the origin. That return is what the operator's encoder tracks for the tilt reading, Measurement 3, and it lets a reciprocal refraction check work from the ground end.</p>
+      <p>Beside the sensor, a retroreflector sends part of the beam straight back to the origin. That return is what the operator's encoder tracks for the tilt reading, Measurement 3, and it lets a reciprocal refraction check work from the origin end.</p>
 
       <div class="subhead">OPTICAL FLOW + RANGEFINDER (UNDERSIDE)</div>
-      <p>Both look straight down. The optical-flow camera reads the texture of the ground sliding past to count the real distance traveled, and the laser rangefinder reads the height to the ground, which is Measurement 2. Neither asks anything of a satellite.</p>
+      <p>Both look straight down. The laser rangefinder reads the height to the water, which is Measurement 2 and the reading that matters. The optical-flow camera counts distance from the surface texture sliding past, though calm water gives it little to track; on a glassy night the distance is carried instead by markers set at measured ranges. Neither asks anything of a satellite.</p>
 
       <div class="subhead">WEATHER SENSOR (TOP MAST)</div>
       <p>Temperature, humidity, and pressure ride on a short mast above the body, up out of the rotor wash where the air is still the air the beam crossed. Those readings fix the refractivity at the drone's end, and sampled at two heights, the vertical gradient that bends the light.</p>
@@ -704,7 +705,7 @@
       <div class="t2">LASER EAST</div>
       <hr>
       <ul>
-        <li>Mount laser on ridge.</li>
+        <li>Mount laser on bluff.</li>
         <li>Lock horizontal axis east.</li>
         <li>Vertical tilt only permitted.</li>
         <li>Beam is the only authority.</li>
@@ -739,7 +740,7 @@
   <div class="detail" id="procedure">
     <div class="detail-inner">
       <div class="subhead">STEP 01 — RECORDING ALPHA</div>
-      <p>Operator and drone start at the same spot on the ridge. One Polaris reading is taken with both parties standing there to witness it. That removes any argument about the baseline later, because no one is taking the starting number on faith. Polaris sits within about half a degree of the celestial north pole, and its height above the horizon runs close to the observer's latitude (Bowditch, 2019). That is the value the experiment watches for change.</p>
+      <p>Operator and drone start at the same spot on the bluff. One Polaris reading is taken with both parties standing there to witness it. That removes any argument about the baseline later, because no one is taking the starting number on faith. Polaris sits within about half a degree of the celestial north pole, and its height above the horizon runs close to the observer's latitude (Bowditch, 2019). That is the value the experiment watches for change.</p>
 
       <div class="subhead">STEP 02 — FIRING THE LASER EAST</div>
       <p>The horizontal axis of the mount is locked. Locked mechanically, with clamps, not locked by a promise to be careful. The vertical axis stays free, because the drone may rise or fall as it follows the beam and the operator has to follow it. The encoder writes down every vertical move.</p>
@@ -790,7 +791,7 @@
     </div>
 
     <div class="meas">
-      <div class="label">MEASUREMENT 2  —  DRONE ALTITUDE ABOVE GROUND  (logged continuously)</div>
+      <div class="label">MEASUREMENT 2  —  DRONE ALTITUDE ABOVE WATER  (logged continuously)</div>
       <div class="row">
         <div class="cell teal">
           <div class="letter">A</div>
@@ -804,7 +805,7 @@
           <div class="eq">ALTITUDE RISES</div>
           <hr>
           <div class="l1">Drone climbed steadily.</div>
-          <div class="l2">Ground fell away below the beam.</div>
+          <div class="l2">Water fell away below the beam.</div>
         </div>
         <div class="cell purple">
           <div class="letter">C</div>
@@ -848,22 +849,22 @@
     <div class="detail-inner">
       <div class="subhead">WHY THREE MEASUREMENTS AND NOT ONE</div>
       <p>Any one instrument can lie. A clinometer can be miscalibrated. A rangefinder can carry a software bias. An encoder can slip a tooth. One number, on its own, is hard to trust and easy to argue with.</p>
-      <p>So log three. Three quantities from three unrelated physical principles: the angle to a star, the distance to the ground, the pitch of a mounted laser. If a real signal is there, all three carry it, and they carry it the same way. If one of them wanders off from the other two, the suspect is that instrument or that step, not the world. The experiment checks itself.</p>
+      <p>So log three. Three quantities from three unrelated physical principles: the angle to a star, the height above the water, the pitch of a mounted laser. If a real signal is there, all three carry it, and they carry it the same way. If one of them wanders off from the other two, the suspect is that instrument or that step, not the world. The experiment checks itself.</p>
 
       <div class="subhead">MEASUREMENT 1 — POLARIS ANGLE</div>
       <p>Polaris sits within about half a degree of the celestial north pole, and its height above the horizon tracks the observer's latitude (Bowditch, 2019). A change in that angle from start to end is a change in latitude, a step north or south across the surface.</p>
       <p>This one comes with a caveat, and it is fair to state it plainly: people who hold different models of the sky read a star's angle differently. So the weight here does not rest on Polaris alone. It rests on whether Polaris agrees with Measurements 2 and 3.</p>
 
-      <div class="subhead">MEASUREMENT 2 — DRONE ALTITUDE ABOVE GROUND</div>
-      <p>This is the plainest of the three. The drone follows a straight beam of light. If the ground stays the same distance below the beam for the whole flight, the surface is flat across that span. If the ground falls away from the beam, the surface curves across it. The reading does not depend on which way the result comes out. It only reports the distance.</p>
-      <p>No star to interpret. No claim about how light travels through space. A rangefinder pointed down, logging the height to the ground, second after second, for the length of the flight.</p>
+      <div class="subhead">MEASUREMENT 2 — DRONE ALTITUDE ABOVE WATER</div>
+      <p>This is the plainest of the three. The drone follows a straight beam of light. If the water stays the same distance below the beam for the whole flight, the surface is flat across that span. If the water falls away from the beam, the surface curves across it. The reading does not depend on which way the result comes out. It only reports the distance.</p>
+      <p>No star to interpret. No claim about how light travels through space. A rangefinder pointed down, logging the height to the water, second after second, for the length of the flight.</p>
 
       <div class="subhead">MEASUREMENT 3 — LASER TILT ANGLE</div>
       <p>Measurement 3 is Measurement 2 read from the far end of the beam. If the drone climbs, the operator tilts the laser up to keep it lit, and the encoder records the tilt. The total change in tilt is the angle the drone's altitude change subtends back at the mount.</p>
       <p>Because it watches the same thing from the other side, it is a cross-check on the second reading. If altitude says the drone rose 600 feet and tilt says it rose 100, one of the two instruments is wrong, and the run waits until you find out which.</p>
 
       <div class="subhead">READING THE RESULTS</div>
-      <p>Take the three outcomes at face value, without deciding ahead of time which one you hope to see. Outcome A across all three is a flat reading over the run: the surface held level beneath the beam. Outcome B across all three is a curved reading, the ground falling away in the direction a sphere would produce. Outcome C is the surprising case: Polaris higher than it started, or the ground rising toward the beam rather than falling away. That pattern is not predicted by either a level or a curved surface, so it points back at the setup, not outward at a conclusion.</p>
+      <p>Take the three outcomes at face value, without deciding ahead of time which one you hope to see. Outcome A across all three is a flat reading over the run: the surface held level beneath the beam. Outcome B across all three is a curved reading, the water falling away in the direction a sphere would produce. Outcome C is the surprising case: Polaris higher than it started, or the water rising toward the beam rather than falling away. That pattern is not predicted by either a level or a curved surface, so it points back at the setup, not outward at a conclusion.</p>
       <p>The result that matters is agreement. When the three readings line up, you have a measurement worth reporting, whatever it says. When they disagree, the run is telling you something was off, and the answer is to fix it and run again, not to pick the number you liked best.</p>
     </div>
   </div>
@@ -889,14 +890,14 @@
       <p>Refraction depends on color. Red light bends less than blue through the same air (Young, n.d.). Fly a red beam and a green beam to the same drone at once. If refraction is present, the two will not agree, in their tilt or in where they fall, and the size of the disagreement is the size of the refraction. If they sit on top of each other, refraction is negligible. Either way, two colors measure the effect instead of assuming it.</p>
 
       <div class="subhead">CHOOSE THE NIGHT CAREFULLY</div>
-      <p>Refraction is worst in the thin layer near the ground, where the temperature gradient is steepest (Young, n.d.). A cold, clear, dry night flattens that gradient. The ridge mount lifts the beam up out of the worst of the layer. And sunrise and sunset are the hours to avoid, when the air near the ground is heating or cooling fastest.</p>
+      <p>Refraction is worst in the thin layer just above the surface, where the temperature gradient is steepest (Young, n.d.). Over water that gradient is driven by the gap between the water and the air, so the nights to want are the ones where the two sit close together, often overcast and settled, rather than a clear night that lets the air cool far below the water and stand up a strong gradient. Firing from the height lifts the beam up out of the worst of that layer. And sunrise and sunset are the hours to avoid, when the surface is heating or cooling fastest.</p>
 
       <div class="subhead">REVERSE THE EXPERIMENT</div>
       <p>Run it backward too. Fire from the far point back to the origin, with a second drone going the other way. If both directions show the same altitude pattern, the refraction is symmetric and mostly cancels. If the two directions disagree, you have either an instrument fault or air that is not the same coming and going, and either one is worth chasing down before you draw a line under the result.</p>
 
       <div class="subhead">THE HONEST LIMIT</div>
-      <p>You cannot remove refraction without a vacuum, and there is no vacuum out here. What you can do is bound it, measure it, and correct for it until the leftover is small next to the signal. A two-color run, from a high ridge, on a cold clear night, checked in both directions, drives the refraction contribution well under the curvature contribution at moderate range. State the residual that remains. Do not report it as zero.</p>
-      <p>It also helps to know that refraction has no fixed direction. Its sign and size depend on the vertical temperature profile on the night, not on any model of the surface. In common, well-mixed air it bends light slightly <em>downward</em>, so a distant object sits a little higher than bare geometry alone would place it. Over a strongly heated surface the gradient reverses and it bends light <em>upward</em>, so the object sinks and more of it is lost (an inferior mirage). Over a cold surface under an inversion it can bend much more than usual, lifting into view objects that geometry would hide (looming and ducting) (Young, n.d.). Because it runs both ways, neither a flat reading nor a curved one can be charged to refraction by simply asserting it after the fact. That is the whole reason for the two-color run, the reversal, and the ridge mount: they turn refraction into a number measured on the night and stated as a residual, rather than a correction either side reaches for when the result is inconvenient.</p>
+      <p>You cannot remove refraction without a vacuum, and there is no vacuum out here. What you can do is bound it, measure it, and correct for it until the leftover is small next to the signal. A two-color run, from a height above the water, on a settled night, checked in both directions, drives the refraction contribution well under the curvature contribution at moderate range. State the residual that remains. Do not report it as zero.</p>
+      <p>It also helps to know that refraction has no fixed direction. Its sign and size depend on the vertical temperature profile on the night, not on any model of the surface. In common, well-mixed air it bends light slightly <em>downward</em>, so a distant object sits a little higher than bare geometry alone would place it. Over a strongly heated surface the gradient reverses and it bends light <em>upward</em>, so the object sinks and more of it is lost (an inferior mirage). Over a cold surface under an inversion it can bend much more than usual, lifting into view objects that geometry would hide (looming and ducting) (Young, n.d.). Because it runs both ways, neither a flat reading nor a curved one can be charged to refraction by simply asserting it after the fact. That is the whole reason for the two-color run, the reversal, and firing from a height over water: they turn refraction into a number measured on the night and stated as a residual, rather than a correction either side reaches for when the result is inconvenient.</p>
     </div>
   </div>
 
