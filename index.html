@@ -417,11 +417,28 @@ function fitLaser(){
 }
 
 function fitObs(){
+  const R=effR(S.k),d0=S.d0,hT=S.hT,h0=S.h0;
+  V.cx=0;
+  // Multi-target lineup: choose the zoom so the receding row spans ~70% of the width.
+  // (drawObserverMulti spaces targets ~1.8x the nearest target's pixel height apart, so
+  //  size V.s against that spacing to keep the whole row in frame and proportioned.)
+  if(S.extra.length>0){
+    const dists=[...S.extra,d0].filter(d=>d>0);
+    const n=dists.length,near=Math.min(...dists);
+    const drop=dropArc(near,R),slant=Math.sqrt(near*near+(h0-drop)*(h0-drop));
+    const hHidN=hHide(near,h0,R),hVisN=Math.max(0,hT-hHidN);
+    const angH=Math.max((hVisN>0?Math.atan2(hVisN,slant):0)+(hHidN>0?Math.atan2(hHidN,slant):0),1e-4);
+    // Frame the nearest target by whichever is tighter: ~35% of height, or the row (spaced 1.3x
+    // its height) spanning ~70% of width. Keeps both a 2-rig and a 6-tower lineup in frame.
+    const maxHpx=n>1?Math.min(H*0.35,(W*0.7)/(1.3*(n-1))):H*0.45;
+    V.s=maxHpx/angH;
+    S.focal=focalFromScale();
+    const fi=document.getElementById('iFocal');if(fi)fi.value=Math.round(S.focal);
+    return;
+  }
   const fovRad=2*Math.atan(S.sensor/(2*S.focal));
   V.s=W/fovRad;
-  V.cx=0;
   // Center vertically on the midpoint between horizon (0) and visible target top
-  const R=effR(S.k),d0=S.d0,hT=S.hT,h0=S.h0;
   const hHid=hHide(d0,h0,R);
   const hVis=Math.max(0,hT-hHid);
   const dE=dropArc(d0,R);
@@ -1415,6 +1432,8 @@ function renderObserver(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
 
   // Resolve callout overlaps and draw
   flushCallouts();
+  // fitObs may have changed the focal length to frame a multi-target lineup; refresh the readout
+  updateSummary();
 }
 
 // Observer-view multi-target lineup: a row of identical objects at increasing distance,
@@ -1422,30 +1441,37 @@ function renderObserver(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
 function drawObserverMulti(R,h0,hT,d0,hrz,ay){
   const dists=[...S.extra,d0].filter(d=>d>0).sort((a,b)=>a-b);
   const n=dists.length;
-  const step=Math.min(W*0.14,(W*0.82)/Math.max(n,1));
-  const startX=W/2-step*(n-1)/2;
-  for(let i=0;i<n;i++){
-    const di=dists[i];
+  // Per-target geometry first, so spacing can scale with the rendered (pixel) heights.
+  const rigs=dists.map(di=>{
     const drop=dropArc(di,R);
     const slant=Math.sqrt(di*di+(h0-drop)*(h0-drop));
     const hHidI=hHide(di,h0,R),hVisI=Math.max(0,hT-hHidI);
     const tY=ay(hVisI>0?Math.atan2(hVisI,slant):0);
     const bY=ay(hHidI>0?-Math.atan2(hHidI,slant):0);
-    const h=Math.abs(bY-tY),w=Math.max(Math.min(h*0.35,step*0.32),2);
+    return {di,hHidI,hVisI,tY,bY,h:Math.abs(bY-tY)};
+  });
+  // Spacing and width both track the tallest (nearest) target's pixel height, so the whole
+  // lineup scales uniformly with zoom instead of stretching vertically.
+  const maxH=Math.max(...rigs.map(r=>r.h),6);
+  const step=maxH*1.3;
+  const startX=W/2-step*(n-1)/2;
+  for(let i=0;i<n;i++){
+    const r=rigs[i];
+    const w=Math.max(r.h*0.35,2);
     const cx=startX+i*step;
     // Visible part above the horizon
     ctx.save();ctx.beginPath();ctx.rect(0,0,W,hrz-0.5);ctx.clip();
-    drawTargetShapeObs(cx,tY,bY,hrz,w,h,S.type,hHidI,hVisI,hT);
+    drawTargetShapeObs(cx,r.tY,r.bY,hrz,w,r.h,S.type,r.hHidI,r.hVisI,hT);
     ctx.restore();
     // Hidden part below the horizon, washed red
-    if(hHidI>0){
+    if(r.hHidI>0){
       ctx.save();ctx.beginPath();ctx.rect(0,hrz,W,H-hrz);ctx.clip();
-      ctx.globalAlpha=0.3;drawTargetShapeObs(cx,tY,bY,hrz,w,h,S.type,hHidI,hVisI,hT);ctx.globalAlpha=1;
-      ctx.fillStyle='rgba(255,60,60,0.22)';ctx.fillRect(cx-w*1.7,hrz,w*3.4,bY-hrz);
+      ctx.globalAlpha=0.3;drawTargetShapeObs(cx,r.tY,r.bY,hrz,w,r.h,S.type,r.hHidI,r.hVisI,hT);ctx.globalAlpha=1;
+      ctx.fillStyle='rgba(255,60,60,0.22)';ctx.fillRect(cx-w*1.7,hrz,w*3.4,r.bY-hrz);
       ctx.restore();
     }
-    sLabel(cx,H-46,fmtD(di),'#9ab',9);
-    if(hHidI>0)sLabel(cx,H-34,'−'+fmtH(hHidI),'#ff8a8a',8);
+    sLabel(cx,H-46,fmtD(r.di),'#9ab',9);
+    if(r.hHidI>0)sLabel(cx,H-34,'−'+fmtH(r.hHidI),'#ff8a8a',8);
   }
   screenCallout(W/2,hrz,[
     {text:n+' identical targets, '+fmtH(hT)+' each',color:'#00f2fe'},
