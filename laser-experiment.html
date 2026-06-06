@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A reproducible DIY field protocol: a drone follows a horizontal laser beam to measure whether the surface beneath it curves, cross-checked by Polaris angle, drone altitude, and laser tilt.">
+<title>Laser Beam Follow Experiment — A Field Protocol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,700;1,400&family=Jura:wght@500&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23fcfbf8'/%3E%3Cline x1='4' y1='22' x2='28' y2='16' stroke='%23a06e14' stroke-width='2' stroke-dasharray='3 2'/%3E%3Ccircle cx='28' cy='16' r='2.5' fill='%23a03228'/%3E%3Cpolygon points='4,28 9,20 14,28' fill='%23c3bcac'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #fcfbf8;
+    --ink: #121210;
+    --ink-l: #3c3c38;
+    --ink-ll: #646460;
+    --ink-lll: #969692;
+    --rule: #c8c6c0;
+    --rule-2: #e1dfda;
+    --gold: #a06e14;
+    --amber: #aa7312;
+    --cold: #2d64a5;
+    --green: #1e8c50;
+    --red-d: #a03228;
+    --pink: #a03c6e;
+    --teal: #197872;
+    --coral: #af4132;
+    --purple: #5f469b;
+    --teal-f: #ebf8f5;
+    --coral-f: #fceeeb;
+    --purple-f: #f2eefc;
+    --gold-f: #fcf6e4;
+    --cold-f: #e8f2fc;
+    --green-f: #e8f8ee;
+    --expand-bg: #f5f3ec;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 40px 20px;
+    background: #ebe9e3;
+    font-family: 'IBM Plex Mono', ui-monospace, 'Courier New', monospace;
+    color: var(--ink);
+  }
+
+  .poster {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: var(--bg);
+    padding: 60px 70px;
+    border: 1px solid var(--rule);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    position: relative;
+  }
+
+  .poster::before {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border: 1px solid var(--rule-2);
+    pointer-events: none;
+  }
+
+  .title-block { text-align: center; margin-bottom: 18px; }
+  .title-block h1 {
+    font-family: 'IBM Plex Serif', Georgia, serif;
+    font-size: 56px; font-weight: 700; line-height: 1.05;
+    letter-spacing: -0.02em; margin: 0;
+  }
+  .title-block .subtitle {
+    font-family: 'IBM Plex Serif', Georgia, serif; font-style: italic;
+    font-size: 22px; color: var(--ink-ll); margin-top: 14px; letter-spacing: 0.04em;
+  }
+  .tagline {
+    border-top: 1px solid var(--rule); padding-top: 14px;
+    font-size: 12px; color: var(--ink-lll); letter-spacing: 0.08em;
+  }
+
+  .section-header {
+    font-family: 'Jura', sans-serif; font-weight: 500;
+    font-size: 17px; color: var(--gold); letter-spacing: 0.06em;
+    border-top: 1px solid var(--rule); padding-top: 14px;
+    margin-top: 36px; margin-bottom: 18px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .expand-trigger {
+    font-family: ui-monospace, monospace;
+    font-size: 11px; color: var(--ink-lll);
+    cursor: pointer; user-select: none;
+    border: 1px solid var(--rule);
+    padding: 4px 10px; border-radius: 2px;
+    background: transparent; letter-spacing: 0.08em;
+    transition: all 0.15s ease;
+  }
+  .expand-trigger:hover { color: var(--gold); border-color: var(--gold); }
+
+  .detail {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.4s ease, margin 0.4s ease;
+  }
+  .detail.open { max-height: 6000px; margin-top: 14px; margin-bottom: 14px; }
+  .detail-inner {
+    background: var(--expand-bg);
+    border-left: 3px solid var(--gold);
+    padding: 22px 28px;
+    font-size: 13px; line-height: 1.7; color: var(--ink-l);
+  }
+  .detail-inner h4 {
+    font-family: 'IBM Plex Serif', Georgia, serif;
+    font-size: 17px; font-weight: 700; margin: 0 0 8px; color: var(--ink);
+  }
+  .detail-inner p { margin: 0 0 14px; }
+  .detail-inner p:last-child { margin-bottom: 0; }
+  .detail-inner .subhead {
+    color: var(--gold); font-size: 11px;
+    letter-spacing: 0.1em; font-weight: 700;
+    margin-top: 22px; margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .detail-inner .subhead:first-child { margin-top: 0; }
+
+  .equipment { position: relative; }
+  .polaris-inset {
+    position: absolute; top: -34px; right: -10px;
+    width: 130px; text-align: center;
+  }
+  .polaris-inset svg { width: 130px; height: 130px; }
+  .polaris-inset .lbl {
+    font-size: 10px; color: var(--ink-lll);
+    letter-spacing: 0.1em; margin-top: 4px;
+  }
+  .eq-list { list-style: none; padding: 0; margin: 0; font-size: 14px; }
+  .eq-list li {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 5px 0; color: var(--ink-l);
+  }
+  .eq-list li .item-text::before { content: "— "; color: var(--ink-lll); }
+  .eq-list li .cost { color: var(--amber); white-space: nowrap; margin-left: 16px; }
+  .total {
+    display: flex; justify-content: flex-end; align-items: baseline;
+    border-top: 1px solid var(--rule); padding-top: 14px;
+    margin-top: 14px; gap: 28px;
+  }
+  .total .lbl { font-size: 20px; font-weight: 700; color: var(--ink-l); letter-spacing: 0.04em; }
+  .total .val { font-size: 20px; font-weight: 700; color: var(--gold); }
+
+  .diagram { margin-top: 28px; }
+  .diagram svg { width: 100%; height: auto; display: block; }
+  .dist-caption {
+    text-align: center; font-size: 12px;
+    color: var(--ink-lll); letter-spacing: 0.08em; margin-top: 10px;
+  }
+
+  .steps {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 14px; margin-top: 28px;
+  }
+  .step {
+    border: 1px solid; border-radius: 2px;
+    padding: 16px 18px; min-height: 240px;
+  }
+  .step .num { font-size: 22px; font-weight: 700; letter-spacing: 0.04em; }
+  .step .t1, .step .t2 {
+    font-family: 'IBM Plex Serif', Georgia, serif;
+    font-size: 26px; font-weight: 400; line-height: 1.1; margin-top: 12px;
+  }
+  .step .t1 { color: var(--ink); }
+  .step hr { border: none; border-top: 1px solid var(--rule); margin: 18px 0 12px; }
+  .step ul {
+    list-style: none; padding: 0; margin: 0;
+    font-size: 12px; color: var(--ink-l); line-height: 1.7;
+  }
+
+  .step.cold  { border-color: var(--cold);   background: var(--cold-f);   }
+  .step.cold  .num, .step.cold .t2  { color: var(--cold);   }
+  .step.gold  { border-color: var(--gold);   background: var(--gold-f);   }
+  .step.gold  .num, .step.gold .t2  { color: var(--gold);   }
+  .step.green { border-color: var(--green);  background: var(--green-f);  }
+  .step.green .num, .step.green .t2 { color: var(--green);  }
+  .step.amber { border-color: var(--amber);  background: var(--gold-f);   }
+  .step.amber .num, .step.amber .t2 { color: var(--amber);  }
+
+  .results { margin-top: 36px; }
+  .results h2 {
+    font-family: 'Jura', sans-serif; font-weight: 500;
+    font-size: 17px; color: var(--gold); letter-spacing: 0.06em;
+    border-top: 1px solid var(--rule); padding-top: 14px;
+    margin: 0;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .meas { margin-top: 22px; }
+  .meas .label { font-size: 13px; color: var(--ink-ll); margin-bottom: 10px; }
+  .meas .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .meas .cell {
+    border: 1px solid; border-radius: 2px;
+    padding: 14px 18px; min-height: 100px; position: relative;
+  }
+  .meas .cell .letter {
+    font-family: 'IBM Plex Serif', Georgia, serif;
+    font-size: 32px; font-weight: 700; line-height: 1;
+  }
+  .meas .cell .eq {
+    position: absolute; top: 22px; right: 18px;
+    font-size: 13px; font-weight: 500;
+  }
+  .meas .cell hr { border: none; border-top: 1px solid var(--rule); margin: 14px 0 10px; }
+  .meas .cell .l1 { font-size: 13px; color: var(--ink-l); }
+  .meas .cell .l2 { font-size: 11px; color: var(--ink-ll); margin-top: 4px; }
+
+  .meas .cell.teal   { border-color: var(--teal);   background: var(--teal-f);   }
+  .meas .cell.teal   .eq { color: var(--teal);   }
+  .meas .cell.coral  { border-color: var(--coral);  background: var(--coral-f);  }
+  .meas .cell.coral  .eq { color: var(--coral);  }
+  .meas .cell.purple { border-color: var(--purple); background: var(--purple-f); }
+  .meas .cell.purple .eq { color: var(--purple); }
+
+  .closing-notes {
+    border-top: 1px solid var(--rule); margin-top: 32px;
+    padding-top: 16px; font-size: 12px; line-height: 1.7; color: var(--ink-ll);
+  }
+  .closing-notes .secondary { color: var(--ink-lll); }
+  .footer {
+    border-top: 1px solid var(--rule); margin-top: 28px;
+    padding-top: 14px; display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--ink-lll); letter-spacing: 0.08em;
+  }
+
+  .global-controls {
+    position: sticky; top: 20px;
+    text-align: right; margin-bottom: -32px; z-index: 10;
+  }
+  .global-controls button {
+    background: var(--bg); border: 1px solid var(--rule);
+    padding: 6px 14px;
+    font-family: ui-monospace, monospace;
+    font-size: 11px; letter-spacing: 0.08em;
+    color: var(--ink-ll); cursor: pointer; border-radius: 2px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+  .global-controls button:hover { color: var(--gold); border-color: var(--gold); }
+
+  @media (max-width: 768px) {
+    .poster { padding: 30px 24px; }
+    .title-block h1 { font-size: 36px; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .meas .row { grid-template-columns: 1fr; }
+    .polaris-inset { position: static; margin: 0 auto 20px; }
+  }
+</style>
+</head>
+<body>
+
+<article class="poster">
+
+  <div class="global-controls">
+    <button onclick="toggleAll()" id="toggleAllBtn">EXPAND ALL</button>
+  </div>
+
+  <div class="title-block">
+    <h1>LASER BEAM FOLLOW<br>EXPERIMENT</h1>
+    <div class="subtitle">— A FIELD PROTOCOL —</div>
+  </div>
+  <div class="tagline">NO MAP  ·  NO COMPASS  ·  NO PROGRAMMED DIRECTION  ·  THE BEAM IS THE ONLY GUIDE</div>
+
+  <div class="section-header">
+    <span>ABOUT THIS EXPERIMENT</span>
+    <button class="expand-trigger" onclick="toggleDetail('about')">EXPAND ▾</button>
+  </div>
+  <div class="detail" id="about">
+    <div class="detail-inner">
+      <h4>What this experiment measures</h4>
+      <p>A laser fires horizontally east from a fixed mount on a ridge. A drone equipped with a quadrant beam sensor flies downrange, correcting its position to keep the beam centered on its sensor. The drone has no compass, no map, no programmed direction. It only knows whether the beam is centered. Wherever the beam goes, the drone goes.</p>
+
+      <h4>What this experiment proves and doesn't prove</h4>
+      <p>This is not a single decisive test of Earth's shape. It is a controlled measurement of three independent variables — Polaris angle, drone altitude above ground, and laser tilt angle — across a measured baseline distance. The pattern across all three readings tells you what the surface did underneath the beam path.</p>
+      <p>A single run does not settle the question. Repeat runs in different atmospheric conditions, at different latitudes, and in different seasons strengthen the evidence considerably. The protocol is reproducible by anyone with a few hundred dollars in equipment and access to open terrain.</p>
+
+      <div class="subhead">WHY USE A DRONE INSTEAD OF A PERSON</div>
+      <p>A human walker introduces dozens of micro-decisions per second — pace, gait, where to step around obstacles, how to interpret a dim signal. The drone has one instruction: keep the beam centered on the sensor. The flight controller corrects mechanically without interpretation, removing observer bias from the experiment entirely.</p>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span>EQUIPMENT</span>
+    <button class="expand-trigger" onclick="toggleDetail('equipment')">EXPAND ▾</button>
+  </div>
+
+  <div class="equipment">
+    <div class="polaris-inset">
+      <svg viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="65" cy="65" r="62" fill="#ebf0f8" stroke="#c8c6c0" stroke-width="1"/>
+        <circle cx="80" cy="40"  r="1.5" fill="#3c3c38"/>
+        <circle cx="44" cy="50"  r="1"   fill="#3c3c38"/>
+        <circle cx="92" cy="64"  r="1"   fill="#3c3c38"/>
+        <circle cx="65" cy="40"  r="3" fill="#a06e14"/>
+        <line x1="10" y1="92" x2="120" y2="92" stroke="#969692" stroke-width="1"/>
+        <line x1="65" y1="92" x2="110" y2="48" stroke="#2d64a5" stroke-width="1.6"/>
+        <text x="113" y="50" font-family="ui-monospace,monospace" font-size="9" fill="#2d64a5">α</text>
+        <line x1="65" y1="92" x2="113" y2="62" stroke="#1e8c50" stroke-width="1.6"/>
+        <text x="116" y="64" font-family="ui-monospace,monospace" font-size="9" fill="#1e8c50">β</text>
+      </svg>
+      <div class="lbl">POLARIS REFERENCE</div>
+    </div>
+
+    <ul class="eq-list">
+      <li><span class="item-text">High-power green laser  532 nm  200mW+</span><span class="cost">$80 – $150</span></li>
+      <li><span class="item-text">Motorised pan/tilt mount with tilt encoder</span><span class="cost">$80 – $250</span></li>
+      <li><span class="item-text">Drone frame + flight controller + motors + ESC</span><span class="cost">$150 – $300</span></li>
+      <li><span class="item-text">Quadrant beam sensor  retroreflector + detector array</span><span class="cost">$40 – $100</span></li>
+      <li><span class="item-text">Optical flow + downward rangefinder  distance + altitude</span><span class="cost">$30 – $60</span></li>
+      <li><span class="item-text">Digital clinometer  0.1 degree resolution</span><span class="cost">$30 – $65</span></li>
+      <li><span class="item-text">Surveyor measuring wheel  backup distance log</span><span class="cost">$20 – $50</span></li>
+      <li><span class="item-text">Walkie-talkies  operator to chase crew</span><span class="cost">$25 – $50</span></li>
+      <li><span class="item-text">Miscellaneous  batteries  cable ties  notebook</span><span class="cost">$30 – $60</span></li>
+    </ul>
+
+    <div class="total">
+      <span class="lbl">TOTAL ESTIMATE</span>
+      <span class="val">$485 – $1,085</span>
+    </div>
+  </div>
+
+  <div class="detail" id="equipment">
+    <div class="detail-inner">
+      <div class="subhead">532 NM GREEN LASER</div>
+      <p>Green wavelengths are the brightest visible light per watt of power and remain visible in clear air at long range. Silicon photodiodes — the kind used in the drone's quadrant sensor — are sensitive to 532 nm. A 200mW unit is the practical floor for daytime visibility at distance; 500mW is better for ranges beyond 5 miles. Higher powers exist but require eye-safety protocols and may be regulated.</p>
+
+      <div class="subhead">MOTORISED PAN/TILT MOUNT</div>
+      <p>The mount must lock the horizontal (yaw) axis absolutely while allowing free vertical (pitch) movement. A tilt encoder logs the pitch angle continuously — this is the source of Measurement 3. Quality matters: cheap mounts have backlash that introduces angular noise comparable to the signal you are looking for. Look for backlash under 0.05 degrees.</p>
+
+      <div class="subhead">QUADRANT BEAM SENSOR</div>
+      <p>Four photodiodes arranged in a cross around a central aperture. When the beam strikes the center, all four read equal intensity. When the beam drifts up, the top two read brighter. The differential signal tells the flight controller which way to correct. This is the elegant part of the design — the drone never needs to know which direction is east. It only needs to keep all four photodiodes balanced.</p>
+
+      <div class="subhead">OPTICAL FLOW + DOWNWARD RANGEFINDER</div>
+      <p>Combined modules like the Matek 3901-L0X include both a downward-pointing camera (for GPS-independent position tracking via ground texture) and a laser rangefinder (for altitude above ground). One module gives you distance traveled along the path AND the continuous altitude reading needed for Measurement 2. Crucially, this is fully independent of GPS or any satellite system; it measures the ground directly.</p>
+
+      <div class="subhead">CLINOMETER</div>
+      <p>A digital inclinometer accurate to 0.1 degrees is sufficient to detect Polaris angle changes corresponding to roughly 7 miles of north/south displacement. Sub-arcminute precision is achievable with sextants but adds cost and skill requirements. The 0.1 degree resolution is the practical floor for a reproducible amateur protocol.</p>
+
+      <div class="subhead">PRICE SOURCES</div>
+      <p>Laser prices verified against Zeus Lasers and Wicked Lasers consumer catalogs (June 2026). Drone components priced from common F450 kit suppliers. Sensor and mount prices from Aliexpress, eBay surveying equipment, and Banggood industrial listings. The range reflects bottom-of-market viable equipment to mid-tier prosumer. Going higher buys precision and reliability, not capability.</p>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span>SETUP DIAGRAM</span>
+    <button class="expand-trigger" onclick="toggleDetail('diagram')">EXPAND ▾</button>
+  </div>
+
+  <div class="diagram">
+    <svg viewBox="0 0 1000 400" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0"   y="0"   width="1000" height="340" fill="#f0f4fc"/>
+      <rect x="0"   y="340" width="1000" height="60"  fill="#e4ded2"/>
+      <line x1="0" y1="340" x2="1000" y2="340" stroke="#969692" stroke-width="2"/>
+      <text x="14" y="358" font-family="ui-monospace,monospace" font-size="11" fill="#969692" letter-spacing="0.1em">GROUND LEVEL</text>
+
+      <polygon points="60,340 100,260 160,200 220,260 260,340" fill="#c3bcac" stroke="#969692" stroke-width="1"/>
+      <text x="160" y="358" font-family="ui-monospace,monospace" font-size="10" fill="#969692" text-anchor="middle" letter-spacing="0.08em">RIDGE</text>
+
+      <g transform="translate(160,200)">
+        <line x1="-14" y1="-6" x2="0" y2="-50" stroke="#3c3c38" stroke-width="1.5"/>
+        <line x1="0"   y1="-6" x2="0" y2="-50" stroke="#3c3c38" stroke-width="1.5"/>
+        <line x1="14"  y1="-6" x2="0" y2="-50" stroke="#3c3c38" stroke-width="1.5"/>
+        <rect x="-18" y="-58" width="36" height="10" fill="#dcdad0" stroke="#3c3c38" stroke-width="1"/>
+        <rect x="-12" y="-72" width="44" height="10" fill="#646460" stroke="#3c3c38" stroke-width="1"/>
+        <g transform="translate(0,-104)">
+          <circle cx="0" cy="0" r="9" fill="none" stroke="#3c3c38" stroke-width="1.5"/>
+          <line x1="0" y1="9"  x2="0"   y2="40" stroke="#3c3c38" stroke-width="1.5"/>
+          <line x1="0" y1="19" x2="14"  y2="11" stroke="#3c3c38" stroke-width="1.5"/>
+          <line x1="0" y1="19" x2="-12" y2="22" stroke="#3c3c38" stroke-width="1.5"/>
+          <line x1="0" y1="40" x2="-9"  y2="60" stroke="#3c3c38" stroke-width="1.5"/>
+          <line x1="0" y1="40" x2="9"   y2="60" stroke="#3c3c38" stroke-width="1.5"/>
+        </g>
+      </g>
+      <text x="160" y="378" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" text-anchor="middle" letter-spacing="0.06em">OPERATOR</text>
+
+      <defs>
+        <linearGradient id="beamGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%"   stop-color="#a06e14" stop-opacity="0"/>
+          <stop offset="50%"  stop-color="#a06e14" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#a06e14" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <line x1="192" y1="138" x2="900" y2="138" stroke="url(#beamGlow)" stroke-width="10"/>
+      <line x1="192" y1="138" x2="900" y2="138" stroke="#a06e14" stroke-width="1.8" stroke-dasharray="10 4"/>
+      <polygon points="900,138 880,131 880,145" fill="#a06e14"/>
+      <text x="546" y="128" font-family="ui-monospace,monospace" font-size="11" fill="#646460" text-anchor="middle" letter-spacing="0.06em">LASER BEAM — EAST — STRAIGHT LINE OF LIGHT</text>
+
+      <line x1="210" y1="146" x2="210" y2="170" stroke="#2d64a5" stroke-width="1"/>
+      <text x="220" y="174" font-family="ui-monospace,monospace" font-size="11" fill="#2d64a5" letter-spacing="0.04em">HORIZONTAL AXIS LOCKED — TILT ANGLE LOGGED</text>
+
+      <g transform="translate(900,138)">
+        <g>
+          <circle cx="-26" cy="-12" r="10" fill="none" stroke="#646460" stroke-width="1.5"/>
+          <line x1="-34" y1="-12" x2="-18" y2="-12" stroke="#646460" stroke-width="1.5"/>
+          <line x1="-26" y1="-20" x2="-26" y2="-4"  stroke="#646460" stroke-width="1.5"/>
+          <circle cx="26"  cy="-12" r="10" fill="none" stroke="#646460" stroke-width="1.5"/>
+          <line x1="18"  y1="-12" x2="34" y2="-12" stroke="#646460" stroke-width="1.5"/>
+          <line x1="26"  y1="-20" x2="26" y2="-4"  stroke="#646460" stroke-width="1.5"/>
+        </g>
+        <rect x="-18" y="-6" width="36" height="14" fill="#ebe7df" stroke="#646460" stroke-width="1.5"/>
+        <rect x="-27" y="-3" width="9"  height="9"  fill="#a03228" stroke="#7e1e16" stroke-width="0.6"/>
+        <circle cx="-22" cy="2"  r="11" fill="#a06e14" opacity="0.18"/>
+        <circle cx="-22" cy="2"  r="6"  fill="#a06e14" opacity="0.4"/>
+      </g>
+
+      <line x1="900" y1="155" x2="900" y2="340" stroke="#a03c6e" stroke-width="1"/>
+      <g stroke="#a03c6e" stroke-width="1">
+        <line x1="895" y1="180" x2="905" y2="180"/>
+        <line x1="895" y1="210" x2="905" y2="210"/>
+        <line x1="895" y1="240" x2="905" y2="240"/>
+        <line x1="895" y1="270" x2="905" y2="270"/>
+        <line x1="895" y1="300" x2="905" y2="300"/>
+        <line x1="895" y1="330" x2="905" y2="330"/>
+      </g>
+      <text x="912" y="250" font-family="ui-monospace,monospace" font-size="10" fill="#a03c6e" letter-spacing="0.06em">ALT.</text>
+      <text x="912" y="262" font-family="ui-monospace,monospace" font-size="10" fill="#a03c6e" letter-spacing="0.06em">LOGGED</text>
+
+      <text x="884" y="86"  font-family="ui-monospace,monospace" font-size="10" fill="#1e8c50" text-anchor="end" letter-spacing="0.04em">SENSOR LIT   HOLD COURSE</text>
+      <text x="884" y="106" font-family="ui-monospace,monospace" font-size="10" fill="#a03228" text-anchor="end" letter-spacing="0.04em">SENSOR DIMS  CORRECT N/S</text>
+
+      <text x="900" y="378" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" text-anchor="middle" letter-spacing="0.06em">DRONE</text>
+    </svg>
+    <div class="dist-caption">DISTANCE BOUNDED BY LASER RANGE ON A CLEAR LOW-REFRACTION NIGHT</div>
+  </div>
+
+  <div class="detail" id="diagram">
+    <div class="detail-inner">
+      <div class="subhead">THE GEOMETRY</div>
+      <p>The diagram shows a side view of the experiment. The operator stands on a ridge — high enough that the laser clears any intermediate terrain and the horizon is not a factor. The drone hovers at the same elevation as the beam at the start.</p>
+      <p>If the surface beneath the beam is flat, the drone holds its starting altitude throughout the flight. The beam stays parallel to the ground. The tilt encoder reports zero. The clinometer reads the same angle to Polaris at the end as at the start.</p>
+      <p>If the surface beneath the beam curves away, the ground drops below where it began. The drone must climb to stay on the beam — because the beam is a straight line and the surface is not. The downward rangefinder logs the climb. The tilt encoder logs the operator tilting upward to track the climbing drone. The clinometer reads a different angle to Polaris because the drone has displaced along the surface.</p>
+
+      <div class="subhead">WHY THE RIDGE MATTERS</div>
+      <p>Beam-blocking by intervening terrain is a real problem at long range. A ridge of even modest height — 50 to 200 metres — clears most natural obstructions and puts the beam well above the boundary layer where thermal refraction is strongest. The ridge also gives the operator and equipment a stable platform that won't shift during the run.</p>
+
+      <div class="subhead">WHY EAST</div>
+      <p>East was chosen because it keeps the beam roughly tangent to a latitude line if the surface is curved. North or south would introduce latitude change directly into the beam path, mixing variables. East-west keeps the curvature signal geometrically clean. The choice of east specifically (rather than west) is arbitrary — west would work identically.</p>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span>PROCEDURE</span>
+    <button class="expand-trigger" onclick="toggleDetail('procedure')">EXPAND ▾</button>
+  </div>
+
+  <div class="steps">
+    <div class="step cold">
+      <div class="num">01</div>
+      <div class="t1">RECORD</div>
+      <div class="t2">ALPHA</div>
+      <hr>
+      <ul>
+        <li>Point clinometer at Polaris.</li>
+        <li>Both witness the same reading.</li>
+        <li>Record angle above horizon.</li>
+        <li>ALPHA = ____ degrees</li>
+      </ul>
+    </div>
+    <div class="step gold">
+      <div class="num">02</div>
+      <div class="t1">FIRE</div>
+      <div class="t2">LASER EAST</div>
+      <hr>
+      <ul>
+        <li>Mount laser on ridge.</li>
+        <li>Lock horizontal axis east.</li>
+        <li>Vertical tilt only permitted.</li>
+        <li>Beam is the only authority.</li>
+      </ul>
+    </div>
+    <div class="step green">
+      <div class="num">03</div>
+      <div class="t1">FOLLOW</div>
+      <div class="t2">THE BEAM</div>
+      <hr>
+      <ul>
+        <li>Drone corrects to beam only.</li>
+        <li>No compass. No heading. No map.</li>
+        <li>Log altitude continuously.</li>
+        <li>Stop at agreed distance.</li>
+      </ul>
+    </div>
+    <div class="step amber">
+      <div class="num">04</div>
+      <div class="t1">RECORD</div>
+      <div class="t2">3 READINGS</div>
+      <hr>
+      <ul>
+        <li>Polaris angle at end position.</li>
+        <li>Final drone altitude.</li>
+        <li>Final laser tilt angle.</li>
+        <li>BETA = ____ degrees</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="detail" id="procedure">
+    <div class="detail-inner">
+      <div class="subhead">STEP 01 — RECORDING ALPHA</div>
+      <p>Both operator and drone are at the same starting position on the ridge. A single Polaris reading is taken with both parties present. This eliminates instrument disagreement at the baseline — both teams agree on the starting value because they witnessed it together. Polaris is chosen because it is essentially fixed above the celestial north pole; its angle above the horizon corresponds to the observer's geographic latitude.</p>
+
+      <div class="subhead">STEP 02 — FIRING THE LASER EAST</div>
+      <p>The laser mount's horizontal axis is locked. This is mechanical, not procedural — physical clamps prevent any yaw movement during the run. The vertical axis remains free because the drone may move up or down as it follows the beam, and the operator must track it. The tilt encoder logs every vertical adjustment.</p>
+      <p>The first beam alignment uses a compass to point east. This is the only role the compass plays. Once the beam is established and locked, the compass is removed. From that moment forward the beam itself defines the path — not the compass, not any map, not any model.</p>
+
+      <div class="subhead">STEP 03 — FOLLOWING THE BEAM</div>
+      <p>The drone's flight controller is wired only to the quadrant sensor output. There is no waypoint navigation, no GPS guidance, no programmed heading. The single instruction is to hold the beam centered on the sensor face. If the beam drifts up on the sensor, the drone climbs. If it drifts left, the drone moves left. Altitude and lateral position are determined entirely by where the beam points.</p>
+      <p>The optical flow module logs distance traveled along the actual path — not a straight-line distance assumption. If the beam curves the drone's path with it, the odometer reads the path length.</p>
+      <p>Stopping distance should be agreed before the run begins. Distance is bounded by the laser's effective range on the night's atmospheric conditions. On a clear low-humidity night a 200mW laser remains coherent to roughly 20-30 miles. On hazy or humid nights this drops to 5-10 miles.</p>
+
+      <div class="subhead">STEP 04 — THREE READINGS AT END POSITION</div>
+      <p>When the drone reaches the agreed distance it lands. The chase crew on site takes a fresh Polaris reading using the same clinometer and the same method as in Step 01. The drone's altitude log is downloaded. The laser tilt encoder reading is recorded from the operator's mount.</p>
+      <p>These three values — BETA, final altitude, and final tilt — combined with the corresponding starting values, are the entire output of the experiment.</p>
+    </div>
+  </div>
+
+  <div class="results">
+    <h2>
+      <span>THREE INDEPENDENT MEASUREMENTS — COMPARE ALL</span>
+      <button class="expand-trigger" onclick="toggleDetail('measurements')">EXPAND ▾</button>
+    </h2>
+
+    <div class="meas">
+      <div class="label">MEASUREMENT 1  —  POLARIS ANGLE  (BETA minus ALPHA)</div>
+      <div class="row">
+        <div class="cell teal">
+          <div class="letter">A</div>
+          <div class="eq">BETA = ALPHA</div>
+          <hr>
+          <div class="l1">Polaris unchanged.</div>
+          <div class="l2">No N/S drift detected.</div>
+        </div>
+        <div class="cell coral">
+          <div class="letter">B</div>
+          <div class="eq">BETA &lt; ALPHA</div>
+          <hr>
+          <div class="l1">Polaris lower.</div>
+          <div class="l2">Drone ended further south.</div>
+        </div>
+        <div class="cell purple">
+          <div class="letter">C</div>
+          <div class="eq">BETA &gt; ALPHA</div>
+          <hr>
+          <div class="l1">Polaris higher.</div>
+          <div class="l2">Drone ended further north.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="meas">
+      <div class="label">MEASUREMENT 2  —  DRONE ALTITUDE ABOVE GROUND  (logged continuously)</div>
+      <div class="row">
+        <div class="cell teal">
+          <div class="letter">A</div>
+          <div class="eq">ALTITUDE FLAT</div>
+          <hr>
+          <div class="l1">Drone stayed level.</div>
+          <div class="l2">Same height all the way.</div>
+        </div>
+        <div class="cell coral">
+          <div class="letter">B</div>
+          <div class="eq">ALTITUDE RISES</div>
+          <hr>
+          <div class="l1">Drone climbed steadily.</div>
+          <div class="l2">Surface curved away below.</div>
+        </div>
+        <div class="cell purple">
+          <div class="letter">C</div>
+          <div class="eq">ALTITUDE FALLS</div>
+          <hr>
+          <div class="l1">Drone descended.</div>
+          <div class="l2">Unexpected. Verify setup.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="meas">
+      <div class="label">MEASUREMENT 3  —  LASER TILT ANGLE  (logged at origin mount)</div>
+      <div class="row">
+        <div class="cell teal">
+          <div class="letter">A</div>
+          <div class="eq">TILT UNCHANGED</div>
+          <hr>
+          <div class="l1">Laser stayed level.</div>
+          <div class="l2">No upward correction needed.</div>
+        </div>
+        <div class="cell coral">
+          <div class="letter">B</div>
+          <div class="eq">TILT INCREASES</div>
+          <hr>
+          <div class="l1">Laser tilted upward.</div>
+          <div class="l2">Drone rose to stay on beam.</div>
+        </div>
+        <div class="cell purple">
+          <div class="letter">C</div>
+          <div class="eq">TILT DECREASES</div>
+          <hr>
+          <div class="l1">Laser tilted downward.</div>
+          <div class="l2">Unexpected. Verify setup.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="detail" id="measurements">
+    <div class="detail-inner">
+      <div class="subhead">WHY THREE MEASUREMENTS AND NOT ONE</div>
+      <p>Any single instrument can be wrong. A clinometer can have a calibration error, an altitude rangefinder can have a software bias, an encoder can slip. By logging three independent quantities that should agree if the underlying signal is real, the experiment becomes self-checking.</p>
+      <p>Three readings from three different physical principles — angular sighting of a star, distance measurement to the ground, mechanical encoding of laser pitch — should all tell the same story. If any one disagrees with the other two, that instrument or that step in the procedure needs investigation before the run is trusted.</p>
+
+      <div class="subhead">MEASUREMENT 1 — POLARIS ANGLE</div>
+      <p>Polaris sits within about half a degree of the celestial north pole. Its angle above the horizon at any location is essentially equal to that location's geographic latitude. A change in Polaris angle between start and end positions corresponds directly to a change in latitude — a north/south displacement along the surface.</p>
+      <p>This measurement has a known limitation: some models attribute different geometric meaning to Polaris observations. The strength of the experiment is not in this single measurement but in its consistency with Measurements 2 and 3.</p>
+
+      <div class="subhead">MEASUREMENT 2 — DRONE ALTITUDE ABOVE GROUND</div>
+      <p>This is the most geometrically unambiguous of the three. The drone is following a perfectly straight beam of light. If the ground beneath it stays at the same distance below the beam throughout the flight, the surface is flat over that distance. If the ground drops away from the beam, the surface curves.</p>
+      <p>No interpretation of star positions is required. No assumptions about light propagation through space. Just a downward-pointing rangefinder logging distance to the ground beneath the drone, second by second, for the entire flight.</p>
+
+      <div class="subhead">MEASUREMENT 3 — LASER TILT ANGLE</div>
+      <p>This is geometrically equivalent to Measurement 2 but logged from the other end of the beam. If the drone climbs, the operator must tilt the laser upward to track it. The tilt encoder records that adjustment. The total tilt change from start to end is a direct measure of the angle subtended by the drone's altitude gain at the operator's position.</p>
+      <p>Because it measures the same underlying phenomenon as Measurement 2 from a different vantage point, it serves as a cross-check. If Measurement 2 says the drone climbed 600 feet and Measurement 3 says it climbed 100 feet, something is wrong with one of the instruments.</p>
+
+      <div class="subhead">INTERPRETING THE RESULTS</div>
+      <p>Outcome A across all three measurements indicates no detectable curvature signal over the run distance. Outcome B across all three indicates curvature consistent with a spherical surface. Outcome C indicates either northward displacement (Polaris) or a downward-bowing surface (altitude) — both of which would be unexpected and warrant investigation rather than conclusion.</p>
+      <p>Disagreement between the three measurements is a signal that the experiment was compromised somehow. Disagreement should always trigger a repeat run with attention to whatever instrument or condition might have caused the discrepancy.</p>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span>HANDLING ATMOSPHERIC REFRACTION</span>
+    <button class="expand-trigger" onclick="toggleDetail('refraction')">EXPAND ▾</button>
+  </div>
+  <div class="detail" id="refraction">
+    <div class="detail-inner">
+      <p>Atmospheric refraction is the strongest objection to this experiment and deserves direct treatment. Light bends as it passes through air of varying density, and that bending can mimic or mask the signal the experiment is trying to measure.</p>
+
+      <div class="subhead">RUN IN MULTIPLE CONDITIONS</div>
+      <p>Refraction varies with temperature gradient, humidity, and pressure. If the altitude gain on a cold dry winter night matches the altitude gain on a warm humid summer night within a small margin, refraction is not the dominant cause. If the readings vary wildly with weather, refraction is doing real work and the signal is unreliable.</p>
+
+      <div class="subhead">MEASURE REFRACTION DIRECTLY</div>
+      <p>A second laser fired between two fixed points of known elevation and distance during the same atmospheric conditions gives a direct refraction measurement. Standard surveying uses reciprocal leveling — two observers measure each other simultaneously from known points, and any discrepancy beyond the known geometry is refraction. Log the coefficient during the experiment and subtract it from the altitude reading.</p>
+
+      <div class="subhead">USE MULTIPLE WAVELENGTHS</div>
+      <p>Refraction is wavelength-dependent. Red light bends less than blue light through the same atmosphere. Running two beams simultaneously — a red laser and a green laser tracking the same drone — produces measurable differences in their tilt angles or the drone's relative position if refraction is occurring. If both beams agree perfectly, refraction is negligible. If they diverge, you have measured the refraction directly.</p>
+
+      <div class="subhead">CHOOSE THE NIGHT CAREFULLY</div>
+      <p>Refraction is strongest in the boundary layer near the ground where temperature gradients are steepest. A cold clear night with low humidity minimizes the variable. Beam paths well above ground level — facilitated by the ridge mount — keep the experiment out of the worst refractive zone. Avoid running during sunrise or sunset transitions when thermal gradients are maximum.</p>
+
+      <div class="subhead">REVERSE THE EXPERIMENT</div>
+      <p>Have the laser at the far point fire back to the origin, with a second drone repeating the run in the opposite direction. If both runs show the same altitude gain pattern, refraction is symmetric and largely cancels. If the two runs disagree, you have either an instrument problem or asymmetric atmospheric conditions worth investigating before drawing conclusions.</p>
+
+      <div class="subhead">THE HONEST LIMIT</div>
+      <p>You cannot eliminate refraction without going to vacuum. But you can bound it, measure it, and correct for it well enough that the residual is small compared to the curvature signal you are looking for. A run with multi-wavelength measurement, conducted from a high ridge on a cold clear night, with reciprocal verification, drives the refraction contribution well below the curvature contribution at moderate distances.</p>
+      <p>Refraction is also not the friend it is sometimes claimed to be. Standard atmospheric refraction bends light <em>downward</em>, which means objects appear higher than they geometrically should — partially compensating for curvature, not adding to it. Any claim that refraction explains away a curvature observation requires the world to look more curved than it actually is, which is the opposite of what refraction does.</p>
+    </div>
+  </div>
+
+  <div class="closing-notes">
+    WHEN ALL THREE READINGS POINT THE SAME DIRECTION — THREE INSTRUMENTS AGREE FROM ONE RUN.<br>
+    <span class="secondary">IF ANY MEASUREMENT DISAGREES — REPEAT THE EXPERIMENT BEFORE DRAWING ANY CONCLUSION.</span>
+  </div>
+
+  <div class="footer">
+    <span>PRICES SOURCED JUNE 2026  ·  DIY DRONE BUILD  ·  0.1 deg CLINOMETER  ·  CLEAR LOW-REFRACTION NIGHT REQUIRED</span>
+    <span><a href="index.html" style="color:var(--gold);text-decoration:none">← EARTH CURVATURE SIMULATOR</a></span>
+  </div>
+
+</article>
+
+<script>
+  function toggleDetail(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+    const trigger = document.querySelector(`[onclick="toggleDetail('${id}')"]`);
+    if (trigger) {
+      trigger.textContent = el.classList.contains('open') ? 'COLLAPSE ▴' : 'EXPAND ▾';
+    }
+  }
+
+  function toggleAll() {
+    const btn = document.getElementById('toggleAllBtn');
+    const details = document.querySelectorAll('.detail');
+    const anyClosed = Array.from(details).some(d => !d.classList.contains('open'));
+
+    details.forEach(d => {
+      if (anyClosed) d.classList.add('open');
+      else d.classList.remove('open');
+    });
+
+    document.querySelectorAll('.expand-trigger').forEach(t => {
+      if (t === btn) return;
+      t.textContent = anyClosed ? 'COLLAPSE ▴' : 'EXPAND ▾';
+    });
+
+    btn.textContent = anyClosed ? 'COLLAPSE ALL' : 'EXPAND ALL';
+  }
+</script>
+
+</body>
+</html>

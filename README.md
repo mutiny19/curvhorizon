@@ -56,9 +56,13 @@ No build step and no dependencies. Either:
 ## Field protocol
 
 A companion field protocol, the **Laser Beam Follow Experiment**, sketches a
-real-world drone-and-laser test of the same geometry the Laser Test view models
-(equipment, expected signal by distance, and the three independent measurements
-to compare).
+reproducible real-world drone-and-laser test of the same geometry the Laser Test
+view models: a drone follows a horizontal laser beam while three independent
+instruments (Polaris angle, drone altitude above ground, and laser tilt)
+cross-check what the surface did beneath the beam.
+
+- **Interactive page:** [`laser-experiment.html`](laser-experiment.html) ([live](https://mutiny19.github.io/curvhorizon/laser-experiment.html)) — equipment, setup diagram, procedure, and how to handle refraction, with expandable detail on each section.
+- **Poster version:**
 
 ![Laser Beam Follow Experiment field protocol](docs/laser-follow-experiment.png)
 
