@@ -37,11 +37,12 @@ how distant targets are progressively hidden by the curvature of the Earth — a
   radius by latitude).
 - **Refraction bands** — overlay line-of-sight at multiple *k* values to show the range.
 - **Visibility / haze limit** — optional Koschmieder air-clarity cutoff.
-- **Photo overlay (experimental)** — load a real photo into the Observer View, set the focal
-  length and sensor to the camera that took it (from the photo's EXIF), and the photo is drawn
-  at the matching field of view. Once you register its horizon, the predicted horizon and the
-  hidden/visible split overlay the real scene to scale. It is a visual comparison aid and does
-  not change any calculation.
+- **Photo overlay (experimental)** — load a real photo into the Observer View and it is drawn
+  at the matching field of view. Focal length and sensor width are read automatically from the
+  photo's EXIF (dependency-free parser) when present, or set manually. Opacity, move, roll (to
+  level a tilted horizon), and fine-scale controls register the image; once you line up its
+  horizon the predicted horizon and the hidden/visible split overlay the real scene to scale.
+  It is a visual comparison aid and does not change any calculation.
 - **Terrain & sea state** — optional intervening obstacle (a hill or ridge at a set
   distance and height) and wave height. Whichever of the Earth horizon, the wave crests,
   or the obstacle grazes the line of sight highest sets the hidden amount, and the result

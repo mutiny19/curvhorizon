@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   Earth Curvature & Horizon Simulator
-  Version 1.5.0  ·  Last revised 2026-06-06
+  Version 1.6.0  ·  Last revised 2026-06-06
   Spherical/WGS84 curvature & visibility model with observer/camera view.
 
   Copyright (c) 2026 mutiny19.
@@ -119,7 +119,7 @@
     <span class="sub">Spherical model &middot; R = 6,371 km</span>
   </div>
   <div style="display:flex;align-items:center;gap:14px">
-    <span class="hide-mobile" style="font-size:10px;color:#556" title="Last revised 2026-06-06">v1.5.0 &middot; 2026-06-06</span>
+    <span class="hide-mobile" style="font-size:10px;color:#556" title="Last revised 2026-06-06">v1.6.0 &middot; 2026-06-06</span>
     <button id="btnGuide">? How to use</button>
     <span class="hide-mobile" style="font-size:11px;color:#556">Scroll to zoom &middot; Drag to pan</span>
   </div>
@@ -166,14 +166,16 @@
     <div class="sec obs-only">
       <h3>Photo Overlay <span style="font-size:9px;color:#e84393;border:1px solid #e84393;border-radius:3px;padding:1px 4px;vertical-align:middle">EXPERIMENTAL</span></h3>
       <div class="row"><label for="iPhoto">Load photo</label><input type="file" id="iPhoto" accept="image/*" style="font-size:10px"></div>
-      <div class="note">Drop in a real photo, then set Focal length and Sensor above to the camera that took it (from the photo's EXIF), plus Eye height and the target Distance/Height. The photo is drawn at the matching field of view, so once you line up its horizon the predicted hidden/visible split becomes a direct overlay on the real scene.</div>
+      <div class="note">Drop in a real photo. If it has EXIF, the focal length and sensor size are read and filled in automatically; otherwise set them above to the camera that took it. Then set Eye height and the target Distance/Height. The photo is drawn at the matching field of view, so once you line up its horizon the predicted hidden/visible split becomes a direct overlay on the real scene.</div>
+      <div class="note" id="exifNote" style="display:none;border-left:2px solid #e84393;padding-left:7px;color:#cbb"></div>
       <div id="photoCtls" style="display:none">
         <div class="row"><label>Opacity</label><input type="range" id="iPhotoOp" min="0" max="100" value="85" step="1"><span class="u" id="photoOpVal" style="width:auto;font-size:10px">85%</span></div>
         <div class="row"><label>Move up/down</label><input type="range" id="iPhotoVY" min="-100" max="100" value="0" step="0.5"></div>
         <div class="row"><label>Move left/right</label><input type="range" id="iPhotoHX" min="-100" max="100" value="0" step="0.5"></div>
+        <div class="row"><label>Roll</label><input type="range" id="iPhotoRoll" min="-8" max="8" value="0" step="0.1"><span class="u" id="photoRollVal" style="width:auto;font-size:10px">0.0°</span></div>
         <div class="row"><label>Fine scale</label><input type="range" id="iPhotoSc" min="80" max="120" value="100" step="0.5"><span class="u" id="photoScVal" style="width:auto;font-size:10px">100%</span></div>
         <div class="presets"><button class="pre" id="btnPhotoClear">Remove photo</button></div>
-        <div class="note">Align the photo's real horizon to the orange horizon line using Move up/down. Fine scale (and a small tilt) absorb lens distortion and rounding in the EXIF. This overlay is a visual aid for comparison; it does not change any calculation.</div>
+        <div class="note">Align the photo's real horizon to the orange horizon line using Move up/down, and use Roll to level a horizon that sits at an angle. Fine scale absorbs lens distortion and EXIF rounding. This overlay is a visual aid for comparison; it does not change any calculation.</div>
       </div>
     </div>
     <div class="sec">
@@ -355,10 +357,10 @@
         <p><strong style="color:var(--text)">Visual range (haze):</strong> Optional. Atmospheric extinction limits how far you can see at all, independent of curvature. Using the Koschmieder relation, contrast falls as exp(−3.912·d/V), where V is the meteorological visual range. Even when geometry leaves a target above the horizon, haze may erase it. Set V=0 to ignore.</p>
         <p><strong style="color:var(--text)">Terrain and sea state:</strong> Optional. A sight line that just grazes a nearer high point is obstructed by it rather than by the Earth horizon. The tool checks two extra grazing points: an intervening obstacle (a hill or ridge at a set distance and height) and the wave crests that form the visible sea edge. For each, the hidden height on the target is h0 + slope·d0 + drop(d0), where the slope runs from the eye to the grazing point and drop(x) = R'(1 − cos(x / R')) is the surface fall at distance x. Whichever of the Earth horizon, the wave crests, or the obstacle hides the most sets the result, and the panel reports which one. The wave model is a first approximation: it raises the horizon grazing point by the wave height. Set the inputs to 0 to ignore.</p>
         <p><strong style="color:var(--text)">Ray-traced refraction:</strong> Optional. The effective-radius method treats bending as one fixed number for the whole path. Real air does not: the refractivity gradient changes with height, and near the surface it can reverse. The ray-trace option integrates the light path through a layered profile, solving d²h/ds² = 1/R + dn/dh(h), where h is height above the surface, s is ground distance, and dn/dh is set by the refractivity gradient (in N-units; n = 1 + N·10⁻⁶). A constant gradient of −R⁻¹·k reproduces the effective-radius model exactly, which is why the standard profile overlays the constant-k sight line. A gradient steeper than about −157 N/km bends the ray as fast as the Earth curves; beyond that, light is trapped in a duct, the horizon extends, and distant objects loom or invert. A hot surface reverses the gradient near the ground and bends rays upward, shortening the horizon and producing an inferior mirage. The inversion and mirage profiles apply such a layer near the surface and integrate the result, then report the ray-traced hidden height beside the constant-k value. This is a 2D profile model, not a full 3D atmosphere, and the layer values are representative rather than measured.</p>
-        <p><strong style="color:var(--text)">Photo overlay (experimental):</strong> The Observer View can load a real photograph as a background. Because the view maps the horizontal field of view (2·arctan(sensor / 2·focal)) across the full frame, a photo shot at a known focal length and sensor size shares the same angular scale as the overlays. After you set those to the photo's values and register its horizon against the orange horizon line, the predicted hidden/visible split lands on the real scene at the correct pixel height. The alignment nudges (move, scale) only register the image; they do not feed back into any calculation, and lens distortion, roll, and EXIF rounding are not corrected, so treat it as a comparison aid rather than a measurement.</p>
+        <p><strong style="color:var(--text)">Photo overlay (experimental):</strong> The Observer View can load a real photograph as a background. Because the view maps the horizontal field of view (2·arctan(sensor / 2·focal)) across the full frame, a photo shot at a known focal length and sensor size shares the same angular scale as the overlays. When a JPEG carries EXIF, the focal length and sensor width are read automatically (the sensor is derived from the 35mm-equivalent focal length, or from the focal-plane resolution tags); otherwise you enter them. After you register the photo's horizon against the orange horizon line, the predicted hidden/visible split lands on the real scene at the correct pixel height. The alignment nudges (move, roll, scale) only register the image; a roll control levels a tilted horizon, and fine scale absorbs lens distortion and EXIF rounding. None of these feed back into any calculation, so treat it as a comparison aid rather than a measurement.</p>
         <p><strong style="color:var(--text)">What this does <em>not</em> show:</strong> it predicts the <em>geometry</em> of what curvature hides. It cannot tell you whether a specific photo is genuine clear-air, a mirage, or intervening terrain; those depend on conditions on the day.</p>
         <p style="margin-top:6px"><strong style="color:var(--text)">Credit:</strong> The core curvature formulas follow and match the widely used <a href="https://dizzib.github.io/earth/curve-calc/" target="_blank" rel="noopener" style="color:var(--accent)">dizzib Earth curve calculator</a>; this tool adds scaled visualization, an observer/camera view, refraction bands, and visual range.</p>
-        <p style="margin-top:6px;color:#667">Version 1.5.0 &middot; last revised 2026-06-06</p>
+        <p style="margin-top:6px;color:#667">Version 1.6.0 &middot; last revised 2026-06-06</p>
         <p style="margin-top:8px"><strong style="color:var(--text)">Glossary</strong> <span style="color:#667">(terms link to neutral, scientific definitions)</span></p>
         <dl style="margin:2px 0 4px 0">
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon" target="_blank" rel="noopener" style="color:var(--accent)">Horizon</a></dt>
@@ -529,6 +531,68 @@ function rayTraceHidden(h0,d0,hT,R){
 }
 // Koschmieder: fraction of contrast surviving over distance d through visual range V (metres)
 function clarity(d,V){return V>0?Math.exp(-3.912*d/V):1}
+// ===================== EXIF (no dependencies) =====================
+// Minimal JPEG/TIFF EXIF reader: pulls focal length, 35mm-equivalent focal length, camera make/
+// model, and the focal-plane resolution tags, then derives the physical sensor width. Enough to
+// auto-fill the Observer View optics for the photo overlay. Returns null if no usable EXIF.
+function parseExif(buf){
+  try{
+    const dv=new DataView(buf);
+    if(dv.byteLength<12||dv.getUint16(0)!==0xFFD8)return null;        // not a JPEG
+    let off=2;
+    while(off+4<=dv.byteLength){
+      const marker=dv.getUint16(off);
+      if((marker&0xFF00)!==0xFF00)break;
+      if(marker===0xFFDA||marker===0xFFD9)break;                     // start of scan / end
+      const len=dv.getUint16(off+2);
+      if(marker===0xFFE1&&off+10<dv.byteLength&&dv.getUint32(off+4)===0x45786966&&dv.getUint16(off+8)===0x0000){
+        return readTiff(dv,off+10);                                   // 'Exif\0\0' -> TIFF header
+      }
+      off+=2+len;
+    }
+  }catch(e){}
+  return null;
+}
+function readTiff(dv,base){
+  const le=dv.getUint16(base)===0x4949;                              // II = little-endian, MM = big
+  const u16=o=>dv.getUint16(base+o,le),u32=o=>dv.getUint32(base+o,le);
+  if(dv.getUint16(base+2,le)!==42)return null;
+  const res={};
+  const rationalAt=p=>{const d=u32(p+4);return d?u32(p)/d:null;};
+  function readIFD(ifd){
+    if(ifd<=0||base+ifd+2>dv.byteLength)return;
+    const n=u16(ifd);
+    for(let i=0;i<n;i++){
+      const e=ifd+2+i*12,tag=u16(e),type=u16(e+2),vo=e+8;
+      if(tag===0x8769)res._exif=u32(vo);                              // Exif sub-IFD pointer
+      else if(tag===0x010F)res.make=readAscii(e);
+      else if(tag===0x0110)res.model=readAscii(e);
+      else if(tag===0x920A)res.focal=rationalAt(u32(vo));             // FocalLength (rational)
+      else if(tag===0xA405)res.focal35=u16(vo);                       // FocalLengthIn35mmFilm (short)
+      else if(tag===0xA20E)res.fpx=rationalAt(u32(vo));               // FocalPlaneXResolution
+      else if(tag===0xA210)res.fpu=u16(vo);                           // FocalPlaneResolutionUnit
+      else if(tag===0xA002)res.pxx=(type===3)?u16(vo):u32(vo);        // PixelXDimension
+    }
+  }
+  function readAscii(e){
+    const count=u32(e+4),p=count<=4?(base+e+8):(base+u32(e+8));let s='';
+    for(let i=0;i<count;i++){const c=dv.getUint8(p+i);if(!c)break;s+=String.fromCharCode(c);}
+    return s.trim();
+  }
+  readIFD(u32(4));
+  if(res._exif)readIFD(res._exif);
+  // Derive sensor width (mm)
+  let sensorW=null;
+  if(res.focal&&res.focal35&&res.focal35>0)sensorW=36*res.focal/res.focal35;     // crop = f35/f
+  else if(res.fpx&&res.pxx&&res.fpu){const mm=res.fpu===3?10:25.4;sensorW=res.pxx/res.fpx*mm;}
+  return {focal:res.focal||null,focal35:res.focal35||null,make:res.make||'',model:res.model||'',sensorW:sensorW&&isFinite(sensorW)?sensorW:null};
+}
+function applySensorWidth(w){
+  const sel=document.getElementById('iSensor');
+  let opt=[...sel.options].find(o=>Math.abs(parseFloat(o.value)-w)<0.05);
+  if(!opt){opt=document.createElement('option');opt.value=w.toFixed(2);opt.textContent='EXIF ('+w.toFixed(1)+'mm)';sel.appendChild(opt);}
+  sel.value=opt.value;S.sensor=parseFloat(opt.value);
+}
 const M2FT=3.28084,M2MI=0.000621371;
 function fmtD(m){
   if(S.units==='imp'){const ft=m*M2FT;return ft>=5280?(ft/5280).toFixed(2)+' mi':ft.toFixed(0)+' ft';}
@@ -540,7 +604,7 @@ function fmtH(m){
 }
 
 const V={cx:0,cy:0,s:1,manual:false};
-const S={h0:2,d0:30000,hT:100,type:'mountain',k:0.17,view:'side',focal:50,sensor:36,units:'metric',oblate:false,lat:45,showBands:false,tilt:0,visRange:0,extra:[],panX:0,flat:false,obsD:0,obsH:0,wave:0,rayProfile:'off',photoOp:0.85,photoVY:0,photoHX:0,photoSc:1};
+const S={h0:2,d0:30000,hT:100,type:'mountain',k:0.17,view:'side',focal:50,sensor:36,units:'metric',oblate:false,lat:45,showBands:false,tilt:0,visRange:0,extra:[],panX:0,flat:false,obsD:0,obsH:0,wave:0,rayProfile:'off',photoOp:0.85,photoVY:0,photoHX:0,photoSc:1,photoRoll:0};
 let PHOTO=null;   // experimental photo-overlay image (Observer View only); never serialized
 // obsD/obsH: an intervening obstacle (distance/height, metres). wave: sea-state wave height (metres).
 // S.extra: extra target distances (metres) for multi-target observations (e.g. a line of
@@ -699,12 +763,12 @@ function exportPNG(){
   o.fillStyle='#0a0e17';o.fillRect(0,0,off.width,off.height);o.drawImage(src,0,0);
   o.fillStyle='#0c1320';o.fillRect(0,src.height,off.width,footH);
   o.fillStyle='#8aa0b8';o.font=(13*dpr)+"px 'SF Mono',monospace";o.textBaseline='middle';
-  o.fillText('Earth Curvature Simulator v1.5.0  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  mutiny19.github.io/curvhorizon',10*dpr,src.height+footH/2);
+  o.fillText('Earth Curvature Simulator v1.6.0  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  mutiny19.github.io/curvhorizon',10*dpr,src.height+footH/2);
   off.toBlob(function(b){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='curvature-'+S.view+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);});
 }
 function exportCSV(){
   const R=effR(S.k),gR=baseR(),h0=S.h0,hT=S.hT,fin=isFinite(R);
-  const lines=['# Earth Curvature & Horizon Simulator v1.5.0',
+  const lines=['# Earth Curvature & Horizon Simulator v1.6.0',
     '# eye_height_m='+h0+',target_height_m='+hT+',k='+S.k+',earth='+earthLabel(),
     '# permalink='+buildPermalink(),
     'distance_km,horizon_km,drop_below_tangent_m,bulge_m,hidden_m_kSel,visible_m,hidden_m_k0'];
@@ -827,9 +891,26 @@ function init(){
       V.manual=false;render();
     };
     img.onerror=function(){alert('Could not load that image.');};
-    const rd=new FileReader();
-    rd.onload=e=>{img.src=e.target.result;};
-    rd.readAsDataURL(f);
+    img.src=URL.createObjectURL(f);
+    // Read EXIF separately and auto-fill optics
+    const er=new FileReader();
+    er.onload=function(e){
+      const ex=parseExif(e.target.result),note=document.getElementById('exifNote');
+      if(ex&&(ex.focal||ex.sensorW)){
+        if(ex.focal){S.focal=Math.max(1,ex.focal);document.getElementById('iFocal').value=Math.round(S.focal);}
+        if(ex.sensorW)applySensorWidth(ex.sensorW);
+        const cam=[ex.make,ex.model].filter(Boolean).join(' ');
+        const bits=[];
+        if(cam)bits.push(cam);
+        if(ex.focal)bits.push(Math.round(ex.focal)+'mm'+(ex.focal35?' ('+ex.focal35+'mm eq)':''));
+        if(ex.sensorW)bits.push('sensor '+ex.sensorW.toFixed(1)+'mm');
+        note.textContent='EXIF: '+bits.join(' · ');note.style.display='';
+        V.manual=false;render();
+      }else{
+        note.textContent='No usable EXIF found. Set Focal length and Sensor manually.';note.style.display='';
+      }
+    };
+    er.readAsArrayBuffer(f);
   });
   document.getElementById('iPhotoOp').addEventListener('input',function(){
     S.photoOp=(parseFloat(this.value)||0)/100;
@@ -837,6 +918,10 @@ function init(){
   });
   document.getElementById('iPhotoVY').addEventListener('input',function(){S.photoVY=parseFloat(this.value)||0;render();});
   document.getElementById('iPhotoHX').addEventListener('input',function(){S.photoHX=parseFloat(this.value)||0;render();});
+  document.getElementById('iPhotoRoll').addEventListener('input',function(){
+    S.photoRoll=parseFloat(this.value)||0;
+    document.getElementById('photoRollVal').textContent=S.photoRoll.toFixed(1)+'°';render();
+  });
   document.getElementById('iPhotoSc').addEventListener('input',function(){
     S.photoSc=(parseFloat(this.value)||100)/100;
     document.getElementById('photoScVal').textContent=Math.round(S.photoSc*100)+'%';render();
@@ -845,6 +930,7 @@ function init(){
     PHOTO=null;
     const fi=document.getElementById('iPhoto');if(fi)fi.value='';
     document.getElementById('photoCtls').style.display='none';
+    document.getElementById('exifNote').style.display='none';
     render();
   });
 
@@ -1833,9 +1919,13 @@ function renderObserver(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
   if(photoOn){
     const ar=PHOTO.naturalHeight/PHOTO.naturalWidth,sc=S.photoSc;
     const dw=W*sc,dh=W*ar*sc;
-    const dx=(W-dw)/2+S.photoHX/100*W*0.5;
-    const dy=(H-dh)/2+S.photoVY/100*H*0.5;
-    ctx.save();ctx.globalAlpha=S.photoOp;ctx.drawImage(PHOTO,dx,dy,dw,dh);ctx.restore();
+    const cxp=W/2+S.photoHX/100*W*0.5;   // nudged centre about which roll rotates
+    const cyp=H/2+S.photoVY/100*H*0.5;
+    ctx.save();ctx.globalAlpha=S.photoOp;
+    ctx.translate(cxp,cyp);
+    if(S.photoRoll)ctx.rotate(S.photoRoll*Math.PI/180);
+    ctx.drawImage(PHOTO,-dw/2,-dh/2,dw,dh);
+    ctx.restore();
   }
 
   // Horizon line
