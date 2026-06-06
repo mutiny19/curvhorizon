@@ -123,10 +123,10 @@
   }
   .detail-inner .subhead:first-child { margin-top: 0; }
 
-  .equipment { position: relative; }
+  .equipment { display: flex; flex-direction: row-reverse; align-items: flex-start; gap: 24px; }
+  .eq-main { flex: 1 1 auto; min-width: 0; }
   .polaris-inset {
-    position: absolute; top: -34px; right: -10px;
-    width: 130px; text-align: center;
+    flex: 0 0 130px; width: 130px; text-align: center; padding-top: 2px;
   }
   .polaris-inset svg { width: 130px; height: 130px; }
   .polaris-inset .lbl {
@@ -248,7 +248,8 @@
     .title-block h1 { font-size: 36px; }
     .steps { grid-template-columns: 1fr 1fr; }
     .meas .row { grid-template-columns: 1fr; }
-    .polaris-inset { position: static; margin: 0 auto 20px; }
+    .equipment { flex-direction: column; }
+    .polaris-inset { margin: 0 auto 16px; }
   }
 </style>
 </head>
@@ -307,6 +308,7 @@
       <div class="lbl">POLARIS REFERENCE</div>
     </div>
 
+    <div class="eq-main">
     <ul class="eq-list">
       <li><span class="item-text">High-power green laser  532 nm  200mW+</span><span class="cost">$80 – $150</span></li>
       <li><span class="item-text">Motorised pan/tilt mount with tilt encoder</span><span class="cost">$80 – $250</span></li>
@@ -322,6 +324,7 @@
     <div class="total">
       <span class="lbl">TOTAL ESTIMATE</span>
       <span class="val">$485 – $1,085</span>
+    </div>
     </div>
   </div>
 
