@@ -215,7 +215,7 @@
         <button class="pre obs-pre" data-d="68" data-h="553" data-t="building" data-h0="2" data-k="0.13" data-note="Toronto skyline ~68km across Lake Ontario from the NY shore. Lower floors sit below the horizon; only the upper buildings and the CN Tower's top (553m) show, and only on rare clear days, since haze usually intervenes. A textbook 'partly hidden' case.">Toronto / Lake Ontario</button>
         <button class="pre obs-pre" data-d="50" data-h="190" data-t="building" data-h0="10" data-k="0.17" data-note="Turning Torso (190m) from Copenhagen, ~50km across the Øresund. Lower floors hidden by curvature; full-tower sightings occur during inversions (looming), not ordinary refraction.">Turning Torso / Copenhagen</button>
         <button class="pre obs-pre" data-d="24" data-h="33" data-t="custom" data-h0="2" data-k="0.13" data-multi="4,8,12,16,20" data-note="Lake Pontchartrain power-line towers (Louisiana): identical ~33m towers in a straight 24km line. Soundly's telephoto photos (2017) show the far towers sinking base-first below the horizon, curvature made directly visible. Zooming in sharpens the towers but cannot lift their hidden bases back into view.">Lake Pontchartrain towers</button>
-        <button class="pre obs-pre" data-d="15.14" data-h="60" data-t="oil_platform" data-h0="1.5" data-k="0.13" data-multi="10" data-note="The 'Black Swan' photo: an offshore oil rig at ~9.4 mi (a second sat at ~6.2 mi), shot from only ~1.5m above the shore where the horizon is just ~2.7 mi away. In that one frame the horizon appears behind the rigs; on ordinary days from the same spot it sits in front of them and cuts off their bases. The difference is day-to-day refraction over water. Toggle Show bands to watch the hidden line shift with k.">Black Swan rigs</button>
+        <button class="pre obs-pre" data-d="15.14" data-h="60" data-t="oil_platform" data-h0="1.5" data-k="0.13" data-multi="10" data-note="The 'Black Swan' photo: an offshore oil rig at ~9.4 mi (a second sat at ~6.2 mi), shot from only ~1.5m above the shore where the horizon is just ~2.7 mi away. In that one frame the horizon appears behind the rigs; on ordinary days from the same spot it sits in front of them and cuts off their bases. The difference is day-to-day refraction over water. In Observer View, raise Refraction toward an inversion and watch the horizon distance grow past the rigs: the HORIZON readout flips from in front of them to behind them, and their hidden bases climb back into view.">Black Swan rigs</button>
         <button class="pre obs-pre" data-d="9.7" data-h="2" data-t="custom" data-h0="0.6" data-k="0.25" data-note="Bedford Level Experiment (1838/1870). 6 miles of still canal, sightline ~0.6m above water. Rowbotham's near-water sighting led him to the wrong conclusion; Wallace (1870) raised the sightline and corrected for refraction, measuring the curvature. Near-water sightlines are exactly where refraction is strongest and most variable.">Bedford Level (6mi)</button>
         <button class="pre obs-pre" data-d="263" data-h="2785" data-t="mountain" data-h0="150" data-k="0.13" data-note="Mt Canigou (2785m) seen from near Marseille, ~263km. A genuine clear-air sighting: the peak is tall enough and the observer high enough that the summit clears the bulge under standard refraction.">Canigou / Marseille</button>
         <button class="pre obs-pre" data-d="117" data-h="1227" data-t="mountain" data-h0="120" data-k="0.13" data-note="Mt Ka'ala (1,227m), the highest peak on O'ahu, seen from an elevated overlook on Kaua'i, ~117km across the Kaua'i Channel. The summit easily clears the curve and is geometrically visible; the real limiter is ocean haze, not curvature. Set a Visual range (~120–170 km) to see why it only appears on exceptionally clear days.">O'ahu from Kaua'i</button>
@@ -1282,11 +1282,19 @@ function renderObserver(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
 
   // Labels - all through collision-avoidance system
   if(hrzY>0&&hrzY<H){
-    screenCallout(60,hrz,[
+    // Is the horizon in front of the targets (cutting them off) or behind them (they stand in front of it)?
+    const tgtDists=(multi?[...S.extra,d0]:[d0]).filter(d=>d>0);
+    const nearT=Math.min(...tgtDists),farT=Math.max(...tgtDists);
+    const plural=tgtDists.length>1;
+    const hLines=[
       {text:'HORIZON',color:'#ffa502'},
       {text:'Dip: '+(dipAngle*180/Math.PI*60).toFixed(2)+' arcmin below eye level',color:'#ffa502'},
-      {text:'(angle, not distance; where the surface grazes out of view)',color:'#998'},
-    ],-40,0,10);
+      {text:'Distance: '+fmtD(d1),color:'#ffa502'},
+    ];
+    if(d1>=farT)hLines.push({text:'beyond the '+(plural?'targets — they stand':'target — it stands')+' in front of it',color:'#55efc4'});
+    else if(d1>nearT)hLines.push({text:'behind the nearer, in front of the farther',color:'#ffd93d'});
+    else hLines.push({text:'in front of the '+(plural?'targets':'target')+', so '+(plural?'their bases are':'its base is')+' hidden',color:'#998'});
+    screenCallout(60,hrz,hLines,-40,0,10);
   }
 
   if(!multi){
