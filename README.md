@@ -16,6 +16,11 @@ how distant targets are progressively hidden by the curvature of the Earth — a
 - **Atmospheric refraction** — selectable coefficient *k* (geometric, standard, typical
   visual, strong, inversion) or manual entry, modeled via the effective-radius method
   R' = R / (1 − k).
+- **Ray-traced refraction** — optional alternative to the constant-*k* model: integrates the
+  real light path through a layered air profile (standard, inversion/ducting, or surface
+  mirage), draws the bent ray in the side view, and reports the ray-traced hidden height
+  beside the effective-radius value. The standard profile overlays the constant-*k* sight
+  line; the duct and mirage profiles reproduce looming, ducting, and inferior mirages.
 - **Hidden vs. visible** — the obstructed portion below the horizon is drawn in red; the
   visible portion above in the target color, with callouts for distance, height, hidden
   amount, horizon distance, bulge, and dip.

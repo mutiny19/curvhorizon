@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   Earth Curvature & Horizon Simulator
-  Version 1.3.0  ·  Last revised 2026-06-06
+  Version 1.4.0  ·  Last revised 2026-06-06
   Spherical/WGS84 curvature & visibility model with observer/camera view.
 
   Copyright (c) 2026 mutiny19.
@@ -119,7 +119,7 @@
     <span class="sub">Spherical model &middot; R = 6,371 km</span>
   </div>
   <div style="display:flex;align-items:center;gap:14px">
-    <span class="hide-mobile" style="font-size:10px;color:#556" title="Last revised 2026-06-06">v1.3.0 &middot; 2026-06-06</span>
+    <span class="hide-mobile" style="font-size:10px;color:#556" title="Last revised 2026-06-06">v1.4.0 &middot; 2026-06-06</span>
     <button id="btnGuide">? How to use</button>
     <span class="hide-mobile" style="font-size:11px;color:#556">Scroll to zoom &middot; Drag to pan</span>
   </div>
@@ -216,6 +216,15 @@
       <div class="row" id="customKRow" style="display:none"><label>Custom k</label><input type="number" id="iK" value="0.17" min="0" max="1" step="0.01"></div>
       <div class="note" id="kNote">Typical visual observation conditions. Slightly more bending than standard.</div>
       <div class="row" style="margin-top:6px"><label>Show bands</label><input type="checkbox" id="iShowBands" style="width:auto;flex:0"><span class="u" style="width:auto;color:#8899aa;font-size:10px">k=0 / .13 / .25 / .5</span></div>
+      <div class="row" style="margin-top:6px"><label>Ray trace</label>
+        <select id="iRayProfile">
+          <option value="off">Off (effective radius only)</option>
+          <option value="standard">Standard profile (matches k)</option>
+          <option value="duct">Inversion / ducting</option>
+          <option value="mirage">Surface mirage</option>
+        </select>
+      </div>
+      <div class="note" id="rayNote" style="display:none">Traces the actual light path through a layered air profile and overlays it on the constant-k geometry. The constant-k result assumes the bending never changes with height; a real inversion or hot surface does, which is what produces ducting, looming, and mirages.</div>
       <div class="row"><label>Visual range</label><input type="number" id="iVis" value="0" min="0" step="5"><span class="u">km</span></div>
       <div class="note">Air clarity / haze limit. 0 = ignore. Even when geometry says a target is visible, haze can hide it.</div>
     </div>
@@ -266,6 +275,7 @@
         <div class="rr"><span class="l">Bulge height (apex)</span><span class="v y" id="oBulge">-</span></div>
         <div class="rr"><span class="l">Hidden height</span><span class="v r" id="oHid">-</span></div>
         <div class="rr sub" id="rHidBy" style="display:none"><span class="l">obstruction</span><span class="v" id="oHidBy">-</span></div>
+        <div class="rr sub" id="rHidRay" style="display:none"><span class="l">ray-traced</span><span class="v" id="oHidRay">-</span></div>
         <div class="rr sub" id="rHidGeo" style="display:none"><span class="l">no refraction (k=0)</span><span class="v" id="oHidGeo">-</span></div>
         <div class="rr"><span class="l">Visible height</span><span class="v g" id="oVis">-</span></div>
         <div class="rd"></div>
@@ -331,9 +341,10 @@
         </ul>
         <p><strong style="color:var(--text)">Visual range (haze):</strong> Optional. Atmospheric extinction limits how far you can see at all, independent of curvature. Using the Koschmieder relation, contrast falls as exp(−3.912·d/V), where V is the meteorological visual range. Even when geometry leaves a target above the horizon, haze may erase it. Set V=0 to ignore.</p>
         <p><strong style="color:var(--text)">Terrain and sea state:</strong> Optional. A sight line that just grazes a nearer high point is obstructed by it rather than by the Earth horizon. The tool checks two extra grazing points: an intervening obstacle (a hill or ridge at a set distance and height) and the wave crests that form the visible sea edge. For each, the hidden height on the target is h0 + slope·d0 + drop(d0), where the slope runs from the eye to the grazing point and drop(x) = R'(1 − cos(x / R')) is the surface fall at distance x. Whichever of the Earth horizon, the wave crests, or the obstacle hides the most sets the result, and the panel reports which one. The wave model is a first approximation: it raises the horizon grazing point by the wave height. Set the inputs to 0 to ignore.</p>
+        <p><strong style="color:var(--text)">Ray-traced refraction:</strong> Optional. The effective-radius method treats bending as one fixed number for the whole path. Real air does not: the refractivity gradient changes with height, and near the surface it can reverse. The ray-trace option integrates the light path through a layered profile, solving d²h/ds² = 1/R + dn/dh(h), where h is height above the surface, s is ground distance, and dn/dh is set by the refractivity gradient (in N-units; n = 1 + N·10⁻⁶). A constant gradient of −R⁻¹·k reproduces the effective-radius model exactly, which is why the standard profile overlays the constant-k sight line. A gradient steeper than about −157 N/km bends the ray as fast as the Earth curves; beyond that, light is trapped in a duct, the horizon extends, and distant objects loom or invert. A hot surface reverses the gradient near the ground and bends rays upward, shortening the horizon and producing an inferior mirage. The inversion and mirage profiles apply such a layer near the surface and integrate the result, then report the ray-traced hidden height beside the constant-k value. This is a 2D profile model, not a full 3D atmosphere, and the layer values are representative rather than measured.</p>
         <p><strong style="color:var(--text)">What this does <em>not</em> show:</strong> it predicts the <em>geometry</em> of what curvature hides. It cannot tell you whether a specific photo is genuine clear-air, a mirage, or intervening terrain; those depend on conditions on the day.</p>
         <p style="margin-top:6px"><strong style="color:var(--text)">Credit:</strong> The core curvature formulas follow and match the widely used <a href="https://dizzib.github.io/earth/curve-calc/" target="_blank" rel="noopener" style="color:var(--accent)">dizzib Earth curve calculator</a>; this tool adds scaled visualization, an observer/camera view, refraction bands, and visual range.</p>
-        <p style="margin-top:6px;color:#667">Version 1.3.0 &middot; last revised 2026-06-06</p>
+        <p style="margin-top:6px;color:#667">Version 1.4.0 &middot; last revised 2026-06-06</p>
         <p style="margin-top:8px"><strong style="color:var(--text)">Glossary</strong> <span style="color:#667">(terms link to neutral, scientific definitions)</span></p>
         <dl style="margin:2px 0 4px 0">
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon" target="_blank" rel="noopener" style="color:var(--accent)">Horizon</a></dt>
@@ -434,6 +445,74 @@ function hiddenWithFeatures(d0,h0,hT,R){
   if(S.obsD>0&&S.obsH>0){const t=grazeHidden(d0,h0,R,S.obsD,S.obsH);if(t>hid){hid=t;by='terrain';}}
   return {hid:Math.min(hid,hT),by};
 }
+// ===================== RAY-TRACED REFRACTION =====================
+// Instead of folding refraction into one effective radius, integrate the real light path
+// through a layered air profile. Height h is measured above the sea-level sphere, s is
+// ground distance. The ray obeys d2h/ds2 = 1/R + dn/dh(h): the 1/R term is the surface
+// curving away beneath a straight ray; dn/dh bends the ray (negative dn/dh bends it down).
+// A constant dn/dh = -k/R reproduces the effective-radius model exactly, so "standard"
+// overlays the constant-k line and the duct/mirage profiles depart from it.
+//
+// dn/dh is set by the refractivity gradient g in N-units per kilometre (dn/dh = g*1e-9).
+// g = -157 N/km is the critical value where the ray curves as fast as the Earth (k=1);
+// steeper than that traps light in a duct. We tie the background gradient to the chosen k
+// (g_bg = -k/(R*1e-9)) and let the surface layer differ for an inversion or a hot surface.
+function refrGradient(h,R){
+  const gBg=-S.k/(R*1e-9);                 // N/km that reproduces the chosen constant k
+  if(S.rayProfile==='duct'){               // strong inversion in the lowest layer (super-refraction)
+    const top=Math.max(20,3*S.h0);
+    return h<top?-300:gBg;
+  }
+  if(S.rayProfile==='mirage'){             // hot surface: n rises with height in a thin layer, bends rays up
+    const top=Math.max(2,0.5*S.h0);
+    return h<top?320:gBg;
+  }
+  return gBg;                              // 'standard': constant, equals the effective-radius model
+}
+// Integrate one ray from the eye (h=h0) launched at slope phi0 (radians) out to ground
+// distance maxS. Returns the polyline of {s,h}, the minimum height reached, and whether it
+// struck the surface. Uses RK4 on the linear system h'=phi, phi'=1/R+dn/dh.
+function traceRay(h0,phi0,R,maxS,steps){
+  const n=Math.max(200,Math.min(steps||1400,3000)),ds=maxS/n;
+  const acc=h=>1/R+refrGradient(Math.max(0,h),R)*1e-9;
+  let h=h0,phi=phi0,minH=h0,grazeS=-1;
+  const pts=[{s:0,h:h0}];
+  for(let i=0;i<n;i++){
+    const s=i*ds;
+    const k1h=phi,            k1p=acc(h);
+    const k2h=phi+0.5*ds*k1p, k2p=acc(h+0.5*ds*k1h);
+    const k3h=phi+0.5*ds*k2p, k3p=acc(h+0.5*ds*k2h);
+    const k4h=phi+ds*k3p,     k4p=acc(h+ds*k3h);
+    h+=ds/6*(k1h+2*k2h+2*k3h+k4h);
+    phi+=ds/6*(k1p+2*k2p+2*k3p+k4p);
+    if(h<minH){minH=h;}
+    if(h<=0&&grazeS<0){grazeS=s+ds;}
+    pts.push({s:(i+1)*ds,h:h});
+  }
+  return {pts,minH,grazeS};
+}
+// Find the horizon-grazing ray: the steepest-down ray from the eye whose path just touches
+// the surface (minH ~ 0) before the target. Bisection on the launch slope. Returns the trace
+// plus the ray-traced hidden height = the ray's height at the target distance d0 (the lowest
+// point on the target a grazing line of sight can still reach). hidden=0 if no ray grazes
+// within d0 (target is inside the refracted horizon).
+function rayTraceHidden(h0,d0,hT,R){
+  // The limiting line of sight leaves the eye angled DOWN and just grazes the surface at the
+  // horizon, then rises again as the surface curves away. Its height where it reaches the
+  // target is the lowest point still visible = the hidden height. Find that tangent ray by
+  // bisecting the launch slope: minH(phi0) increases monotonically with phi0, root at minH=0.
+  const dip=Math.sqrt(2*Math.max(h0,0.05)/R);     // approximate horizon dip angle
+  let lo=-(3*dip+h0/d0),hi=0.0,best=null;          // lo: steep enough to strike the surface
+  for(let it=0;it<44;it++){
+    const mid=(lo+hi)/2,tr=traceRay(h0,mid,R,d0,1200);
+    if(tr.minH<=0){lo=mid;best=tr;}else{hi=mid;}
+  }
+  if(!best)best=traceRay(h0,lo,R,d0,1200);
+  // Within the refracted horizon (ray grazes at/after the target, or never reaches surface): nothing hidden.
+  if(best.grazeS<0||best.grazeS>=d0*0.999)return {hid:0,trace:best,grazeS:best.grazeS};
+  const last=best.pts[best.pts.length-1];
+  return {hid:Math.max(0,Math.min(last.h,hT)),trace:best,grazeS:best.grazeS};
+}
 // Koschmieder: fraction of contrast surviving over distance d through visual range V (metres)
 function clarity(d,V){return V>0?Math.exp(-3.912*d/V):1}
 const M2FT=3.28084,M2MI=0.000621371;
@@ -447,7 +526,7 @@ function fmtH(m){
 }
 
 const V={cx:0,cy:0,s:1,manual:false};
-const S={h0:2,d0:30000,hT:100,type:'mountain',k:0.17,view:'side',focal:50,sensor:36,units:'metric',oblate:false,lat:45,showBands:false,tilt:0,visRange:0,extra:[],panX:0,flat:false,obsD:0,obsH:0,wave:0};
+const S={h0:2,d0:30000,hT:100,type:'mountain',k:0.17,view:'side',focal:50,sensor:36,units:'metric',oblate:false,lat:45,showBands:false,tilt:0,visRange:0,extra:[],panX:0,flat:false,obsD:0,obsH:0,wave:0,rayProfile:'off'};
 // obsD/obsH: an intervening obstacle (distance/height, metres). wave: sea-state wave height (metres).
 // S.extra: extra target distances (metres) for multi-target observations (e.g. a line of
 // identical towers). They share the primary target's height and type. Empty for everything else.
@@ -549,6 +628,7 @@ function serializeState(){
   if(S.obsD>0)p.set('od',+S.obsD);
   if(S.obsH>0)p.set('oh',+S.obsH);
   if(S.wave>0)p.set('wv',+S.wave);
+  if(S.rayProfile&&S.rayProfile!=='off')p.set('rp',S.rayProfile);
   if(S.showBands)p.set('b','1');
   if(S.extra.length)p.set('x',S.extra.join(','));
   return p.toString();
@@ -569,6 +649,7 @@ function applyStateFromURL(){
   if(p.has('od'))S.obsD=Math.max(0,f('od'));
   if(p.has('oh'))S.obsH=Math.max(0,f('oh'));
   if(p.has('wv'))S.wave=Math.max(0,f('wv'));
+  if(p.has('rp')&&['standard','duct','mirage'].includes(p.get('rp')))S.rayProfile=p.get('rp');
   S.showBands=p.get('b')==='1';
   if(p.has('x'))S.extra=p.get('x').split(',').map(parseFloat).filter(v=>v>0);
   return true;
@@ -583,6 +664,8 @@ function syncControlsFromState(){
   document.getElementById('iSensor').value=S.sensor;
   document.getElementById('iFocal').value=Math.round(S.focal);
   document.getElementById('iShowBands').checked=S.showBands;
+  document.getElementById('iRayProfile').value=S.rayProfile||'off';
+  document.getElementById('rayNote').style.display=(S.rayProfile&&S.rayProfile!=='off')?'':'none';
   if(window.syncKUI)syncKUI();
   syncInputsToUnits();updateViewBtns();updateEarthNote();
 }
@@ -601,12 +684,12 @@ function exportPNG(){
   o.fillStyle='#0a0e17';o.fillRect(0,0,off.width,off.height);o.drawImage(src,0,0);
   o.fillStyle='#0c1320';o.fillRect(0,src.height,off.width,footH);
   o.fillStyle='#8aa0b8';o.font=(13*dpr)+"px 'SF Mono',monospace";o.textBaseline='middle';
-  o.fillText('Earth Curvature Simulator v1.3.0  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  mutiny19.github.io/curvhorizon',10*dpr,src.height+footH/2);
+  o.fillText('Earth Curvature Simulator v1.4.0  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  mutiny19.github.io/curvhorizon',10*dpr,src.height+footH/2);
   off.toBlob(function(b){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='curvature-'+S.view+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);});
 }
 function exportCSV(){
   const R=effR(S.k),gR=baseR(),h0=S.h0,hT=S.hT,fin=isFinite(R);
-  const lines=['# Earth Curvature & Horizon Simulator v1.3.0',
+  const lines=['# Earth Curvature & Horizon Simulator v1.4.0',
     '# eye_height_m='+h0+',target_height_m='+hT+',k='+S.k+',earth='+earthLabel(),
     '# permalink='+buildPermalink(),
     'distance_km,horizon_km,drop_below_tangent_m,bulge_m,hidden_m_kSel,visible_m,hidden_m_k0'];
@@ -849,6 +932,11 @@ function init(){
 
   // Refraction bands
   document.getElementById('iShowBands').addEventListener('change',function(){S.showBands=this.checked;render()});
+  document.getElementById('iRayProfile').addEventListener('change',function(){
+    S.rayProfile=this.value;
+    document.getElementById('rayNote').style.display=this.value==='off'?'none':'';
+    render();
+  });
 
   // WGS84
   document.getElementById('iEarthModel').addEventListener('change',function(){
@@ -1072,6 +1160,9 @@ function render(){
   const d1=hDist(h0,R),hBul=bHeight(d0,R);
   const _hf=hiddenWithFeatures(d0,h0,hT,R),hHid=_hf.hid,hidBy=_hf.by;
   const hVis=Math.max(0,hT-hHid),dropEnd=dropArc(d0,R);
+  // Ray-traced refraction overlay (uses the true radius, not the effective radius)
+  const rayOn=S.rayProfile!=='off'&&!S.flat;
+  const rayRes=rayOn?rayTraceHidden(h0,d0,hT,baseR()):null;
 
   updateSummary();
   scheduleURLUpdate();
@@ -1087,6 +1178,11 @@ function render(){
   const showBy=!S.flat&&hidBy!=='earth'&&hHid>1e-4;
   document.getElementById('rHidBy').style.display=showBy?'':'none';
   if(showBy)document.getElementById('oHidBy').textContent=(hidBy==='waves'?'wave crests':'intervening terrain');
+  document.getElementById('rHidRay').style.display=rayOn?'':'none';
+  if(rayOn){
+    const lab={standard:'standard profile',duct:'inversion / duct',mirage:'surface mirage'}[S.rayProfile]||S.rayProfile;
+    document.getElementById('oHidRay').textContent=fmtH(rayRes.hid)+' ('+lab+')';
+  }
   document.getElementById('oVis').textContent=fmtH(hVis);
   document.getElementById('oAng').textContent=angVis.toFixed(1)+' arcmin';
   document.getElementById('oTilt').textContent=tiltDeg.toFixed(4)+'°';
@@ -1141,13 +1237,13 @@ function render(){
     else renderObserverFlat(d0,hT,h0);
     return;
   }
-  if(S.view==='side')renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd,hidBy);
+  if(S.view==='side')renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd,hidBy,rayRes);
   else if(S.view==='laser')renderLaser(R,d0,hT,h0,hBul);
   else renderObserver(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd);
 }
 
 // ===================== SIDE VIEW =====================
-function renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd,hidBy){
+function renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd,hidBy,rayRes){
   if(!V.manual)fitSide();
   // A canvas scale bar (drawn at end) replaces the text readout in this view
   document.getElementById('scaleInfo').style.display='none';
@@ -1286,6 +1382,26 @@ function renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd,hidBy){
     for(let i=0;i<=60;i++){const a=wA0-span*(i/60);const crest=(i%2===0)?S.wave:0;const p=w2s((R+crest)*Math.cos(a),(R+crest)*Math.sin(a));i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);}
     ctx.stroke();
     if(hidBy==='waves'){const wc=pt(hrzA,S.wave);callout(wc,[{text:'WAVE CRESTS',color:'#6ad0ff'},{text:fmtH(S.wave)+' sea state',color:'#6ad0ff'}],0,-58,10);}
+  }
+
+  // Ray-traced light path overlay (drawn on the effective-radius sphere: the standard profile
+  // follows curvature 1/R' and so overlays the straight constant-k sight line, while the duct
+  // and mirage profiles bend away from it)
+  if(rayRes&&rayRes.trace){
+    const tr=rayRes.trace.pts;
+    ctx.beginPath();
+    for(let i=0;i<tr.length;i++){const a=obsA-tr[i].s/R,rr=R+tr[i].h,p=w2s(rr*Math.cos(a),rr*Math.sin(a));i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);}
+    ctx.strokeStyle='#e84393';ctx.lineWidth=Math.max(2.5*lw*V.s,1.6);ctx.globalAlpha=0.92;ctx.stroke();ctx.globalAlpha=1;
+    const profLbl={standard:'standard air',duct:'inversion / duct',mirage:'surface mirage'}[S.rayProfile]||S.rayProfile;
+    const rhid=Math.min(rayRes.hid,hT);
+    if(rhid>0.01){
+      const rp=pt(tgtA,rhid),rps=w2s(rp.x,rp.y);
+      ctx.beginPath();ctx.moveTo(rps.x-15,rps.y);ctx.lineTo(rps.x+15,rps.y);ctx.strokeStyle='#e84393';ctx.lineWidth=2.5;ctx.stroke();
+      dot(rp,3*lw,'#e84393','#fff');
+      callout(rp,[{text:'RAY-TRACED ('+profLbl+')',color:'#e84393'},{text:fmtH(rayRes.hid)+' hidden',color:'#e84393'}],62,34,10);
+    }else{
+      callout(tgtSurf,[{text:'RAY-TRACED ('+profLbl+')',color:'#e84393'},{text:'fully visible (ducted)',color:'#e84393'}],62,44,10);
+    }
   }
 
   // Line of sight
