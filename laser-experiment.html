@@ -316,6 +316,7 @@
       <li><span class="item-text">Quadrant beam sensor  retroreflector + detector array</span><span class="cost">$40 – $100</span></li>
       <li><span class="item-text">Optical flow + downward rangefinder  distance + altitude</span><span class="cost">$30 – $60</span></li>
       <li><span class="item-text">Digital clinometer  0.1 degree resolution</span><span class="cost">$30 – $65</span></li>
+      <li><span class="item-text">Weather sensors  temp + humidity + pressure  drone and origin</span><span class="cost">$20 – $60</span></li>
       <li><span class="item-text">Surveyor measuring wheel  backup distance log</span><span class="cost">$20 – $50</span></li>
       <li><span class="item-text">Walkie-talkies  operator to chase crew</span><span class="cost">$25 – $50</span></li>
       <li><span class="item-text">Miscellaneous  batteries  cable ties  notebook</span><span class="cost">$30 – $60</span></li>
@@ -323,7 +324,7 @@
 
     <div class="total">
       <span class="lbl">TOTAL ESTIMATE</span>
-      <span class="val">$485 – $1,085</span>
+      <span class="val">$505 – $1,145</span>
     </div>
     </div>
   </div>
@@ -345,8 +346,11 @@
       <div class="subhead">CLINOMETER</div>
       <p>A digital inclinometer good to 0.1 degrees is enough. That resolution catches a Polaris shift of about 7 miles of north/south travel, which is the scale this protocol works at. Sextants reach finer, into the arcminutes, but they cost more and ask more of the hands holding them. For a protocol meant to be repeated by ordinary people, 0.1 degrees is the floor that still works.</p>
 
+      <div class="subhead">WEATHER SENSORS (BOTH ENDS)</div>
+      <p>A combined module like the BME280 reads temperature, relative humidity, and barometric pressure from one small chip, for a few dollars. Carry one at the origin, mounted at beam height on the ridge, and one on the drone at the far end. Those three numbers fix the refractivity of the air the beam crosses: N = 77.6·P/T + 3.73 × 10⁵ · e/T², where P is the pressure in hPa, T the temperature in kelvin, and e the water-vapor pressure that the humidity reading gives (Hirt et al., 2010). Logged at both ends through the run, they turn the refraction correction from an estimate into a measured quantity. Let the flight controller record the drone's and add a small datalogger at the mount; two modules and a logger cost about the price of a meal.</p>
+
       <div class="subhead">PRICE SOURCES</div>
-      <p>Laser prices were checked against the Zeus Lasers and Wicked Lasers consumer catalogs (June 2026). Drone parts were priced from common F450 kit suppliers. Sensor and mount prices came from AliExpress, eBay surveying listings, and Banggood industrial pages. The range runs from the cheapest gear that still does the job to mid-tier prosumer. Spending past that buys precision and reliability. It does not buy a different answer.</p>
+      <p>Laser prices were checked against the Zeus Lasers and Wicked Lasers consumer catalogs (June 2026). Drone parts were priced from common F450 kit suppliers. Sensor, mount, and weather-module prices came from AliExpress, eBay surveying listings, and Banggood industrial pages. The range runs from the cheapest gear that still does the job to mid-tier prosumer. Spending past that buys precision and reliability. It does not buy a different answer.</p>
     </div>
   </div>
 
@@ -648,6 +652,9 @@
 
       <div class="subhead">MEASURE REFRACTION DIRECTLY</div>
       <p>Refraction can be measured, not just feared. Fire a second laser between two fixed points of known height and distance, in the same air, on the same night. Surveyors do a version of this with reciprocal leveling: two instruments sight each other at the same moment from known positions, and whatever remains after the known geometry is removed is the bending (Hirt et al., 2010). Log that coefficient during the run and take it back out of the altitude reading.</p>
+
+      <div class="subhead">LOG THE AIR AT BOTH ENDS</div>
+      <p>The temperature, humidity, and pressure sensors on the mount and the drone measure the cause of refraction directly. The bending of the beam is set by how refractivity changes along the path and, most of all, with height (Hirt et al., 2010). Convert each reading to N and you have the air at both ends as a single number. Better still, let the drone hold station and sample at two heights a few metres apart: the change in N over that height is the vertical gradient, and the vertical gradient is what curves the beam. Measured that way, the refraction for the moment is a reading rather than a guess, and it drops straight into the correction beside the two-color and reciprocal checks.</p>
 
       <div class="subhead">USE MULTIPLE WAVELENGTHS</div>
       <p>Refraction depends on color. Red light bends less than blue through the same air (Young, n.d.). Fly a red beam and a green beam to the same drone at once. If refraction is present, the two will not agree, in their tilt or in where they fall, and the size of the disagreement is the size of the refraction. If they sit on top of each other, refraction is negligible. Either way, two colors measure the effect instead of assuming it.</p>
