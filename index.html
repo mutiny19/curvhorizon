@@ -365,7 +365,7 @@ function fmtH(m){
 }
 
 const V={cx:0,cy:0,s:1,manual:false};
-const S={h0:2,d0:30000,hT:100,type:'mountain',k:0.17,view:'side',focal:50,sensor:36,units:'metric',oblate:false,lat:45,showBands:false,tilt:0,visRange:0,extra:[]};
+const S={h0:2,d0:30000,hT:100,type:'mountain',k:0.17,view:'side',focal:50,sensor:36,units:'metric',oblate:false,lat:45,showBands:false,tilt:0,visRange:0,extra:[],panX:0};
 // S.extra: extra target distances (metres) for multi-target observations (e.g. a line of
 // identical towers). They share the primary target's height and type. Empty for everything else.
 // Refraction bands - single source of truth for both views. k=0.5 represents
@@ -418,7 +418,7 @@ function fitLaser(){
 
 function fitObs(){
   const R=effR(S.k),d0=S.d0,hT=S.hT,h0=S.h0;
-  V.cx=0;
+  V.cx=0;S.panX=0;  // a fresh fit recenters any horizontal pan of a multi-target row
   // Multi-target lineup: choose the zoom so the receding row spans ~70% of the width.
   // (drawObserverMulti spaces targets ~1.8x the nearest target's pixel height apart, so
   //  size V.s against that spacing to keep the whole row in frame and proportioned.)
@@ -584,10 +584,11 @@ function init(){
     if(!drag)return;
     moved+=Math.abs(e.clientX-lx)+Math.abs(e.clientY-ly);
     if(S.view==='obs'){
-      // Vertical drag tilts the view up/down (horizontal locked on target)
+      // Vertical drag tilts the view up/down; for a multi-target row, horizontal drag pans it
       S.tilt+=(e.clientY-ly)/V.s;
       const maxTilt=80*Math.PI/180;
       S.tilt=Math.max(-maxTilt,Math.min(maxTilt,S.tilt));
+      if(S.extra.length>0){S.panX+=(e.clientX-lx)/V.s;V.manual=true;}
       lx=e.clientX;ly=e.clientY;render();
       return;
     }
@@ -680,7 +681,7 @@ const TOUR=[
   {sel:'#iEarthModel',title:'Earth model',body:'Use the mean 6371 km sphere, or the WGS84 oblate spheroid with a latitude-dependent radius (6357–6378 km) for precise work.'},
   {sel:'.obs-pre',title:'Famous observations',body:'Real, photographed long-distance sightings: Chicago across Lake Michigan, Mt Canigou from Marseille, the Bedford Level canal. Click one and read the note: it explains whether the sighting is ordinary refraction or a temperature-inversion mirage.'},
   {sel:'#methToggle',title:'Methodology',body:'Expand this for the exact formulas used, the refraction model, and why the "8 inches per mile²" rule overstates what is hidden.'},
-  {sel:'.cv',title:'Navigate the view',body:'<b>Scroll</b> to zoom, <b>drag</b> to pan. In Observer View, zooming changes the camera focal length like a real lens: the horizon stays put while the target magnifies (proof a zoom can\'t recover something truly hidden). <b>Dragging up or down tilts</b> your line of sight like raising or lowering a camera, and the Fit button recenters and levels the view.'},
+  {sel:'.cv',title:'Navigate the view',body:'<b>Scroll</b> to zoom, <b>drag</b> to pan. In Observer View, zooming changes the camera focal length like a real lens: the horizon stays put while the target magnifies (proof a zoom can\'t recover something truly hidden). <b>Dragging up or down tilts</b> your line of sight like raising or lowering a camera; with a row of targets, dragging left or right pans along the row. The Fit button recenters and levels the view.'},
   {sel:null,title:'You\'re set',body:'Explore freely. The Results panel always shows horizon distance, hidden and visible height, and the bulge. Reopen this tour at any time with the “? How to use” button.'},
 ];
 let _tourI=0;
@@ -1440,7 +1441,6 @@ function renderObserver(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
 function drawObserverMulti(R,h0,hT,d0,hrz,ay){
   const dists=[...S.extra,d0].filter(d=>d>0).sort((a,b)=>a-b);
   const n=dists.length;
-  // Per-target geometry first, so spacing can scale with the rendered (pixel) heights.
   const rigs=dists.map(di=>{
     const drop=dropArc(di,R);
     const slant=Math.sqrt(di*di+(h0-drop)*(h0-drop));
@@ -1449,14 +1449,16 @@ function drawObserverMulti(R,h0,hT,d0,hrz,ay){
     const bY=ay(hHidI>0?-Math.atan2(hHidI,slant):0);
     return {di,hHidI,hVisI,tY,bY,h:Math.abs(bY-tY)};
   });
-  // Spacing is canvas-relative so the row stays in frame at any zoom; each target's width tracks
-  // its own pixel height, so targets keep their proportions (no vertical stretching) as you zoom.
-  const step=(W*0.72)/Math.max(n-1,1);
-  const startX=W/2-step*(n-1)/2;
+  // Even horizontal spacing, but scaled to the nearest target's pixel height: it spans ~half the
+  // width by default and grows with zoom, so the whole row magnifies like a telescope (objects spread
+  // apart as you zoom in, converge as you zoom out). Horizontal drag pans the row via S.panX so you
+  // can follow it once it grows past the frame.
+  const stepPx=1.67*W*rigs[0].h/(Math.max(n-1,1)*H);
+  const panPx=S.panX*V.s;
   for(let i=0;i<n;i++){
     const r=rigs[i];
     const w=Math.max(r.h*0.35,2);
-    const cx=startX+i*step;
+    const cx=W/2+(i-(n-1)/2)*stepPx+panPx;
     // Visible part above the horizon
     ctx.save();ctx.beginPath();ctx.rect(0,0,W,hrz-0.5);ctx.clip();
     drawTargetShapeObs(cx,r.tY,r.bY,hrz,w,r.h,S.type,r.hHidI,r.hVisI,hT);
