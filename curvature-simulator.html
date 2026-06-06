@@ -428,10 +428,9 @@ function fitObs(){
     const drop=dropArc(near,R),slant=Math.sqrt(near*near+(h0-drop)*(h0-drop));
     const hHidN=hHide(near,h0,R),hVisN=Math.max(0,hT-hHidN);
     const angH=Math.max((hVisN>0?Math.atan2(hVisN,slant):0)+(hHidN>0?Math.atan2(hHidN,slant):0),1e-4);
-    // Frame the nearest target by whichever is tighter: ~35% of height, or the row (spaced 1.3x
-    // its height) spanning ~70% of width. Keeps both a 2-rig and a 6-tower lineup in frame.
-    const maxHpx=n>1?Math.min(H*0.35,(W*0.7)/(1.3*(n-1))):H*0.45;
-    V.s=maxHpx/angH;
+    // Size the nearest target to ~30% of height. Horizontal spacing is canvas-relative (see
+    // drawObserverMulti), so the row always stays in frame; zooming enlarges each target in place.
+    V.s=(H*0.30)/angH;
     S.focal=focalFromScale();
     const fi=document.getElementById('iFocal');if(fi)fi.value=Math.round(S.focal);
     return;
@@ -1450,10 +1449,9 @@ function drawObserverMulti(R,h0,hT,d0,hrz,ay){
     const bY=ay(hHidI>0?-Math.atan2(hHidI,slant):0);
     return {di,hHidI,hVisI,tY,bY,h:Math.abs(bY-tY)};
   });
-  // Spacing and width both track the tallest (nearest) target's pixel height, so the whole
-  // lineup scales uniformly with zoom instead of stretching vertically.
-  const maxH=Math.max(...rigs.map(r=>r.h),6);
-  const step=maxH*1.3;
+  // Spacing is canvas-relative so the row stays in frame at any zoom; each target's width tracks
+  // its own pixel height, so targets keep their proportions (no vertical stretching) as you zoom.
+  const step=(W*0.72)/Math.max(n-1,1);
   const startX=W/2-step*(n-1)/2;
   for(let i=0;i<n;i++){
     const r=rigs[i];
