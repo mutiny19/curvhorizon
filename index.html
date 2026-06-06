@@ -269,6 +269,17 @@
       </div>
     </div>
     <div class="sec">
+      <h3>Visibility limits</h3>
+      <div class="rp">
+        <div class="rr"><span class="l" title="Beyond this distance the target's top drops below the horizon. Equals horizon(eye) + horizon(target).">Top visible within</span><span class="v g" id="oLimTop">-</span></div>
+        <div class="rr"><span class="l" title="Beyond this distance even the base/waterline is below the horizon. Equals the observer's horizon distance.">Base visible within</span><span class="v a" id="oLimBase">-</span></div>
+        <div class="rd"></div>
+        <div class="rr"><span class="l" title="Minimum eye height, at the current distance, for the top of the target to just clear the horizon.">Eye height to see top</span><span class="v o" id="oLimEyeTop">-</span></div>
+        <div class="rr"><span class="l" title="Minimum eye height, at the current distance, for the whole target (down to its base) to be visible.">Eye height to see base</span><span class="v o" id="oLimEyeBase">-</span></div>
+      </div>
+      <div class="note">Inverse answers from the current target height and refraction: how far the target stays visible, and what eye height would reveal it at the set distance.</div>
+    </div>
+    <div class="sec">
       <h3 class="meth-toggle" id="methToggle" style="cursor:pointer;user-select:none">Methodology &#9654;</h3>
       <div id="methBody" style="display:none;font-size:11px;color:#8899aa;line-height:1.6">
         <p>All formulas use effective Earth radius R' = R/(1−k) to model atmospheric refraction. Lines in <span style="color:#7a93b0">grey</span> below each formula show the live calculation for your current inputs.</p>
@@ -1030,6 +1041,17 @@ function render(){
     const gR=baseR();
     document.getElementById('oD1geo').textContent=fmtD(hDist(h0,gR));
     document.getElementById('oHidGeo').textContent=fmtH(hHide(d0,h0,gR));
+  }
+  // Visibility limits (inverse solvers)
+  if(S.flat){
+    ['oLimTop','oLimBase'].forEach(id=>document.getElementById(id).textContent='unlimited');
+    ['oLimEyeTop','oLimEyeBase'].forEach(id=>document.getElementById(id).textContent='any height');
+  }else{
+    const hzObs=hDist(h0,R),hzTgt=hDist(hT,R),dNeedTop=d0-hzTgt;
+    document.getElementById('oLimTop').textContent=fmtD(hzObs+hzTgt);
+    document.getElementById('oLimBase').textContent=fmtD(hzObs);
+    document.getElementById('oLimEyeTop').textContent=dNeedTop<=0?'any height':fmtH(Math.sqrt(R*R+dNeedTop*dNeedTop)-R);
+    document.getElementById('oLimEyeBase').textContent=fmtH(Math.sqrt(R*R+d0*d0)-R);
   }
   const se=document.getElementById('oStat');
   if(hHid<=0){se.textContent='Fully visible';se.className='v g'}
