@@ -471,13 +471,13 @@ function init(){
     S.units='metric';
     document.getElementById('btnMetric').classList.add('active');
     document.getElementById('btnImperial').classList.remove('active');
-    syncInputsToUnits();render();
+    syncInputsToUnits();updateEarthNote();render();
   });
   document.getElementById('btnImperial').addEventListener('click',()=>{
     S.units='imp';
     document.getElementById('btnImperial').classList.add('active');
     document.getElementById('btnMetric').classList.remove('active');
-    syncInputsToUnits();render();
+    syncInputsToUnits();updateEarthNote();render();
   });
 
   const binds={iH0:'h0',iD0:'d0_dist',iHT:'hT'};
@@ -731,11 +731,14 @@ function tourShow(){
 
 function updateEarthNote(){
   const r=S.oblate?wgs84R(S.lat):RE;
+  const imp=S.units==='imp';
+  const rStr=imp?Math.round(r*M2MI).toLocaleString('en-US')+' mi':Math.round(r/1000).toLocaleString('en-US')+' km';
+  const rStr1=imp?(r*M2MI).toFixed(1)+' mi':(r/1000).toFixed(1)+' km';
   document.getElementById('earthNote').textContent=S.oblate
-    ?'WGS84 geocentric R at '+S.lat+'°: '+(r/1000).toFixed(1)+' km'
-    :'Mean sphere R = 6,371 km.';
+    ?'WGS84 geocentric R at '+S.lat+'°: '+rStr1
+    :'Mean sphere R = '+rStr+'.';
   document.querySelector('header .sub').textContent=
-    (S.oblate?'WGS84 oblate':'Spherical model')+' · R = '+(r/1000).toFixed(0)+' km';
+    (S.oblate?'WGS84 oblate':'Spherical model')+' · R = '+rStr;
 }
 
 function syncInputsToUnits(){
@@ -771,18 +774,21 @@ function updateViewBtns(){
 const TYPE_LABELS={mountain:'Mountain',lighthouse:'Lighthouse',boat:'Boat / Ship',building:'Building',wind_turbine:'Wind Turbine',oil_platform:'Oil Platform',custom:'Custom'};
 function updateSummary(){
   const laser=S.view==='laser';
+  const imp=S.units==='imp';
+  const earthRStr=imp?Math.round(baseR()*M2MI).toLocaleString('en-US')+' mi':Math.round(baseR()/1000).toLocaleString('en-US')+' km';
+  const earthStr=S.oblate?'WGS84 @ '+S.lat+'° ('+earthRStr+')':'Sphere '+earthRStr;
   const rows=laser?[
     ['Laser height',fmtH(S.h0)],
     ['Distance',fmtD(S.d0)],
     ['Detector height',fmtH(S.hT)],
     ['Refraction','k = '+S.k],
-    ['Earth',S.oblate?'WGS84 @ '+S.lat+'°':'Sphere 6371 km'],
+    ['Earth',earthStr],
   ]:[
     ['Eye height',fmtH(S.h0)],
     ['Distance',fmtD(S.d0)],
     ['Target',fmtH(S.hT)+' '+(TYPE_LABELS[S.type]||S.type)],
     ['Refraction','k = '+S.k],
-    ['Earth',S.oblate?'WGS84 @ '+S.lat+'°':'Sphere 6371 km'],
+    ['Earth',earthStr],
   ];
   if(S.visRange>0&&!laser)rows.push(['Visual range',fmtD(S.visRange)]);
   if(S.view==='obs')rows.push(['Lens',Math.round(S.focal)+' mm']);
