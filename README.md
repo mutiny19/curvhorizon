@@ -32,6 +32,10 @@ how distant targets are progressively hidden by the curvature of the Earth — a
   radius by latitude).
 - **Refraction bands** — overlay line-of-sight at multiple *k* values to show the range.
 - **Visibility / haze limit** — optional Koschmieder air-clarity cutoff.
+- **Terrain & sea state** — optional intervening obstacle (a hill or ridge at a set
+  distance and height) and wave height. Whichever of the Earth horizon, the wave crests,
+  or the obstacle grazes the line of sight highest sets the hidden amount, and the result
+  panel reports which one is the limiter.
 - **Methodology** — collapsible section with the governing formulas, live worked
   calculations for the current scene, citations, and a glossary.
 

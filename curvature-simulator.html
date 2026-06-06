@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   Earth Curvature & Horizon Simulator
-  Version 1.2.0  ·  Last revised 2026-06-06
+  Version 1.3.0  ·  Last revised 2026-06-06
   Spherical/WGS84 curvature & visibility model with observer/camera view.
 
   Copyright (c) 2026 mutiny19.
@@ -119,7 +119,7 @@
     <span class="sub">Spherical model &middot; R = 6,371 km</span>
   </div>
   <div style="display:flex;align-items:center;gap:14px">
-    <span class="hide-mobile" style="font-size:10px;color:#556" title="Last revised 2026-06-06">v1.2.0 &middot; 2026-06-06</span>
+    <span class="hide-mobile" style="font-size:10px;color:#556" title="Last revised 2026-06-06">v1.3.0 &middot; 2026-06-06</span>
     <button id="btnGuide">? How to use</button>
     <span class="hide-mobile" style="font-size:11px;color:#556">Scroll to zoom &middot; Drag to pan</span>
   </div>
@@ -220,6 +220,14 @@
       <div class="note">Air clarity / haze limit. 0 = ignore. Even when geometry says a target is visible, haze can hide it.</div>
     </div>
     <div class="sec">
+      <h3>Terrain &amp; Sea State</h3>
+      <div class="row"><label>Obstacle dist.</label><input type="number" id="iObsD" value="0" min="0" step="1"><span class="u">km</span></div>
+      <div class="row"><label>Obstacle height</label><input type="number" id="iObsH" value="0" min="0" step="1"><span class="u">m</span></div>
+      <div class="note">An intervening hill or ridge between you and the target. 0 = none. If it rises above the line of sight, it becomes the obstruction instead of the horizon.</div>
+      <div class="row" style="margin-top:6px"><label>Wave height</label><input type="number" id="iWave" value="0" min="0" step="0.1"><span class="u">m</span></div>
+      <div class="note">Sea state. The visible horizon is formed by the nearest wave crests, not the mean surface, so waves hide a little more (approximate).</div>
+    </div>
+    <div class="sec">
       <h3>Earth Model</h3>
       <div class="row"><label>Shape</label>
         <select id="iEarthModel">
@@ -257,6 +265,7 @@
         <div class="rd"></div>
         <div class="rr"><span class="l">Bulge height (apex)</span><span class="v y" id="oBulge">-</span></div>
         <div class="rr"><span class="l">Hidden height</span><span class="v r" id="oHid">-</span></div>
+        <div class="rr sub" id="rHidBy" style="display:none"><span class="l">obstruction</span><span class="v" id="oHidBy">-</span></div>
         <div class="rr sub" id="rHidGeo" style="display:none"><span class="l">no refraction (k=0)</span><span class="v" id="oHidGeo">-</span></div>
         <div class="rr"><span class="l">Visible height</span><span class="v g" id="oVis">-</span></div>
         <div class="rd"></div>
@@ -318,12 +327,13 @@
           <li>Smooth sphere/ellipsoid at one datum, with no terrain, waves, tides, or local elevation between observer and target.</li>
           <li>A single uniform k along the whole path (the real atmosphere is layered; the effective-radius method is the standard approximation, best for modest distances and small k).</li>
           <li>Heights are measured above that datum; the light ray is modeled as a circular arc of radius r = R/k (≈ 7–8× Earth's radius at standard k), which the effective-radius substitution turns into a straight line on radius R'.</li>
-          <li>Ignores haze/visual range, diffraction, and wave height, all of which affect a real sighting.</li>
+          <li>Ignores diffraction, and treats refraction as a single constant. Real air bends light by a profile that varies with height and weather.</li>
         </ul>
         <p><strong style="color:var(--text)">Visual range (haze):</strong> Optional. Atmospheric extinction limits how far you can see at all, independent of curvature. Using the Koschmieder relation, contrast falls as exp(−3.912·d/V), where V is the meteorological visual range. Even when geometry leaves a target above the horizon, haze may erase it. Set V=0 to ignore.</p>
+        <p><strong style="color:var(--text)">Terrain and sea state:</strong> Optional. A sight line that just grazes a nearer high point is obstructed by it rather than by the Earth horizon. The tool checks two extra grazing points: an intervening obstacle (a hill or ridge at a set distance and height) and the wave crests that form the visible sea edge. For each, the hidden height on the target is h0 + slope·d0 + drop(d0), where the slope runs from the eye to the grazing point and drop(x) = R'(1 − cos(x / R')) is the surface fall at distance x. Whichever of the Earth horizon, the wave crests, or the obstacle hides the most sets the result, and the panel reports which one. The wave model is a first approximation: it raises the horizon grazing point by the wave height. Set the inputs to 0 to ignore.</p>
         <p><strong style="color:var(--text)">What this does <em>not</em> show:</strong> it predicts the <em>geometry</em> of what curvature hides. It cannot tell you whether a specific photo is genuine clear-air, a mirage, or intervening terrain; those depend on conditions on the day.</p>
         <p style="margin-top:6px"><strong style="color:var(--text)">Credit:</strong> The core curvature formulas follow and match the widely used <a href="https://dizzib.github.io/earth/curve-calc/" target="_blank" rel="noopener" style="color:var(--accent)">dizzib Earth curve calculator</a>; this tool adds scaled visualization, an observer/camera view, refraction bands, and visual range.</p>
-        <p style="margin-top:6px;color:#667">Version 1.2.0 &middot; last revised 2026-06-06</p>
+        <p style="margin-top:6px;color:#667">Version 1.3.0 &middot; last revised 2026-06-06</p>
         <p style="margin-top:8px"><strong style="color:var(--text)">Glossary</strong> <span style="color:#667">(terms link to neutral, scientific definitions)</span></p>
         <dl style="margin:2px 0 4px 0">
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon" target="_blank" rel="noopener" style="color:var(--accent)">Horizon</a></dt>
@@ -407,6 +417,23 @@ function hHide(d0,h0,R){const d1=hDist(h0,R);if(d0<=d1)return 0;const d2=d0-d1;r
 function bHeight(d0,R){return isFinite(R)?R*(1-Math.cos(d0/(2*R))):0}
 function effR(k){return baseR()/(1-Math.max(0,Math.min(k,0.99)))}
 function dropArc(x,R){if(!isFinite(R))return 0;const a=x/R;return R*(1-Math.cos(a))}
+// Height on the target (above its base) hidden by a sight line that just grazes a point at
+// distance gd and height gh above the surface. Models the Earth horizon (gh=0), a wave crest at
+// the horizon (gh=wave height), or an intervening obstacle. Returns 0 when the grazing point is
+// past the target or behind the observer.
+function grazeHidden(d0,h0,R,gd,gh){
+  if(!isFinite(R)||gd<=0||gd>=d0)return 0;
+  const slope=((gh-dropArc(gd,R))-h0)/gd;
+  return Math.max(0,h0+slope*d0+dropArc(d0,R));
+}
+// Effective hidden height including sea state (waves) and an intervening obstacle. Returns the
+// hidden amount and which feature set it (earth | waves | terrain).
+function hiddenWithFeatures(d0,h0,hT,R){
+  let hid=hHide(d0,h0,R),by='earth';
+  if(S.wave>0){const w=grazeHidden(d0,h0,R,hDist(h0,R),S.wave);if(w>hid){hid=w;by='waves';}}
+  if(S.obsD>0&&S.obsH>0){const t=grazeHidden(d0,h0,R,S.obsD,S.obsH);if(t>hid){hid=t;by='terrain';}}
+  return {hid:Math.min(hid,hT),by};
+}
 // Koschmieder: fraction of contrast surviving over distance d through visual range V (metres)
 function clarity(d,V){return V>0?Math.exp(-3.912*d/V):1}
 const M2FT=3.28084,M2MI=0.000621371;
@@ -420,7 +447,8 @@ function fmtH(m){
 }
 
 const V={cx:0,cy:0,s:1,manual:false};
-const S={h0:2,d0:30000,hT:100,type:'mountain',k:0.17,view:'side',focal:50,sensor:36,units:'metric',oblate:false,lat:45,showBands:false,tilt:0,visRange:0,extra:[],panX:0,flat:false};
+const S={h0:2,d0:30000,hT:100,type:'mountain',k:0.17,view:'side',focal:50,sensor:36,units:'metric',oblate:false,lat:45,showBands:false,tilt:0,visRange:0,extra:[],panX:0,flat:false,obsD:0,obsH:0,wave:0};
+// obsD/obsH: an intervening obstacle (distance/height, metres). wave: sea-state wave height (metres).
 // S.extra: extra target distances (metres) for multi-target observations (e.g. a line of
 // identical towers). They share the primary target's height and type. Empty for everything else.
 // Refraction bands - single source of truth for both views. k=0.5 represents
@@ -518,6 +546,9 @@ function serializeState(){
   if(S.view==='obs'){p.set('f',Math.round(S.focal));p.set('sn',S.sensor);}
   if(Math.abs(S.tilt)>1e-6)p.set('ti',+S.tilt.toFixed(5));
   if(S.visRange>0)p.set('vr',+S.visRange);
+  if(S.obsD>0)p.set('od',+S.obsD);
+  if(S.obsH>0)p.set('oh',+S.obsH);
+  if(S.wave>0)p.set('wv',+S.wave);
   if(S.showBands)p.set('b','1');
   if(S.extra.length)p.set('x',S.extra.join(','));
   return p.toString();
@@ -535,6 +566,9 @@ function applyStateFromURL(){
   if(p.has('lat'))S.lat=f('lat');
   if(p.has('f'))S.focal=Math.max(1,f('f'));if(p.has('sn'))S.sensor=f('sn');
   if(p.has('ti'))S.tilt=f('ti');if(p.has('vr'))S.visRange=Math.max(0,f('vr'));
+  if(p.has('od'))S.obsD=Math.max(0,f('od'));
+  if(p.has('oh'))S.obsH=Math.max(0,f('oh'));
+  if(p.has('wv'))S.wave=Math.max(0,f('wv'));
   S.showBands=p.get('b')==='1';
   if(p.has('x'))S.extra=p.get('x').split(',').map(parseFloat).filter(v=>v>0);
   return true;
@@ -567,12 +601,12 @@ function exportPNG(){
   o.fillStyle='#0a0e17';o.fillRect(0,0,off.width,off.height);o.drawImage(src,0,0);
   o.fillStyle='#0c1320';o.fillRect(0,src.height,off.width,footH);
   o.fillStyle='#8aa0b8';o.font=(13*dpr)+"px 'SF Mono',monospace";o.textBaseline='middle';
-  o.fillText('Earth Curvature Simulator v1.2.0  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  mutiny19.github.io/curvhorizon',10*dpr,src.height+footH/2);
+  o.fillText('Earth Curvature Simulator v1.3.0  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  mutiny19.github.io/curvhorizon',10*dpr,src.height+footH/2);
   off.toBlob(function(b){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='curvature-'+S.view+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);});
 }
 function exportCSV(){
   const R=effR(S.k),gR=baseR(),h0=S.h0,hT=S.hT,fin=isFinite(R);
-  const lines=['# Earth Curvature & Horizon Simulator v1.2.0',
+  const lines=['# Earth Curvature & Horizon Simulator v1.3.0',
     '# eye_height_m='+h0+',target_height_m='+hT+',k='+S.k+',earth='+earthLabel(),
     '# permalink='+buildPermalink(),
     'distance_km,horizon_km,drop_below_tangent_m,bulge_m,hidden_m_kSel,visible_m,hidden_m_k0'];
@@ -649,6 +683,23 @@ function init(){
   document.getElementById('iVis').addEventListener('input',function(){
     const v=Math.max(0,parseFloat(this.value)||0);
     S.visRange=S.units==='imp'?v/M2MI:v*1000;
+    render();
+  });
+
+  // Terrain & sea state - all stored in metres
+  document.getElementById('iObsD').addEventListener('input',function(){
+    const v=Math.max(0,parseFloat(this.value)||0);
+    S.obsD=S.units==='imp'?v/M2MI:v*1000;   // distance: km / mi
+    render();
+  });
+  document.getElementById('iObsH').addEventListener('input',function(){
+    const v=Math.max(0,parseFloat(this.value)||0);
+    S.obsH=S.units==='imp'?v/M2FT:v;          // height: m / ft
+    render();
+  });
+  document.getElementById('iWave').addEventListener('input',function(){
+    const v=Math.max(0,parseFloat(this.value)||0);
+    S.wave=S.units==='imp'?v/M2FT:v;          // height: m / ft
     render();
   });
 
@@ -936,6 +987,9 @@ function syncInputsToUnits(){
   document.getElementById('iD0').value=imp?(S.d0*M2MI).toFixed(2):(S.d0/1000);
   document.getElementById('iHT').value=imp?(S.hT*M2FT).toFixed(1):S.hT;
   document.getElementById('iVis').value=S.visRange<=0?0:(imp?(S.visRange*M2MI).toFixed(1):(S.visRange/1000));
+  document.getElementById('iObsD').value=S.obsD<=0?0:(imp?(S.obsD*M2MI).toFixed(2):(S.obsD/1000));
+  document.getElementById('iObsH').value=S.obsH<=0?0:(imp?(S.obsH*M2FT).toFixed(1):S.obsH);
+  document.getElementById('iWave').value=S.wave<=0?0:(imp?(S.wave*M2FT).toFixed(1):S.wave);
   // Update unit labels
   document.querySelectorAll('.row .u').forEach(u=>{
     if(u.textContent==='m'||u.textContent==='ft')u.textContent=imp?'ft':'m';
@@ -1015,7 +1069,8 @@ function updateMethodologyWork(Reff,d0,h0,d1,hHid,hBul){
 function render(){
   resize();
   const R=effR(S.k),d0=S.d0,hT=S.hT,h0=S.h0;
-  const d1=hDist(h0,R),hHid=hHide(d0,h0,R),hBul=bHeight(d0,R);
+  const d1=hDist(h0,R),hBul=bHeight(d0,R);
+  const _hf=hiddenWithFeatures(d0,h0,hT,R),hHid=_hf.hid,hidBy=_hf.by;
   const hVis=Math.max(0,hT-hHid),dropEnd=dropArc(d0,R);
 
   updateSummary();
@@ -1029,6 +1084,9 @@ function render(){
   document.getElementById('oBH').textContent=S.flat?'no horizon':(d0>d1?fmtD(d0-d1):'within horizon');
   document.getElementById('oBulge').textContent=fmtH(hBul);
   document.getElementById('oHid').textContent=fmtH(hHid);
+  const showBy=!S.flat&&hidBy!=='earth'&&hHid>1e-4;
+  document.getElementById('rHidBy').style.display=showBy?'':'none';
+  if(showBy)document.getElementById('oHidBy').textContent=(hidBy==='waves'?'wave crests':'intervening terrain');
   document.getElementById('oVis').textContent=fmtH(hVis);
   document.getElementById('oAng').textContent=angVis.toFixed(1)+' arcmin';
   document.getElementById('oTilt').textContent=tiltDeg.toFixed(4)+'°';
@@ -1083,13 +1141,13 @@ function render(){
     else renderObserverFlat(d0,hT,h0);
     return;
   }
-  if(S.view==='side')renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd);
+  if(S.view==='side')renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd,hidBy);
   else if(S.view==='laser')renderLaser(R,d0,hT,h0,hBul);
   else renderObserver(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd);
 }
 
 // ===================== SIDE VIEW =====================
-function renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
+function renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd,hidBy){
   if(!V.manual)fitSide();
   // A canvas scale bar (drawn at end) replaces the text readout in this view
   document.getElementById('scaleInfo').style.display='none';
@@ -1201,6 +1259,34 @@ function renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
     {text:'TARGET',color:'#00f2fe'},
     {text:fmtH(hT)+' tall',color:'#00f2fe'},
   ],40,-70,10);
+
+  // Intervening obstacle (terrain) - a ridge between observer and target
+  if(S.obsD>0&&S.obsH>0&&S.obsD<d0){
+    const obA=obsA-S.obsD/R;
+    const obBase=pt(obA,0),obTop=pt(obA,S.obsH);
+    const obN={x:Math.cos(obA),y:Math.sin(obA)};
+    const half=Math.max(S.obsH*0.9,d0*0.012);
+    const obL=pt(obA+half/R,0),obR=pt(obA-half/R,0);
+    const pL=w2s(obL.x,obL.y),pR=w2s(obR.x,obR.y),pT=w2s(obTop.x,obTop.y);
+    ctx.beginPath();ctx.moveTo(pL.x,pL.y);ctx.lineTo(pT.x,pT.y);ctx.lineTo(pR.x,pR.y);ctx.closePath();
+    ctx.fillStyle='rgba(120,90,60,0.5)';ctx.fill();
+    ctx.strokeStyle=hidBy==='terrain'?'#ffa502':'#7a5a3c';ctx.lineWidth=Math.max(2*lw*V.s,1.2);ctx.stroke();
+    dot(obTop,4*lw,'#c98a4b','#fff');
+    callout(obTop,[
+      {text:hidBy==='terrain'?'OBSTRUCTION':'OBSTACLE',color:'#c98a4b'},
+      {text:fmtH(S.obsH)+' at '+fmtD(S.obsD),color:'#c98a4b'},
+    ],0,-64,10);
+    if(hidBy==='terrain')line(obsEye,obTop,'rgba(201,138,75,0.7)',2*lw*V.s);
+  }
+  // Wave crests near the horizon - the sea surface that actually forms the visible edge
+  if(S.wave>0&&d1<d0){
+    const wA0=obsA-(d1*0.8)/R,span=(d1*0.4)/R;
+    ctx.strokeStyle=hidBy==='waves'?'#6ad0ff':'#3a6a88';ctx.lineWidth=Math.max(1.5*lw*V.s,1);
+    ctx.beginPath();
+    for(let i=0;i<=60;i++){const a=wA0-span*(i/60);const crest=(i%2===0)?S.wave:0;const p=w2s((R+crest)*Math.cos(a),(R+crest)*Math.sin(a));i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);}
+    ctx.stroke();
+    if(hidBy==='waves'){const wc=pt(hrzA,S.wave);callout(wc,[{text:'WAVE CRESTS',color:'#6ad0ff'},{text:fmtH(S.wave)+' sea state',color:'#6ad0ff'}],0,-58,10);}
+  }
 
   // Line of sight
   line(obsEye,tgtTop,'rgba(79,172,254,0.2)',1*lw*V.s,[8*lw*V.s,4*lw*V.s]);
