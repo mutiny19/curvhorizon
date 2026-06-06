@@ -49,6 +49,7 @@
   .rr .v.g{color:var(--green)} .rr .v.r{color:var(--red)}
   .rr .v.o{color:var(--orange)} .rr .v.a{color:var(--accent)} .rr .v.y{color:var(--yellow)}
   .rd{border-top:1px solid var(--border);margin:4px 0}
+  .rr.sub{padding:0 0 2px 10px;font-size:11px;opacity:0.75} .rr.sub .l{color:#778} .rr.sub .v{font-weight:400;color:#8aa0b8}
   .presets{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px}
   .pre{font-size:10px;padding:2px 6px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:3px;cursor:pointer}
   .pre:hover{border-color:var(--accent);color:var(--accent)}
@@ -182,9 +183,10 @@
       <div class="row"><label>Preset</label>
         <select id="iKPreset">
           <option value="0.17">Typical visual (k=0.17)</option>
-          <option value="0.13">Standard (k=0.13)</option>
+          <option value="0.143">7/6 Earth radius (k=0.143)</option>
+          <option value="0.13">Gauss mean (k=0.13)</option>
           <option value="0">None / Geometric (k=0)</option>
-          <option value="0.25">Strong (k=0.25)</option>
+          <option value="0.25">Strong / radio 4/3 (k=0.25)</option>
           <option value="0.33">1/3 rule (k=0.33)</option>
           <option value="0.5">Inversion (k=0.5)</option>
           <option value="0.9">Near-ducting (k=0.9)</option>
@@ -230,14 +232,17 @@
       <h3>Results</h3>
       <div class="rp">
         <div class="rr"><span class="l">Horizon distance</span><span class="v a" id="oD1">-</span></div>
+        <div class="rr sub" id="rD1geo" style="display:none"><span class="l">no refraction (k=0)</span><span class="v" id="oD1geo">-</span></div>
         <div class="rr"><span class="l">Beyond horizon</span><span class="v a" id="oBH">-</span></div>
         <div class="rd"></div>
         <div class="rr"><span class="l">Bulge height (apex)</span><span class="v y" id="oBulge">-</span></div>
         <div class="rr"><span class="l">Hidden height</span><span class="v r" id="oHid">-</span></div>
+        <div class="rr sub" id="rHidGeo" style="display:none"><span class="l">no refraction (k=0)</span><span class="v" id="oHidGeo">-</span></div>
         <div class="rr"><span class="l">Visible height</span><span class="v g" id="oVis">-</span></div>
         <div class="rd"></div>
         <div class="rr"><span class="l">Target visibility</span><span class="v" id="oStat">-</span></div>
-        <div class="rr"><span class="l">Arc angle</span><span class="v o" id="oArc">-</span></div>
+        <div class="rr"><span class="l" title="Angular height of the visible part of the target, as seen from the observer">Angular size (visible)</span><span class="v o" id="oAng">-</span></div>
+        <div class="rr"><span class="l" title="A distant vertical object leans away from you by the central angle s/R. Equal to the surface arc angle.">Object tilt (lean)</span><span class="v o" id="oTilt">-</span></div>
         <div class="rr"><span class="l">Drop at target</span><span class="v o" id="oDrop">-</span></div>
         <div class="rr" id="rBandRow" style="display:none"><span class="l">Visible range (k=0–0.5)</span><span class="v y" id="oBandRange">-</span></div>
         <div class="rr" id="rHazeRow" style="display:none"><span class="l">Through haze</span><span class="v" id="oHaze">-</span></div>
@@ -266,6 +271,15 @@
         <p style="margin-top:6px"><strong style="color:var(--text)">Laser line-of-sight over water:</strong> The Laser Test view uses the same effective-radius geometry. A straight ray clears the surface when its minimum height above the water stays positive; the bulge of the chord above the curved surface at the midpoint is d²/8R'. A horizontal ray rises above the surface as (R'+h)/cos(x/R') − R' ≈ h + x²/2R'. Treating the ray as straight on radius R' = R/(1−k) is exact when the refractivity gradient is constant <a href="https://www.itu.int/rec/R-REC-P.834/en" target="_blank" rel="noopener" style="color:var(--accent)">(ITU-R P.834)</a>.</p>
         <p>Why real laser tests over water are unreliable: a grazing beam travels through the lowest few meters of air, where the temperature gradient and therefore k are largest and most variable. As k rises toward 1 (a surface inversion of roughly +0.11 °C/m) the ray bends as much as the Earth curves, so it stays level and can travel beyond the horizon as a <em>duct</em> <a href="https://aty.sdsu.edu/explain/atmos_refr/duct.html" target="_blank" rel="noopener" style="color:var(--accent)">(Young, SDSU)</a>. The same sight line then gives different results morning vs afternoon, calm vs windy, which is the signature of changing refraction rather than a fixed geometry. Surveyors handle the steady part with a fixed combined curvature-and-refraction correction of about 0.0675·d² m (d in km), with k ≈ 0.13 measured for over a century <a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2010JD014067" target="_blank" rel="noopener" style="color:var(--accent)">(Hirt et al. 2010)</a>. The dependable curvature test raises the sight line and uses equal-height targets, as Wallace did on the Bedford Level in 1870 and the 2018 Rainy Lake experiment repeated <a href="https://walter.bislins.ch/bloge/index.asp?page=Proof+of+Earth+Curvature%3A+The+Rainy+Lake+Experiment" target="_blank" rel="noopener" style="color:var(--accent)">(Rainy Lake)</a>; that is what the Side and Observer views model.</p>
         <p><strong style="color:var(--text)">Spherical vs parabolic:</strong> This uses exact spherical formulas. The "8 inches per mile²" rule is a parabolic approximation of <em>drop below the tangent line</em>; it ignores observer height and overstates what is hidden. The correct hidden-height formula above accounts for both.</p>
+        <p style="margin-top:6px"><strong style="color:var(--text)">Common errors this tool avoids:</strong></p>
+        <ul style="margin:2px 0 6px 14px;padding:0">
+          <li>The obstruction is the <em>horizon</em>, not the bulge: drop below the tangent line (d²/2R') is not the hidden height. Hidden height is measured from the horizon line of sight.</li>
+          <li>"8 inches per mile²" is that tangent drop, and it ignores eye height entirely, so it is not what an observer of any real height sees.</li>
+          <li>The effective radius R' = R/(1−k) is applied to <em>every</em> term (horizon, hidden, bulge, dip), not mixed with the geometric R.</li>
+          <li>Horizon distance uses the exact √(h(h+2R')), not the small-angle √(2R'h), so it stays correct at aircraft and balloon heights.</li>
+          <li>The grazing case (target nearer than the horizon) is clamped to zero hidden, not a small negative number.</li>
+          <li>The "7/6 Earth radius" is exactly k=0.143; k=0.13 is the Gauss mean. The radio "4/3 radius" (k=0.25) is a microwave value, not optical, and is offered as a separate mode.</li>
+        </ul>
         <p><strong style="color:var(--text)">Observer view optics:</strong> The first-person view is rendered as a camera. Focal length f and sensor size set the field of view, FOV = 2·atan(sensor / 2f), and the magnification, f / 50 mm versus a naked eye. Scrolling to zoom changes f like a real lens: it magnifies the scene but cannot lift anything back above the horizon that curvature has already hidden. That matters, since "just zoom in" is a common objection.</p>
         <p><strong style="color:var(--text)">Earth model:</strong> Default radius is the IUGG mean R = 6,371 km. WGS84 mode uses the latitude-dependent geocentric radius of the reference ellipsoid (a = 6,378.137 km equator → b = 6,356.752 km poles). A Flat plane option (R = ∞) is included as a comparison baseline: with no curvature there is no horizon dip, no bulge, and nothing is ever hidden, so every target stays fully visible at any distance. Switching between it and the sphere shows the difference directly, and that difference is the curvature.</p>
         <p style="margin-top:6px"><strong style="color:var(--text)">Assumptions &amp; limits:</strong></p>
@@ -530,7 +544,7 @@ function init(){
   }));
 
   // Refraction
-  const kNotes={'0':'No refraction. Pure geometric line of sight.','0.13':'Standard atmospheric refraction. The light ray curves about 13% as much as Earth\'s surface.','0.17':'Typical visual observation conditions. Slightly more bending than standard.','0.25':'Strong refraction: warm air over a cold surface (e.g. ocean).','0.33':'1/3 rule, sometimes used in surveying. Effective radius = 1.5× Earth.','0.5':'Temperature inversion over cold water. The ray bends halfway toward Earth\'s curve; targets loom higher and more is revealed.','0.9':'Near-ducting: a strong surface inversion. The ray almost follows the curve, so a grazing beam barely drops and the surface looks nearly flat. At k=1 the ray matches Earth\'s curvature exactly (light ducts beyond the horizon).'};
+  const kNotes={'0':'No refraction. Pure geometric line of sight.','0.143':'The value that makes the effective radius exactly 7/6 of Earth\'s (the standard surveying "7/6 Earth"). Light bends about 14% as much as the surface curves.','0.13':'The classic Gauss mean coefficient. Often loosely called "7/6", though 7/6 is exactly k=0.143.','0.17':'Typical visual observation conditions over water. Slightly more bending than the surveying standard.','0.25':'Strong refraction, and the radio/radar "4/3 Earth radius" value (a microwave figure, not optical). Use for line-of-sight RF, not visual obscuration.','0.33':'1/3 rule, sometimes used in surveying. Effective radius = 1.5× Earth.','0.5':'Temperature inversion over cold water. The ray bends halfway toward Earth\'s curve; targets loom higher and more is revealed.','0.9':'Near-ducting: a strong surface inversion. The ray almost follows the curve, so a grazing beam barely drops and the surface looks nearly flat. At k=1 the ray matches Earth\'s curvature exactly (light ducts beyond the horizon).'};
   // One place that reflects S.k into every refraction control (preset, custom field, laser slider, readouts)
   window.syncKUI=function(){
     const kStr=String(S.k);
@@ -848,13 +862,26 @@ function render(){
   updateSummary();
   if(document.getElementById('methBody').style.display!=='none')updateMethodologyWork(R,d0,h0,d1,hHid,hBul);
 
+  const slant=Math.sqrt(d0*d0+(h0-dropEnd)*(h0-dropEnd));
+  const angVis=hVis>0?Math.atan2(hVis,slant)*180/Math.PI*60:0;      // arcmin, visible band
+  const tiltDeg=S.flat?0:(d0/baseR())*180/Math.PI;                  // geometric lean = s/R (true radius)
   document.getElementById('oD1').textContent=S.flat?'none (flat)':fmtD(d1);
   document.getElementById('oBH').textContent=S.flat?'no horizon':(d0>d1?fmtD(d0-d1):'within horizon');
   document.getElementById('oBulge').textContent=fmtH(hBul);
   document.getElementById('oHid').textContent=fmtH(hHid);
   document.getElementById('oVis').textContent=fmtH(hVis);
-  document.getElementById('oArc').textContent=S.flat?'0°':((d0/R)*180/Math.PI).toFixed(4)+'°';
+  document.getElementById('oAng').textContent=angVis.toFixed(1)+' arcmin';
+  document.getElementById('oTilt').textContent=tiltDeg.toFixed(4)+'°';
   document.getElementById('oDrop').textContent=fmtH(dropEnd);
+  // Geometric (no-refraction) comparison for horizon and hidden height
+  const showGeo=S.k>1e-4&&!S.flat;
+  document.getElementById('rD1geo').style.display=showGeo?'':'none';
+  document.getElementById('rHidGeo').style.display=showGeo?'':'none';
+  if(showGeo){
+    const gR=baseR();
+    document.getElementById('oD1geo').textContent=fmtD(hDist(h0,gR));
+    document.getElementById('oHidGeo').textContent=fmtH(hHide(d0,h0,gR));
+  }
   const se=document.getElementById('oStat');
   if(hHid<=0){se.textContent='Fully visible';se.className='v g'}
   else if(hHid>=hT){se.textContent='Fully hidden';se.className='v r'}
