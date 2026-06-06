@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   Earth Curvature & Horizon Simulator
-  Version 1.0.0  ·  Last revised 2026-05-30
+  Version 1.1.0  ·  Last revised 2026-06-05
   Spherical/WGS84 curvature & visibility model with observer/camera view.
 
   Copyright (c) 2026 mutiny19.
@@ -103,7 +103,7 @@
     <span class="sub">Spherical model &middot; R = 6,371 km</span>
   </div>
   <div style="display:flex;align-items:center;gap:14px">
-    <span style="font-size:10px;color:#556" title="Last revised 2026-05-30">v1.0.0 &middot; 2026-05-30</span>
+    <span style="font-size:10px;color:#556" title="Last revised 2026-06-05">v1.1.0 &middot; 2026-06-05</span>
     <button id="btnGuide">? How to use</button>
     <span style="font-size:11px;color:#556">Scroll to zoom &middot; Drag to pan</span>
   </div>
@@ -259,41 +259,49 @@
         <code style="display:block;font-size:10px;color:var(--accent);background:rgba(79,172,254,0.08);padding:3px 6px;border-radius:3px;margin:4px 0">dip = acos(R'/(R'+h)) ≈ √(2h/R') &nbsp;[horizon dip]</code>
         <div id="wDip" class="work"></div>
         <p>The angle (reported here in arcminutes) by which the sea horizon sits <em>below</em> true level. The horizon does not "rise to eye level" as you climb; it sinks farther below it, which is exactly what this dip measures.</p>
-        <p style="margin-top:6px"><strong style="color:var(--text)">Refraction (k):</strong> the coefficient of terrestrial refraction, the ratio of Earth's curvature to the light ray's curvature. The atmosphere bends rays downward, so the model replaces R with an effective radius R' = R/(1−k). k=0 geometric, k=0.13 surveying standard, k=0.17 typical visual conditions.</p>
+        <p style="margin-top:6px"><strong style="color:var(--text)">Refraction (k):</strong> the coefficient of terrestrial refraction, the ratio of Earth's curvature to the light ray's curvature (k = R/r, the optical convention; not to be confused with the radio "k-factor" R'/R = 4/3 used for the same standard air). Air is denser low down, so rays bend gently downward, and the model folds that into geometry by replacing R with an effective radius R' = R/(1−k). Physically k is set by the near-surface temperature gradient: k ≈ 503·(P/T²)·(0.0343 + dT/dh) with P in hPa, T in K, dT/dh in K/m. Standard air (lapse rate −0.0065 K/m) gives k ≈ 0.13; k=0 is pure geometry, k≈0.17 typical near-surface visual conditions.</p>
+        <p><strong style="color:var(--text)">Apparent vs geometric horizon:</strong> The <em>geometric</em> horizon is the tangent on a smooth airless Earth, at √(2Rh). Refraction bends the line of sight down to graze the surface farther away, so the horizon you actually see, the <em>apparent</em> (visible) horizon, sits at √(2R'h), beyond and slightly above the geometric one. The stronger the refraction, the farther the apparent horizon recedes; under a strong inversion it can lie beyond distant objects, so a low shoreline view shows ships or rigs standing in front of the horizon. Both views label these separately.</p>
         <p><strong style="color:var(--text)">Extreme refraction:</strong> Near the surface (especially over water) k is highly variable, measured from negative values up to far beyond 0.5 during temperature inversions. These produce <em>looming / superior mirages</em> that can briefly reveal objects normally hidden. This is a separate, intermittent effect, not steady refraction. The k=0.5 value corresponds to a surface inversion of about +0.05 °C/m, which makes the ray bend roughly half as much as the Earth curves; about +0.11 °C/m makes the ray match Earth's curvature exactly (k=1, the onset of ducting) <a href="https://aty.sdsu.edu/mirages/mirsims/loom/loom.html" target="_blank" rel="noopener" style="color:var(--accent)">(Young, SDSU)</a>.</p>
         <p style="margin-top:6px"><strong style="color:var(--text)">Laser line-of-sight over water:</strong> The Laser Test view uses the same effective-radius geometry. A straight ray clears the surface when its minimum height above the water stays positive; the bulge of the chord above the curved surface at the midpoint is d²/8R'. A horizontal ray rises above the surface as (R'+h)/cos(x/R') − R' ≈ h + x²/2R'. Treating the ray as straight on radius R' = R/(1−k) is exact when the refractivity gradient is constant <a href="https://www.itu.int/rec/R-REC-P.834/en" target="_blank" rel="noopener" style="color:var(--accent)">(ITU-R P.834)</a>.</p>
         <p>Why real laser tests over water are unreliable: a grazing beam travels through the lowest few meters of air, where the temperature gradient and therefore k are largest and most variable. As k rises toward 1 (a surface inversion of roughly +0.11 °C/m) the ray bends as much as the Earth curves, so it stays level and can travel beyond the horizon as a <em>duct</em> <a href="https://aty.sdsu.edu/explain/atmos_refr/duct.html" target="_blank" rel="noopener" style="color:var(--accent)">(Young, SDSU)</a>. The same sight line then gives different results morning vs afternoon, calm vs windy, which is the signature of changing refraction rather than a fixed geometry. Surveyors handle the steady part with a fixed combined curvature-and-refraction correction of about 0.0675·d² m (d in km), with k ≈ 0.13 measured for over a century <a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2010JD014067" target="_blank" rel="noopener" style="color:var(--accent)">(Hirt et al. 2010)</a>. The dependable curvature test raises the sight line and uses equal-height targets, as Wallace did on the Bedford Level in 1870 and the 2018 Rainy Lake experiment repeated <a href="https://walter.bislins.ch/bloge/index.asp?page=Proof+of+Earth+Curvature%3A+The+Rainy+Lake+Experiment" target="_blank" rel="noopener" style="color:var(--accent)">(Rainy Lake)</a>; that is what the Side and Observer views model.</p>
         <p><strong style="color:var(--text)">Spherical vs parabolic:</strong> This uses exact spherical formulas. The "8 inches per mile²" rule is a parabolic approximation of <em>drop below the tangent line</em>; it ignores observer height and overstates what is hidden. The correct hidden-height formula above accounts for both.</p>
+        <p><strong style="color:var(--text)">Observer view optics:</strong> The first-person view is rendered as a camera. Focal length f and sensor size set the field of view, FOV = 2·atan(sensor / 2f), and the magnification, f / 50 mm versus a naked eye. Scrolling to zoom changes f like a real lens: it magnifies the scene but cannot lift anything back above the horizon that curvature has already hidden. That matters, since "just zoom in" is a common objection.</p>
         <p><strong style="color:var(--text)">Earth model:</strong> Default radius is the IUGG mean R = 6,371 km. WGS84 mode uses the latitude-dependent geocentric radius of the reference ellipsoid (a = 6,378.137 km equator → b = 6,356.752 km poles).</p>
         <p style="margin-top:6px"><strong style="color:var(--text)">Assumptions &amp; limits:</strong></p>
         <ul style="margin:2px 0 6px 14px;padding:0">
           <li>Smooth sphere/ellipsoid at one datum, with no terrain, waves, tides, or local elevation between observer and target.</li>
           <li>A single uniform k along the whole path (the real atmosphere is layered; the effective-radius method is the standard approximation, best for modest distances and small k).</li>
-          <li>Heights are measured above that datum; light travels as a circular arc of radius R'/k.</li>
+          <li>Heights are measured above that datum; the light ray is modeled as a circular arc of radius r = R/k (≈ 7–8× Earth's radius at standard k), which the effective-radius substitution turns into a straight line on radius R'.</li>
           <li>Ignores haze/visual range, diffraction, and wave height, all of which affect a real sighting.</li>
         </ul>
         <p><strong style="color:var(--text)">Visual range (haze):</strong> Optional. Atmospheric extinction limits how far you can see at all, independent of curvature. Using the Koschmieder relation, contrast falls as exp(−3.912·d/V), where V is the meteorological visual range. Even when geometry leaves a target above the horizon, haze may erase it. Set V=0 to ignore.</p>
         <p><strong style="color:var(--text)">What this does <em>not</em> show:</strong> it predicts the <em>geometry</em> of what curvature hides. It cannot tell you whether a specific photo is genuine clear-air, a mirage, or intervening terrain; those depend on conditions on the day.</p>
         <p style="margin-top:6px"><strong style="color:var(--text)">Credit:</strong> The core curvature formulas follow and match the widely used <a href="https://dizzib.github.io/earth/curve-calc/" target="_blank" rel="noopener" style="color:var(--accent)">dizzib Earth curve calculator</a>; this tool adds scaled visualization, an observer/camera view, refraction bands, and visual range.</p>
-        <p style="margin-top:6px;color:#667">Version 1.0.0 &middot; last revised 2026-05-30</p>
+        <p style="margin-top:6px;color:#667">Version 1.1.0 &middot; last revised 2026-06-05</p>
         <p style="margin-top:8px"><strong style="color:var(--text)">Glossary</strong> <span style="color:#667">(terms link to neutral, scientific definitions)</span></p>
         <dl style="margin:2px 0 4px 0">
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon" target="_blank" rel="noopener" style="color:var(--accent)">Horizon</a></dt>
           <dd style="margin:0 0 0 10px">The circle all around you where your line of sight grazes the surface tangentially. It is <em>not</em> a single point, an edge, or a wall: in every direction the surface simply curves out of view at this distance and keeps going beyond it, so tall objects past it (mountains, ships' masts) still rise above it. As you climb, this circle widens, its distance growing with the square root of eye height.</dd>
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon#Geometrical_horizon" target="_blank" rel="noopener" style="color:var(--accent)">Hidden height</a></dt>
-          <dd style="margin:0 0 0 10px">How much of a distant object sits below the horizon, obscured by the Earth's curve.</dd>
+          <dd style="margin:0 0 0 10px">How much of a distant object is blocked by the bulge of the Earth: the vertical amount, measured up from its base, that lies below the observer's line of sight to the horizon. Everything above it stays visible.</dd>
+          <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon" target="_blank" rel="noopener" style="color:var(--accent)">Astronomical (true) horizon</a></dt>
+          <dd style="margin:0 0 0 10px">The horizontal plane through your eye ("eye level"), perpendicular to straight up. The sea horizon is <em>not</em> at eye level; it sits below it by the dip.</dd>
+          <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon#Geometrical_horizon" target="_blank" rel="noopener" style="color:var(--accent)">Geometric vs apparent horizon</a></dt>
+          <dd style="margin:0 0 0 10px">The <em>geometric</em> horizon is where the surface curves out of view on an airless Earth (tangent at √(2Rh)). The <em>apparent</em> (visible) horizon is what you actually see, pushed farther out and slightly up by refraction (√(2R'h)).</dd>
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Figure_of_the_Earth" target="_blank" rel="noopener" style="color:var(--accent)">Bulge</a></dt>
           <dd style="margin:0 0 0 10px">The rise of the surface midway between two points: the "hump" a line of sight must clear.</dd>
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon#Curvature_of_the_horizon" target="_blank" rel="noopener" style="color:var(--accent)">Horizon dip</a></dt>
           <dd style="margin:0 0 0 10px">The small <em>angle</em> (measured in arcminutes, not a distance) by which the visible horizon sits below true eye level for a raised observer. Look out perfectly level and the sea horizon is actually a touch below your gaze; this is by how much.</dd>
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Atmospheric_refraction" target="_blank" rel="noopener" style="color:var(--accent)">Atmospheric refraction</a></dt>
-          <dd style="margin:0 0 0 10px">Bending of light through air of changing density, making distant objects appear slightly higher.</dd>
+          <dd style="margin:0 0 0 10px">Bending of light as it crosses air whose density changes with height. Near the ground the denser air is below, so rays curve gently downward, lifting distant objects slightly, shrinking the horizon dip, and pushing the visible horizon farther out.</dd>
           <dt style="margin-top:5px"><a href="https://aty.sdsu.edu/explain/atmos_refr/dip.html" target="_blank" rel="noopener" style="color:var(--accent)">Refraction coefficient (k)</a></dt>
           <dd style="margin:0 0 0 10px">Ratio of Earth's curvature to the light ray's curvature; ~0.13 standard, but highly variable near the surface.</dd>
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Earth_bulge" target="_blank" rel="noopener" style="color:var(--accent)">Effective Earth radius (R')</a></dt>
           <dd style="margin:0 0 0 10px">An inflated radius R/(1−k) that folds steady refraction into the geometry.</dd>
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Looming_and_similar_refraction_phenomena" target="_blank" rel="noopener" style="color:var(--accent)">Looming / superior mirage</a></dt>
           <dd style="margin:0 0 0 10px">Strong refraction in a temperature inversion that lifts hidden objects into view; intermittent, not steady.</dd>
+          <dt style="margin-top:5px"><a href="https://aty.sdsu.edu/explain/atmos_refr/duct.html" target="_blank" rel="noopener" style="color:var(--accent)">Ducting</a></dt>
+          <dd style="margin:0 0 0 10px">The extreme of refraction (k ≥ 1, an inversion steeper than about +0.11 °C/m): the ray curves as much as the Earth, or more, so light is trapped near the surface and can be seen far beyond the geometric horizon.</dd>
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Visibility#Meteorological_visibility" target="_blank" rel="noopener" style="color:var(--accent)">Meteorological visibility / visual range</a></dt>
           <dd style="margin:0 0 0 10px">Distance at which contrast fades to the detection threshold (Koschmieder relation). Haze limit.</dd>
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Reference_ellipsoid" target="_blank" rel="noopener" style="color:var(--accent)">Reference ellipsoid (WGS84)</a></dt>
@@ -984,7 +992,7 @@ function renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
     callout(hrzPt,[
       {text:refr?'HORIZON (apparent)':'HORIZON',color:'#ffa502'},
       {text:fmtD(d1)+' from observer',color:'#ffa502'},
-      ...(refr?[{text:'geometric, no air: '+fmtD(dGeoH)+' — refraction extends it',color:'#8aa0b8'}]:[]),
+      ...(refr?[{text:'geometric, no air: '+fmtD(dGeoH)+' (refraction extends it)',color:'#8aa0b8'}]:[]),
       {text:'tangent point, not an edge',color:'#998'},
     ],0,-70,10);
   }else{
@@ -1328,7 +1336,7 @@ function renderObserver(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
       {text:'Dip: '+(dipAngle*180/Math.PI*60).toFixed(2)+' arcmin below eye level',color:'#ffa502'},
       {text:'Distance: '+fmtD(d1),color:'#ffa502'},
     ];
-    if(d1>=farT)hLines.push({text:'beyond the '+(plural?'targets — they stand':'target — it stands')+' in front of it',color:'#55efc4'});
+    if(d1>=farT)hLines.push({text:'beyond the '+(plural?'targets, which stand':'target, which stands')+' in front of it',color:'#55efc4'});
     else if(d1>nearT)hLines.push({text:'behind the nearer, in front of the farther',color:'#ffd93d'});
     else hLines.push({text:'in front of the '+(plural?'targets':'target')+', so '+(plural?'their bases are':'its base is')+' hidden',color:'#998'});
     screenCallout(60,hrz,hLines,-40,0,10);
