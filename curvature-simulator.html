@@ -1242,6 +1242,18 @@ function renderObserver(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
   const tgtH=Math.abs(baseY-topY);
   const tgtW=Math.max(tgtH*0.35,4);
 
+  // Geometric (true) horizon: where the horizon would sit with no atmosphere. Refraction lifts the
+  // visible (apparent) horizon above and behind it - the mechanism behind 'horizon behind the rigs'.
+  // The solid orange line is the apparent horizon; draw the geometric one as a faint reference below.
+  const geoR=baseR(),dipGeo=Math.acos(geoR/(geoR+h0)),dGeoHrz=Math.sqrt(2*geoR*h0+h0*h0);
+  const geoOffset=dipGeo-dipAngle;            // apparent horizon dips less, so geometric sits below it
+  const geoHrzY=ay(-geoOffset);
+  const showGeoHrz=S.k>1e-4&&geoOffset>1e-7&&geoHrzY>0&&geoHrzY<H;
+  if(showGeoHrz){
+    ctx.save();ctx.strokeStyle='#8aa0b8';ctx.lineWidth=1;ctx.setLineDash([6,5]);ctx.globalAlpha=0.7;
+    ctx.beginPath();ctx.moveTo(0,geoHrzY);ctx.lineTo(W,geoHrzY);ctx.stroke();ctx.restore();
+  }
+
   // Multi-target observations (a line of identical objects): draw the lineup and skip the single-target render
   const multi=S.extra.length>0;
   if(multi) drawObserverMulti(R,h0,hT,d0,hrz,ay);
@@ -1304,7 +1316,7 @@ function renderObserver(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
     const nearT=Math.min(...tgtDists),farT=Math.max(...tgtDists);
     const plural=tgtDists.length>1;
     const hLines=[
-      {text:'HORIZON',color:'#ffa502'},
+      {text:showGeoHrz?'APPARENT HORIZON':'HORIZON',color:'#ffa502'},
       {text:'Dip: '+(dipAngle*180/Math.PI*60).toFixed(2)+' arcmin below eye level',color:'#ffa502'},
       {text:'Distance: '+fmtD(d1),color:'#ffa502'},
     ];
@@ -1312,6 +1324,14 @@ function renderObserver(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
     else if(d1>nearT)hLines.push({text:'behind the nearer, in front of the farther',color:'#ffd93d'});
     else hLines.push({text:'in front of the '+(plural?'targets':'target')+', so '+(plural?'their bases are':'its base is')+' hidden',color:'#998'});
     screenCallout(60,hrz,hLines,-40,0,10);
+  }
+  // Geometric (true) horizon reference: refraction has lifted the visible horizon above and behind it
+  if(showGeoHrz){
+    screenCallout(W-60,geoHrzY,[
+      {text:'GEOMETRIC HORIZON',color:'#8aa0b8'},
+      {text:'no refraction · '+fmtD(dGeoHrz),color:'#8aa0b8'},
+      {text:'refraction lifts the visible horizon behind this',color:'#778'},
+    ],-30,18,10,'right');
   }
 
   if(!multi){
