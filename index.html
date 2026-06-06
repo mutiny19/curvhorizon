@@ -974,9 +974,11 @@ function renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd){
     line(obsEye,hrzPt,'rgba(85,239,196,0.7)',2.5*lw*V.s);
     if(hHid>0)line(hrzPt,tgtHidPt,'rgba(255,107,107,0.35)',1.5*lw*V.s,[5*lw*V.s,3*lw*V.s]);
     dot(hrzPt,7*lw,'#ffa502','#ffd93d');
+    const refr=S.k>1e-4,dGeoH=Math.sqrt(h0*h0+2*baseR()*h0);
     callout(hrzPt,[
-      {text:'HORIZON',color:'#ffa502'},
+      {text:refr?'HORIZON (apparent)':'HORIZON',color:'#ffa502'},
       {text:fmtD(d1)+' from observer',color:'#ffa502'},
+      ...(refr?[{text:'geometric, no air: '+fmtD(dGeoH)+' — refraction extends it',color:'#8aa0b8'}]:[]),
       {text:'tangent point, not an edge',color:'#998'},
     ],0,-70,10);
   }else{
