@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   Earth Curvature & Horizon Simulator
-  Version 1.1.0  ·  Last revised 2026-06-05
+  Version 1.2.0  ·  Last revised 2026-06-06
   Spherical/WGS84 curvature & visibility model with observer/camera view.
 
   Copyright (c) 2026 mutiny19.
@@ -119,7 +119,7 @@
     <span class="sub">Spherical model &middot; R = 6,371 km</span>
   </div>
   <div style="display:flex;align-items:center;gap:14px">
-    <span class="hide-mobile" style="font-size:10px;color:#556" title="Last revised 2026-06-05">v1.1.0 &middot; 2026-06-05</span>
+    <span class="hide-mobile" style="font-size:10px;color:#556" title="Last revised 2026-06-06">v1.2.0 &middot; 2026-06-06</span>
     <button id="btnGuide">? How to use</button>
     <span class="hide-mobile" style="font-size:11px;color:#556">Scroll to zoom &middot; Drag to pan</span>
   </div>
@@ -323,7 +323,7 @@
         <p><strong style="color:var(--text)">Visual range (haze):</strong> Optional. Atmospheric extinction limits how far you can see at all, independent of curvature. Using the Koschmieder relation, contrast falls as exp(−3.912·d/V), where V is the meteorological visual range. Even when geometry leaves a target above the horizon, haze may erase it. Set V=0 to ignore.</p>
         <p><strong style="color:var(--text)">What this does <em>not</em> show:</strong> it predicts the <em>geometry</em> of what curvature hides. It cannot tell you whether a specific photo is genuine clear-air, a mirage, or intervening terrain; those depend on conditions on the day.</p>
         <p style="margin-top:6px"><strong style="color:var(--text)">Credit:</strong> The core curvature formulas follow and match the widely used <a href="https://dizzib.github.io/earth/curve-calc/" target="_blank" rel="noopener" style="color:var(--accent)">dizzib Earth curve calculator</a>; this tool adds scaled visualization, an observer/camera view, refraction bands, and visual range.</p>
-        <p style="margin-top:6px;color:#667">Version 1.1.0 &middot; last revised 2026-06-05</p>
+        <p style="margin-top:6px;color:#667">Version 1.2.0 &middot; last revised 2026-06-06</p>
         <p style="margin-top:8px"><strong style="color:var(--text)">Glossary</strong> <span style="color:#667">(terms link to neutral, scientific definitions)</span></p>
         <dl style="margin:2px 0 4px 0">
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon" target="_blank" rel="noopener" style="color:var(--accent)">Horizon</a></dt>
@@ -567,12 +567,12 @@ function exportPNG(){
   o.fillStyle='#0a0e17';o.fillRect(0,0,off.width,off.height);o.drawImage(src,0,0);
   o.fillStyle='#0c1320';o.fillRect(0,src.height,off.width,footH);
   o.fillStyle='#8aa0b8';o.font=(13*dpr)+"px 'SF Mono',monospace";o.textBaseline='middle';
-  o.fillText('Earth Curvature Simulator v1.1.0  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  mutiny19.github.io/curvhorizon',10*dpr,src.height+footH/2);
+  o.fillText('Earth Curvature Simulator v1.2.0  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  mutiny19.github.io/curvhorizon',10*dpr,src.height+footH/2);
   off.toBlob(function(b){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='curvature-'+S.view+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);});
 }
 function exportCSV(){
   const R=effR(S.k),gR=baseR(),h0=S.h0,hT=S.hT,fin=isFinite(R);
-  const lines=['# Earth Curvature & Horizon Simulator v1.1.0',
+  const lines=['# Earth Curvature & Horizon Simulator v1.2.0',
     '# eye_height_m='+h0+',target_height_m='+hT+',k='+S.k+',earth='+earthLabel(),
     '# permalink='+buildPermalink(),
     'distance_km,horizon_km,drop_below_tangent_m,bulge_m,hidden_m_kSel,visible_m,hidden_m_k0'];
