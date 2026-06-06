@@ -53,6 +53,15 @@ No build step and no dependencies. Either:
 - Open `index.html` directly, or
 - Serve the folder: `npx serve .` and visit the printed URL.
 
+## Field protocol
+
+A companion field protocol, the **Laser Beam Follow Experiment**, sketches a
+real-world drone-and-laser test of the same geometry the Laser Test view models
+(equipment, expected signal by distance, and the three independent measurements
+to compare).
+
+![Laser Beam Follow Experiment field protocol](docs/laser-follow-experiment.png)
+
 ## License
 
 This project is **dual-licensed**:
