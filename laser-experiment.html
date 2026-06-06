@@ -314,12 +314,15 @@
     <div class="eq-main">
     <ul class="eq-list">
       <li><span class="item-text">High-power green laser  532 nm  200mW+</span><span class="cost">$80 – $150</span></li>
+      <li><span class="item-text">Laser safety goggles  532 nm  OD 4+  one per person</span><span class="cost">$20 – $50</span></li>
       <li><span class="item-text">Motorised pan/tilt mount with tilt encoder</span><span class="cost">$80 – $250</span></li>
+      <li><span class="item-text">Surveyor tripod + leveling head for the mount</span><span class="cost">$40 – $120</span></li>
       <li><span class="item-text">Drone frame + flight controller + motors + ESC</span><span class="cost">$150 – $300</span></li>
       <li><span class="item-text">Quadrant beam sensor  retroreflector + detector array</span><span class="cost">$40 – $100</span></li>
       <li><span class="item-text">Optical flow + downward rangefinder  distance + altitude</span><span class="cost">$30 – $60</span></li>
       <li><span class="item-text">Digital clinometer  0.1 degree resolution</span><span class="cost">$30 – $65</span></li>
       <li><span class="item-text">Weather sensors  temp + humidity + pressure  drone and origin</span><span class="cost">$20 – $60</span></li>
+      <li><span class="item-text">Datalogger + microSD  origin weather and tilt log</span><span class="cost">$15 – $40</span></li>
       <li><span class="item-text">Surveyor measuring wheel  backup distance log</span><span class="cost">$20 – $50</span></li>
       <li><span class="item-text">Walkie-talkies  operator to chase crew</span><span class="cost">$25 – $50</span></li>
       <li><span class="item-text">Miscellaneous  batteries  cable ties  notebook</span><span class="cost">$30 – $60</span></li>
@@ -327,7 +330,7 @@
 
     <div class="total">
       <span class="lbl">TOTAL ESTIMATE</span>
-      <span class="val">$505 – $1,145</span>
+      <span class="val">$580 – $1,355</span>
     </div>
     </div>
   </div>
@@ -349,8 +352,14 @@
       <div class="subhead">CLINOMETER</div>
       <p>A digital inclinometer good to 0.1 degrees is enough. That resolution catches a Polaris shift of about 7 miles of north/south travel, which is the scale this protocol works at. Sextants reach finer, into the arcminutes, but they cost more and ask more of the hands holding them. For a protocol meant to be repeated by ordinary people, 0.1 degrees is the floor that still works.</p>
 
+      <div class="subhead">SAFETY, MOUNTING, AND LOGGING</div>
+      <p>A 200 mW green laser is bright enough to injure an eye, so everyone on the crew wears 532 nm goggles rated OD 4 or better, and the beam is kept above head height once it is lit. The mount rides on a surveyor tripod with a leveling head, because a beam that drifts only because its platform sagged is noise you cannot take back out later. And the origin needs a small datalogger with a microSD card to timestamp the mount's weather and tilt readings, so the two ends of the run can be lined up second for second when it is over.</p>
+
       <div class="subhead">WEATHER SENSORS (BOTH ENDS)</div>
       <p>A combined module like the BME280 reads temperature, relative humidity, and barometric pressure from one small chip, for a few dollars. Carry one at the origin, mounted at beam height on the ridge, and one on the drone at the far end. Those three numbers fix the refractivity of the air the beam crosses: N = 77.6·P/T + 3.73 × 10⁵ · e/T², where P is the pressure in hPa, T the temperature in kelvin, and e the water-vapor pressure that the humidity reading gives (Hirt et al., 2010). Logged at both ends through the run, they turn the refraction correction from an estimate into a measured quantity. Let the flight controller record the drone's and add a small datalogger at the mount; two modules and a logger cost about the price of a meal.</p>
+
+      <div class="subhead">OPTIONAL EXTRAS FOR THE REFRACTION CONTROLS</div>
+      <p>The refraction section describes checks that ask for a little more gear. A second laser in another color, red at 635 nm, runs the two-color test for roughly $40 to $90. A second drone, about the price of the first, lets you fly the run in reverse at the same time. Neither is needed for a first run. Both turn a bounded estimate of the bending into a measured one, so budget for them if the early numbers come out close.</p>
 
       <div class="subhead">PRICE SOURCES</div>
       <p>Laser prices were checked against the Zeus Lasers and Wicked Lasers consumer catalogs (June 2026). Drone parts were priced from common F450 kit suppliers. Sensor, mount, and weather-module prices came from AliExpress, eBay surveying listings, and Banggood industrial pages. The range runs from the cheapest gear that still does the job to mid-tier prosumer. Spending past that buys precision and reliability. It does not buy a different answer.</p>
@@ -451,6 +460,113 @@
 
       <div class="subhead">WHY EAST</div>
       <p>East keeps the beam running roughly along a line of latitude. Point the beam north or south and a latitude change rides directly into the path, tangling the variables together. East and west keep that one signal clean. East over west is arbitrary. West would do the same job.</p>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span>DRONE SENSOR LAYOUT</span>
+    <button class="expand-trigger" onclick="toggleDetail('dronelayout')">EXPAND ▾</button>
+  </div>
+
+  <div class="diagram">
+    <svg viewBox="0 0 1000 460" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="1000" height="400" fill="#f0f4fc"/>
+      <rect x="0" y="400" width="1000" height="60" fill="#e4ded2"/>
+      <line x1="0" y1="400" x2="1000" y2="400" stroke="#969692" stroke-width="2"/>
+      <text x="14" y="418" font-family="ui-monospace,monospace" font-size="11" fill="#969692" letter-spacing="0.1em">GROUND</text>
+
+      <!-- incoming beam from origin (west) -->
+      <line x1="0" y1="236" x2="430" y2="236" stroke="#1e8c50" stroke-width="2.4"/>
+      <polygon points="430,236 418,231 418,241" fill="#1e8c50"/>
+      <text x="16" y="226" font-family="ui-monospace,monospace" font-size="11" fill="#1e8c50" letter-spacing="0.05em">BEAM FROM ORIGIN (WEST)</text>
+      <!-- returned beam from retroreflector -->
+      <line x1="418" y1="250" x2="0" y2="258" stroke="#1e8c50" stroke-width="1" stroke-dasharray="5 4"/>
+
+      <!-- rotor arms + motors + props -->
+      <line x1="452" y1="222" x2="372" y2="182" stroke="#646460" stroke-width="3"/>
+      <line x1="548" y1="222" x2="628" y2="182" stroke="#646460" stroke-width="3"/>
+      <rect x="356" y="172" width="26" height="14" rx="2" fill="#646460" stroke="#3c3c38" stroke-width="1"/>
+      <rect x="618" y="172" width="26" height="14" rx="2" fill="#646460" stroke="#3c3c38" stroke-width="1"/>
+      <line x1="338" y1="170" x2="400" y2="170" stroke="#3c3c38" stroke-width="2"/>
+      <line x1="600" y1="170" x2="662" y2="170" stroke="#3c3c38" stroke-width="2"/>
+
+      <!-- weather sensor mast -->
+      <line x1="500" y1="216" x2="500" y2="150" stroke="#3c3c38" stroke-width="1.5"/>
+      <rect x="489" y="135" width="22" height="15" rx="2" fill="#cfe3f5" stroke="#2d64a5" stroke-width="1.3"/>
+
+      <!-- body -->
+      <rect x="440" y="214" width="120" height="40" rx="5" fill="#dcdad0" stroke="#3c3c38" stroke-width="1.5"/>
+      <!-- flight controller chip -->
+      <rect x="452" y="226" width="26" height="16" rx="1.5" fill="#eef1f9" stroke="#2d64a5" stroke-width="1.1"/>
+      <!-- battery -->
+      <rect x="506" y="226" width="34" height="16" rx="1.5" fill="#b9b6ac" stroke="#3c3c38" stroke-width="1.1"/>
+
+      <!-- quadrant beam sensor head (rear / west face) -->
+      <rect x="422" y="218" width="18" height="20" rx="1.5" fill="#ffe9c2" stroke="#a06e14" stroke-width="1.4"/>
+      <line x1="431" y1="218" x2="431" y2="238" stroke="#a06e14" stroke-width="0.7"/>
+      <line x1="422" y1="228" x2="440" y2="228" stroke="#a06e14" stroke-width="0.7"/>
+      <!-- retroreflector below sensor -->
+      <polygon points="424,242 440,242 432,253" fill="#e8e6dd" stroke="#3c3c38" stroke-width="1"/>
+
+      <!-- downward module -->
+      <rect x="486" y="254" width="28" height="12" rx="1.5" fill="#ffe9c2" stroke="#a06e14" stroke-width="1.3"/>
+      <line x1="500" y1="266" x2="500" y2="400" stroke="#a03c6e" stroke-width="1.5"/>
+      <line x1="494" y1="266" x2="470" y2="400" stroke="#2d64a5" stroke-width="1" stroke-dasharray="4 3"/>
+      <line x1="506" y1="266" x2="530" y2="400" stroke="#2d64a5" stroke-width="1" stroke-dasharray="4 3"/>
+
+      <!-- flight direction -->
+      <line x1="824" y1="186" x2="892" y2="186" stroke="#3c3c38" stroke-width="1.5"/>
+      <polygon points="892,186 880,181 880,191" fill="#3c3c38"/>
+      <text x="824" y="176" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" letter-spacing="0.08em">FLIGHT → EAST</text>
+
+      <!-- labels with leader lines -->
+      <line x1="369" y1="170" x2="322" y2="140" stroke="#969692" stroke-width="0.8"/>
+      <text x="318" y="135" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" text-anchor="end" letter-spacing="0.05em">ROTORS ×4</text>
+
+      <line x1="511" y1="142" x2="612" y2="118" stroke="#969692" stroke-width="0.8"/>
+      <text x="618" y="114" font-family="ui-monospace,monospace" font-size="10" fill="#2d64a5" letter-spacing="0.04em">TEMP / HUMIDITY / PRESSURE</text>
+      <text x="618" y="128" font-family="ui-monospace,monospace" font-size="9" fill="#969692" letter-spacing="0.03em">clean air, above the rotor wash</text>
+
+      <line x1="422" y1="226" x2="266" y2="300" stroke="#969692" stroke-width="0.8"/>
+      <text x="60" y="300" font-family="ui-monospace,monospace" font-size="10" fill="#a06e14" letter-spacing="0.04em">QUADRANT BEAM SENSOR</text>
+      <text x="60" y="314" font-family="ui-monospace,monospace" font-size="9" fill="#969692">faces the beam; keeps four readings equal</text>
+
+      <line x1="426" y1="250" x2="266" y2="350" stroke="#969692" stroke-width="0.8"/>
+      <text x="60" y="350" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" letter-spacing="0.04em">RETROREFLECTOR</text>
+      <text x="60" y="364" font-family="ui-monospace,monospace" font-size="9" fill="#969692">returns the beam to the origin</text>
+
+      <line x1="465" y1="240" x2="742" y2="248" stroke="#969692" stroke-width="0.8"/>
+      <text x="748" y="245" font-family="ui-monospace,monospace" font-size="10" fill="#2d64a5" letter-spacing="0.04em">FLIGHT CONTROLLER</text>
+      <text x="748" y="259" font-family="ui-monospace,monospace" font-size="9" fill="#969692">beam sensor is its only input</text>
+
+      <line x1="523" y1="240" x2="742" y2="298" stroke="#969692" stroke-width="0.8"/>
+      <text x="748" y="302" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" letter-spacing="0.05em">BATTERY</text>
+
+      <line x1="506" y1="262" x2="604" y2="358" stroke="#969692" stroke-width="0.8"/>
+      <text x="610" y="354" font-family="ui-monospace,monospace" font-size="10" fill="#a06e14" letter-spacing="0.04em">OPTICAL FLOW + RANGEFINDER</text>
+      <text x="610" y="368" font-family="ui-monospace,monospace" font-size="9" fill="#969692">looks down: ground texture + height</text>
+    </svg>
+    <div class="dist-caption">SIDE VIEW  ·  DRONE FLYING EAST  ·  EACH INSTRUMENT POINTS AT ONE THING: THE BEAM, THE GROUND, OR THE AIR</div>
+  </div>
+
+  <div class="detail" id="dronelayout">
+    <div class="detail-inner">
+      <p>A side view, the drone flying east with the beam arriving from the west. Every instrument on it points at a single thing, and none of them points at a map.</p>
+
+      <div class="subhead">QUADRANT BEAM SENSOR (REAR)</div>
+      <p>The sensor faces back along the beam, toward the origin in the west. Four photodiodes around a center aperture read the light; when all four match, the beam is centered, and keeping them matched is the flight controller's whole job. Mounting it at the rear keeps it square to the incoming beam through the run.</p>
+
+      <div class="subhead">RETROREFLECTOR (REAR)</div>
+      <p>Beside the sensor, a retroreflector sends part of the beam straight back to the origin. That return is what the operator's encoder tracks for the tilt reading, Measurement 3, and it lets a reciprocal refraction check work from the ground end.</p>
+
+      <div class="subhead">OPTICAL FLOW + RANGEFINDER (UNDERSIDE)</div>
+      <p>Both look straight down. The optical-flow camera reads the texture of the ground sliding past to count the real distance traveled, and the laser rangefinder reads the height to the ground, which is Measurement 2. Neither asks anything of a satellite.</p>
+
+      <div class="subhead">WEATHER SENSOR (TOP MAST)</div>
+      <p>Temperature, humidity, and pressure ride on a short mast above the body, up out of the rotor wash where the air is still the air the beam crossed. Those readings fix the refractivity at the drone's end, and sampled at two heights, the vertical gradient that bends the light.</p>
+
+      <div class="subhead">FLIGHT CONTROLLER AND BATTERY (CORE)</div>
+      <p>The flight controller sits in the center, wired to one input only: the beam sensor. No compass, no satellite receiver, no stored heading. The battery sits beside it. Everything the machine knows about where to go, it learns from the light on the sensor.</p>
     </div>
   </div>
 
