@@ -272,15 +272,16 @@
   </div>
   <div class="detail" id="about">
     <div class="detail-inner">
-      <h4>What this experiment measures</h4>
-      <p>A laser fires horizontally east from a fixed mount on a ridge. A drone equipped with a quadrant beam sensor flies downrange, correcting its position to keep the beam centered on its sensor. The drone has no compass, no map, no programmed direction. It only knows whether the beam is centered. Wherever the beam goes, the drone goes.</p>
+      <h4>What this measures</h4>
+      <p>A laser points east and holds still. A drone hangs in the air in front of it, reading nothing but the beam on its sensor. No map. No compass. No heading typed into a flight computer. When the beam drifts up the sensor face, the drone climbs to meet it. When it drifts sideways, the drone slides over. Wherever the light goes, the machine goes.</p>
+      <p>The experiment does not assume an answer. It records what the surface does beneath a straight line of light, and it reports whatever the numbers report. Flat is a result. Curved is a result. Neither is the goal.</p>
 
-      <h4>What this experiment proves and doesn't prove</h4>
-      <p>This is not a single decisive test of Earth's shape. It is a controlled measurement of three independent variables — Polaris angle, drone altitude above ground, and laser tilt angle — across a measured baseline distance. The pattern across all three readings tells you what the surface did underneath the beam path.</p>
-      <p>A single run does not settle the question. Repeat runs in different atmospheric conditions, at different latitudes, and in different seasons strengthen the evidence considerably. The protocol is reproducible by anyone with a few hundred dollars in equipment and access to open terrain.</p>
+      <h4>What it can show, and what it cannot</h4>
+      <p>This is not the one test that ends an argument. There is no such test. What it is, is a measurement of three quantities that are independent of one another: the angle to Polaris, the drone's height above the ground, and the tilt of the laser at its mount. Each can come out level, or changing, or somewhere that needs explaining. Read together, across a measured distance, they describe what the surface did. Nothing more, and nothing less.</p>
+      <p>One run settles nothing on its own. Run it again. On another night, in another season, from another latitude, and the reading either holds or it does not. That is the only test a result has to pass: whether it survives being repeated. The cost of admission is a few hundred dollars and a stretch of open ground, which is the point. Anyone can check the work.</p>
 
-      <div class="subhead">WHY USE A DRONE INSTEAD OF A PERSON</div>
-      <p>A human walker introduces dozens of micro-decisions per second — pace, gait, where to step around obstacles, how to interpret a dim signal. The drone has one instruction: keep the beam centered on the sensor. The flight controller corrects mechanically without interpretation, removing observer bias from the experiment entirely.</p>
+      <div class="subhead">WHY A DRONE, NOT A PERSON</div>
+      <p>A person walking makes a thousand small choices a second. Where to step. How fast. Whether that faint smear of green is the beam or just a tired eye. Every choice is a place where expectation can steer the outcome. The drone makes one choice and makes it again: keep the beam centered. The flight controller does it mechanically, with no stake in the answer. It cannot hope for one. That is the reason it holds the instrument and not a person.</p>
     </div>
   </div>
 
@@ -327,22 +328,22 @@
   <div class="detail" id="equipment">
     <div class="detail-inner">
       <div class="subhead">532 NM GREEN LASER</div>
-      <p>Green wavelengths are the brightest visible light per watt of power and remain visible in clear air at long range. Silicon photodiodes — the kind used in the drone's quadrant sensor — are sensitive to 532 nm. A 200mW unit is the practical floor for daytime visibility at distance; 500mW is better for ranges beyond 5 miles. Higher powers exist but require eye-safety protocols and may be regulated.</p>
+      <p>Green is the brightest visible color per watt, and it carries through clear air at range. The silicon photodiodes in the drone's sensor respond well at 532 nm, so the beam the eye sees and the beam the sensor reads are the same beam. A 200 mW unit is the practical floor for daytime work; 500 mW buys margin past 5 miles. More power than that means eye-safety protocols, and in some places, permits.</p>
 
       <div class="subhead">MOTORISED PAN/TILT MOUNT</div>
-      <p>The mount must lock the horizontal (yaw) axis absolutely while allowing free vertical (pitch) movement. A tilt encoder logs the pitch angle continuously — this is the source of Measurement 3. Quality matters: cheap mounts have backlash that introduces angular noise comparable to the signal you are looking for. Look for backlash under 0.05 degrees.</p>
+      <p>The mount has one demand on it. Lock the horizontal axis dead still, and leave the vertical axis free to move. A tilt encoder logs the vertical angle the whole time. That log is Measurement 3. Quality earns its place here: a cheap mount has backlash, and backlash is angular noise sitting right on top of the signal you came to read. Look for backlash under 0.05 degrees.</p>
 
       <div class="subhead">QUADRANT BEAM SENSOR</div>
-      <p>Four photodiodes arranged in a cross around a central aperture. When the beam strikes the center, all four read equal intensity. When the beam drifts up, the top two read brighter. The differential signal tells the flight controller which way to correct. This is the elegant part of the design — the drone never needs to know which direction is east. It only needs to keep all four photodiodes balanced.</p>
+      <p>Four photodiodes in a cross, around a center aperture. Beam on center, all four read the same. Beam drifts up, the top pair brightens. The difference between them tells the flight controller which way to nudge. This is the quiet trick of the whole rig: the drone never has to know which way is east. It only has to keep four numbers equal.</p>
 
       <div class="subhead">OPTICAL FLOW + DOWNWARD RANGEFINDER</div>
-      <p>Combined modules like the Matek 3901-L0X include both a downward-pointing camera (for GPS-independent position tracking via ground texture) and a laser rangefinder (for altitude above ground). One module gives you distance traveled along the path AND the continuous altitude reading needed for Measurement 2. Crucially, this is fully independent of GPS or any satellite system; it measures the ground directly.</p>
+      <p>A combined module like the Matek 3901-L0X carries two instruments looking down. A camera tracks position by reading the texture of the ground passing beneath it. A laser rangefinder reads the height to that ground. Together they give you distance traveled along the real path and the running altitude that becomes Measurement 2. Both look at the ground directly. Neither asks a satellite anything.</p>
 
       <div class="subhead">CLINOMETER</div>
-      <p>A digital inclinometer accurate to 0.1 degrees is sufficient to detect Polaris angle changes corresponding to roughly 7 miles of north/south displacement. Sub-arcminute precision is achievable with sextants but adds cost and skill requirements. The 0.1 degree resolution is the practical floor for a reproducible amateur protocol.</p>
+      <p>A digital inclinometer good to 0.1 degrees is enough. That resolution catches a Polaris shift of about 7 miles of north/south travel, which is the scale this protocol works at. Sextants reach finer, into the arcminutes, but they cost more and ask more of the hands holding them. For a protocol meant to be repeated by ordinary people, 0.1 degrees is the floor that still works.</p>
 
       <div class="subhead">PRICE SOURCES</div>
-      <p>Laser prices verified against Zeus Lasers and Wicked Lasers consumer catalogs (June 2026). Drone components priced from common F450 kit suppliers. Sensor and mount prices from Aliexpress, eBay surveying equipment, and Banggood industrial listings. The range reflects bottom-of-market viable equipment to mid-tier prosumer. Going higher buys precision and reliability, not capability.</p>
+      <p>Laser prices were checked against the Zeus Lasers and Wicked Lasers consumer catalogs (June 2026). Drone parts were priced from common F450 kit suppliers. Sensor and mount prices came from AliExpress, eBay surveying listings, and Banggood industrial pages. The range runs from the cheapest gear that still does the job to mid-tier prosumer. Spending past that buys precision and reliability. It does not buy a different answer.</p>
     </div>
   </div>
 
@@ -431,15 +432,15 @@
   <div class="detail" id="diagram">
     <div class="detail-inner">
       <div class="subhead">THE GEOMETRY</div>
-      <p>The diagram shows a side view of the experiment. The operator stands on a ridge — high enough that the laser clears any intermediate terrain and the horizon is not a factor. The drone hovers at the same elevation as the beam at the start.</p>
-      <p>If the surface beneath the beam is flat, the drone holds its starting altitude throughout the flight. The beam stays parallel to the ground. The tilt encoder reports zero. The clinometer reads the same angle to Polaris at the end as at the start.</p>
-      <p>If the surface beneath the beam curves away, the ground drops below where it began. The drone must climb to stay on the beam — because the beam is a straight line and the surface is not. The downward rangefinder logs the climb. The tilt encoder logs the operator tilting upward to track the climbing drone. The clinometer reads a different angle to Polaris because the drone has displaced along the surface.</p>
+      <p>The diagram is a side view. The operator stands on a ridge, high enough that the beam clears whatever terrain lies between the two ends and the horizon never enters the picture. The drone starts at the elevation of the beam.</p>
+      <p>Hold two possibilities side by side, and give each the same weight. If the surface beneath the beam is flat, the drone keeps its starting altitude the whole way. The beam runs parallel to the ground. The tilt encoder stays at zero. The clinometer reads the same angle to Polaris at the end as it did at the start.</p>
+      <p>If the surface curves away instead, the ground falls below where it began. The drone climbs to stay on the beam, because the beam is a straight line and the ground is not. The rangefinder logs the climb. The encoder logs the operator tilting up to follow. The clinometer reads a different angle to Polaris, because the drone has moved along the surface. The protocol does not decide between these in advance. It builds the apparatus that can tell them apart, and then it reads the dials.</p>
 
       <div class="subhead">WHY THE RIDGE MATTERS</div>
-      <p>Beam-blocking by intervening terrain is a real problem at long range. A ridge of even modest height — 50 to 200 metres — clears most natural obstructions and puts the beam well above the boundary layer where thermal refraction is strongest. The ridge also gives the operator and equipment a stable platform that won't shift during the run.</p>
+      <p>Over long distances a hill or a swell in the land can block the beam, and a blocked beam ends the run. A ridge of even modest height, 50 to 200 metres, clears most of that. It also lifts the beam above the boundary layer near the ground, where the temperature gradient and the bending it causes are strongest (Young, n.d.). And it gives the equipment a platform that will not shift underneath it during the run.</p>
 
       <div class="subhead">WHY EAST</div>
-      <p>East was chosen because it keeps the beam roughly tangent to a latitude line if the surface is curved. North or south would introduce latitude change directly into the beam path, mixing variables. East-west keeps the curvature signal geometrically clean. The choice of east specifically (rather than west) is arbitrary — west would work identically.</p>
+      <p>East keeps the beam running roughly along a line of latitude. Point the beam north or south and a latitude change rides directly into the path, tangling the variables together. East and west keep that one signal clean. East over west is arbitrary. West would do the same job.</p>
     </div>
   </div>
 
@@ -502,20 +503,20 @@
   <div class="detail" id="procedure">
     <div class="detail-inner">
       <div class="subhead">STEP 01 — RECORDING ALPHA</div>
-      <p>Both operator and drone are at the same starting position on the ridge. A single Polaris reading is taken with both parties present. This eliminates instrument disagreement at the baseline — both teams agree on the starting value because they witnessed it together. Polaris is chosen because it is essentially fixed above the celestial north pole; its angle above the horizon corresponds to the observer's geographic latitude.</p>
+      <p>Operator and drone start at the same spot on the ridge. One Polaris reading is taken with both parties standing there to witness it. That removes any argument about the baseline later, because no one is taking the starting number on faith. Polaris sits within about half a degree of the celestial north pole, and its height above the horizon runs close to the observer's latitude (Bowditch, 2019). That is the value the experiment watches for change.</p>
 
       <div class="subhead">STEP 02 — FIRING THE LASER EAST</div>
-      <p>The laser mount's horizontal axis is locked. This is mechanical, not procedural — physical clamps prevent any yaw movement during the run. The vertical axis remains free because the drone may move up or down as it follows the beam, and the operator must track it. The tilt encoder logs every vertical adjustment.</p>
-      <p>The first beam alignment uses a compass to point east. This is the only role the compass plays. Once the beam is established and locked, the compass is removed. From that moment forward the beam itself defines the path — not the compass, not any map, not any model.</p>
+      <p>The horizontal axis of the mount is locked. Locked mechanically, with clamps, not locked by a promise to be careful. The vertical axis stays free, because the drone may rise or fall as it follows the beam and the operator has to follow it. The encoder writes down every vertical move.</p>
+      <p>A compass points the first shot east. That is the only thing the compass does. Once the beam is set and the axis is clamped, the compass comes off the mount. From there on, the beam is the path. Not the compass. Not a map. Not a model of what the path should be.</p>
 
       <div class="subhead">STEP 03 — FOLLOWING THE BEAM</div>
-      <p>The drone's flight controller is wired only to the quadrant sensor output. There is no waypoint navigation, no GPS guidance, no programmed heading. The single instruction is to hold the beam centered on the sensor face. If the beam drifts up on the sensor, the drone climbs. If it drifts left, the drone moves left. Altitude and lateral position are determined entirely by where the beam points.</p>
-      <p>The optical flow module logs distance traveled along the actual path — not a straight-line distance assumption. If the beam curves the drone's path with it, the odometer reads the path length.</p>
-      <p>Stopping distance should be agreed before the run begins. Distance is bounded by the laser's effective range on the night's atmospheric conditions. On a clear low-humidity night a 200mW laser remains coherent to roughly 20-30 miles. On hazy or humid nights this drops to 5-10 miles.</p>
+      <p>The flight controller is wired to one input: the quadrant sensor. No waypoints. No satellite guidance. No heading to hold. The single instruction is to keep the beam in the center of the sensor. Beam rides up, the drone climbs. Beam slides left, the drone goes left. Where the drone ends up, in height and in line, is set entirely by where the light goes.</p>
+      <p>The optical-flow module logs the distance actually traveled, not a straight-line guess. If the path bends, the odometer counts the length of the bend.</p>
+      <p>Settle the stopping distance before the run. The reach is set by the laser and the night. A 200 mW beam stays usable to roughly 20 to 30 miles on clear, dry air, and falls to 5 to 10 miles when it is hazy or humid.</p>
 
       <div class="subhead">STEP 04 — THREE READINGS AT END POSITION</div>
-      <p>When the drone reaches the agreed distance it lands. The chase crew on site takes a fresh Polaris reading using the same clinometer and the same method as in Step 01. The drone's altitude log is downloaded. The laser tilt encoder reading is recorded from the operator's mount.</p>
-      <p>These three values — BETA, final altitude, and final tilt — combined with the corresponding starting values, are the entire output of the experiment.</p>
+      <p>The drone reaches the agreed distance and lands. The chase crew takes a fresh Polaris reading, same clinometer, same method as Step 01. The altitude log comes off the drone. The tilt reading comes off the operator's encoder.</p>
+      <p>Those three end values, set beside their three starting values, are the whole output. Everything after this is comparison.</p>
     </div>
   </div>
 
@@ -610,24 +611,24 @@
   <div class="detail" id="measurements">
     <div class="detail-inner">
       <div class="subhead">WHY THREE MEASUREMENTS AND NOT ONE</div>
-      <p>Any single instrument can be wrong. A clinometer can have a calibration error, an altitude rangefinder can have a software bias, an encoder can slip. By logging three independent quantities that should agree if the underlying signal is real, the experiment becomes self-checking.</p>
-      <p>Three readings from three different physical principles — angular sighting of a star, distance measurement to the ground, mechanical encoding of laser pitch — should all tell the same story. If any one disagrees with the other two, that instrument or that step in the procedure needs investigation before the run is trusted.</p>
+      <p>Any one instrument can lie. A clinometer can be miscalibrated. A rangefinder can carry a software bias. An encoder can slip a tooth. One number, on its own, is hard to trust and easy to argue with.</p>
+      <p>So log three. Three quantities from three unrelated physical principles: the angle to a star, the distance to the ground, the pitch of a mounted laser. If a real signal is there, all three carry it, and they carry it the same way. If one of them wanders off from the other two, the suspect is that instrument or that step, not the world. The experiment checks itself.</p>
 
       <div class="subhead">MEASUREMENT 1 — POLARIS ANGLE</div>
-      <p>Polaris sits within about half a degree of the celestial north pole. Its angle above the horizon at any location is essentially equal to that location's geographic latitude. A change in Polaris angle between start and end positions corresponds directly to a change in latitude — a north/south displacement along the surface.</p>
-      <p>This measurement has a known limitation: some models attribute different geometric meaning to Polaris observations. The strength of the experiment is not in this single measurement but in its consistency with Measurements 2 and 3.</p>
+      <p>Polaris sits within about half a degree of the celestial north pole, and its height above the horizon tracks the observer's latitude (Bowditch, 2019). A change in that angle from start to end is a change in latitude, a step north or south across the surface.</p>
+      <p>This one comes with a caveat, and it is fair to state it plainly: people who hold different models of the sky read a star's angle differently. So the weight here does not rest on Polaris alone. It rests on whether Polaris agrees with Measurements 2 and 3.</p>
 
       <div class="subhead">MEASUREMENT 2 — DRONE ALTITUDE ABOVE GROUND</div>
-      <p>This is the most geometrically unambiguous of the three. The drone is following a perfectly straight beam of light. If the ground beneath it stays at the same distance below the beam throughout the flight, the surface is flat over that distance. If the ground drops away from the beam, the surface curves.</p>
-      <p>No interpretation of star positions is required. No assumptions about light propagation through space. Just a downward-pointing rangefinder logging distance to the ground beneath the drone, second by second, for the entire flight.</p>
+      <p>This is the plainest of the three. The drone follows a straight beam of light. If the ground stays the same distance below the beam for the whole flight, the surface is flat across that span. If the ground falls away from the beam, the surface curves across it. The reading does not depend on which way the result comes out. It only reports the distance.</p>
+      <p>No star to interpret. No claim about how light travels through space. A rangefinder pointed down, logging the height to the ground, second after second, for the length of the flight.</p>
 
       <div class="subhead">MEASUREMENT 3 — LASER TILT ANGLE</div>
-      <p>This is geometrically equivalent to Measurement 2 but logged from the other end of the beam. If the drone climbs, the operator must tilt the laser upward to track it. The tilt encoder records that adjustment. The total tilt change from start to end is a direct measure of the angle subtended by the drone's altitude gain at the operator's position.</p>
-      <p>Because it measures the same underlying phenomenon as Measurement 2 from a different vantage point, it serves as a cross-check. If Measurement 2 says the drone climbed 600 feet and Measurement 3 says it climbed 100 feet, something is wrong with one of the instruments.</p>
+      <p>Measurement 3 is Measurement 2 read from the far end of the beam. If the drone climbs, the operator tilts the laser up to keep it lit, and the encoder records the tilt. The total change in tilt is the angle the drone's altitude change subtends back at the mount.</p>
+      <p>Because it watches the same thing from the other side, it is a cross-check on the second reading. If altitude says the drone rose 600 feet and tilt says it rose 100, one of the two instruments is wrong, and the run waits until you find out which.</p>
 
-      <div class="subhead">INTERPRETING THE RESULTS</div>
-      <p>Outcome A across all three measurements indicates no detectable curvature signal over the run distance. Outcome B across all three indicates curvature consistent with a spherical surface. Outcome C indicates either northward displacement (Polaris) or a downward-bowing surface (altitude) — both of which would be unexpected and warrant investigation rather than conclusion.</p>
-      <p>Disagreement between the three measurements is a signal that the experiment was compromised somehow. Disagreement should always trigger a repeat run with attention to whatever instrument or condition might have caused the discrepancy.</p>
+      <div class="subhead">READING THE RESULTS</div>
+      <p>Take the three outcomes at face value, without deciding ahead of time which one you hope to see. Outcome A across all three is no curvature signal detected over the run. Outcome B across all three is a curvature signal, in the direction a sphere would produce. Outcome C is the surprising case: Polaris higher than it started, or the ground rising toward the beam rather than falling away. That pattern is not predicted by either a flat or a curved surface, so it points back at the setup, not outward at a conclusion.</p>
+      <p>The result that matters is agreement. When the three readings line up, you have a measurement worth reporting, whatever it says. When they disagree, the run is telling you something was off, and the answer is to fix it and run again, not to pick the number you liked best.</p>
     </div>
   </div>
 
@@ -637,27 +638,36 @@
   </div>
   <div class="detail" id="refraction">
     <div class="detail-inner">
-      <p>Atmospheric refraction is the strongest objection to this experiment and deserves direct treatment. Light bends as it passes through air of varying density, and that bending can mimic or mask the signal the experiment is trying to measure.</p>
+      <p>Atmospheric refraction is the strongest objection to this experiment, and it deserves a direct answer rather than a dismissal. Light bends as it crosses air of changing density, and that bending can imitate the signal the experiment is after, or cover it up. The honest goal is not to wave the problem away. It is to bound it, measure it, and show that what is left over is small.</p>
 
       <div class="subhead">RUN IN MULTIPLE CONDITIONS</div>
-      <p>Refraction varies with temperature gradient, humidity, and pressure. If the altitude gain on a cold dry winter night matches the altitude gain on a warm humid summer night within a small margin, refraction is not the dominant cause. If the readings vary wildly with weather, refraction is doing real work and the signal is unreliable.</p>
+      <p>Refraction follows the temperature gradient, the humidity, and the pressure, and those shift from night to night (Hirt et al., 2010). So run on nights that differ. If a cold dry winter run and a warm humid summer run land on the same altitude gain within a small margin, refraction is not the thing driving the number. If the readings swing with the weather, refraction is doing real work, and the signal is not yet trustworthy.</p>
 
       <div class="subhead">MEASURE REFRACTION DIRECTLY</div>
-      <p>A second laser fired between two fixed points of known elevation and distance during the same atmospheric conditions gives a direct refraction measurement. Standard surveying uses reciprocal leveling — two observers measure each other simultaneously from known points, and any discrepancy beyond the known geometry is refraction. Log the coefficient during the experiment and subtract it from the altitude reading.</p>
+      <p>Refraction can be measured, not just feared. Fire a second laser between two fixed points of known height and distance, in the same air, on the same night. Surveyors do a version of this with reciprocal leveling: two instruments sight each other at the same moment from known positions, and whatever remains after the known geometry is removed is the bending (Hirt et al., 2010). Log that coefficient during the run and take it back out of the altitude reading.</p>
 
       <div class="subhead">USE MULTIPLE WAVELENGTHS</div>
-      <p>Refraction is wavelength-dependent. Red light bends less than blue light through the same atmosphere. Running two beams simultaneously — a red laser and a green laser tracking the same drone — produces measurable differences in their tilt angles or the drone's relative position if refraction is occurring. If both beams agree perfectly, refraction is negligible. If they diverge, you have measured the refraction directly.</p>
+      <p>Refraction depends on color. Red light bends less than blue through the same air (Young, n.d.). Fly a red beam and a green beam to the same drone at once. If refraction is present, the two will not agree, in their tilt or in where they fall, and the size of the disagreement is the size of the refraction. If they sit on top of each other, refraction is negligible. Either way, two colors measure the effect instead of assuming it.</p>
 
       <div class="subhead">CHOOSE THE NIGHT CAREFULLY</div>
-      <p>Refraction is strongest in the boundary layer near the ground where temperature gradients are steepest. A cold clear night with low humidity minimizes the variable. Beam paths well above ground level — facilitated by the ridge mount — keep the experiment out of the worst refractive zone. Avoid running during sunrise or sunset transitions when thermal gradients are maximum.</p>
+      <p>Refraction is worst in the thin layer near the ground, where the temperature gradient is steepest (Young, n.d.). A cold, clear, dry night flattens that gradient. The ridge mount lifts the beam up out of the worst of the layer. And sunrise and sunset are the hours to avoid, when the air near the ground is heating or cooling fastest.</p>
 
       <div class="subhead">REVERSE THE EXPERIMENT</div>
-      <p>Have the laser at the far point fire back to the origin, with a second drone repeating the run in the opposite direction. If both runs show the same altitude gain pattern, refraction is symmetric and largely cancels. If the two runs disagree, you have either an instrument problem or asymmetric atmospheric conditions worth investigating before drawing conclusions.</p>
+      <p>Run it backward too. Fire from the far point back to the origin, with a second drone going the other way. If both directions show the same altitude pattern, the refraction is symmetric and mostly cancels. If the two directions disagree, you have either an instrument fault or air that is not the same coming and going, and either one is worth chasing down before you draw a line under the result.</p>
 
       <div class="subhead">THE HONEST LIMIT</div>
-      <p>You cannot eliminate refraction without going to vacuum. But you can bound it, measure it, and correct for it well enough that the residual is small compared to the curvature signal you are looking for. A run with multi-wavelength measurement, conducted from a high ridge on a cold clear night, with reciprocal verification, drives the refraction contribution well below the curvature contribution at moderate distances.</p>
-      <p>Refraction is also not the friend it is sometimes claimed to be. Standard atmospheric refraction bends light <em>downward</em>, which means objects appear higher than they geometrically should — partially compensating for curvature, not adding to it. Any claim that refraction explains away a curvature observation requires the world to look more curved than it actually is, which is the opposite of what refraction does.</p>
+      <p>You cannot remove refraction without a vacuum, and there is no vacuum out here. What you can do is bound it, measure it, and correct for it until the leftover is small next to the signal. A two-color run, from a high ridge, on a cold clear night, checked in both directions, drives the refraction contribution well under the curvature contribution at moderate range. State the residual that remains. Do not report it as zero.</p>
+      <p>It also helps to know which way refraction points. Under ordinary conditions it bends light <em>downward</em>, so a distant object sits a little higher than bare geometry would place it, and the surface reads as slightly less curved than it is, not more (Young, n.d.). That is worth holding in mind at the altitude log: standard refraction tends to trim a curvature signal rather than create one. Either way, the experiment does not need you to assume that. It measures it on the night, and reports what it finds.</p>
     </div>
+  </div>
+
+  <div class="section-header" style="margin-top:36px">
+    <span>REFERENCES</span>
+  </div>
+  <div style="font-size:12px;line-height:1.7;color:var(--ink-l)">
+    <p style="padding-left:2em;text-indent:-2em;margin:0 0 10px">Bowditch, N. (2019). <em>The American practical navigator: An epitome of navigation</em> (Pub. No. 9). National Geospatial-Intelligence Agency.</p>
+    <p style="padding-left:2em;text-indent:-2em;margin:0 0 10px">Hirt, C., Guillaume, S., Wisbar, A., Bürki, B., &amp; Sternberg, H. (2010). Monitoring of the refraction coefficient in the lower atmosphere using a controlled setup of simultaneous reciprocal vertical angle measurements. <em>Journal of Geophysical Research: Atmospheres, 115</em>(D21), D21102. https://doi.org/10.1029/2010JD014067</p>
+    <p style="padding-left:2em;text-indent:-2em;margin:0">Young, A. T. (n.d.). <em>Atmospheric refraction</em>. San Diego State University. https://aty.sdsu.edu/explain/atmos_refr/</p>
   </div>
 
   <div class="closing-notes">
