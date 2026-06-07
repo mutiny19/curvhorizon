@@ -1021,6 +1021,30 @@
   </div>
 
   <div class="section-header" style="margin-top:36px">
+    <span>A NOTE ON FECORE</span>
+    <button class="expand-trigger" onclick="toggleDetail('fecore')">EXPAND ▾</button>
+  </div>
+  <div class="detail" id="fecore">
+    <div class="detail-inner">
+      <p>Before this protocol, the most ambitious amateur attempt to measure curvature with a laser over water was run by a volunteer group called FECORE, at Lake Balaton in Hungary in the winter of 2018 and at Lake Ijssel in the Netherlands that spring. They called it the greatest distance laser optical measurement over water, ran seven measurements from twelve to forty kilometres, and reported the lake surfaces as flat (Szekely &amp; Cavanaugh, 2018). The work was examined closely afterward, and the examination is worth having, because a measurement documented in enough detail to be checked is something a later design can be built against, whatever it concluded (West, 2021).</p>
+
+      <div class="subhead">WHAT FECORE DID RIGHT</div>
+      <p>Credit where it is due. They wrote their methodology down, in detail, and put it where others could read it. They reported all seven measurements rather than keeping only the ones they liked. They worked over open water, which is the right surface for the reasons given earlier. They recorded temperature, humidity, and pressure at the endpoints, and on the later runs they aimed the laser by GPS. For a volunteer effort with no institution behind it, the record is thorough, and thorough is what lets anyone learn from it.</p>
+
+      <div class="subhead">WHERE IT FELL SHORT</div>
+      <p>First, refraction was inferred, not measured. FECORE compared the refractive index figured from temperature and humidity at the two ends, found the end values close, and reasoned that the bending along the path was small. The geometry does not work that way. Horizontal refraction is set by the vertical temperature gradient through the air the beam crosses, not by the spot readings at the ends. The two ends can read the same while the layer between them holds a strong inversion that bends the beam. The Balaton runs were taken at night in February, the air at plus two to plus three Celsius over a near-freezing lake at more than ninety percent humidity. That is a recipe for a surface inversion, and the vertical profile that would have shown it was never taken.</p>
+      <p>Second, the laser was aimed at the target instead of levelled on its own. To say anything about the surface with a laser, the beam has to be set parallel to the surface first, by independent levelling, and only then does where it lands at distance carry meaning. FECORE pointed the laser until it hit the target, recorded the hit, and read that as flat. The same hit is just as consistent with a curved surface and a beam aimed slightly upward. The setup could not tell the two apart.</p>
+      <p>Third, the beam spread too far to support the precision claimed. A green beam that leaves the mount as a point is a disc of light several feet across at forty kilometres. A reported beam height of a few metres is the centre of a wide cone, not a hard line, and the optics do not support reading it as finely as the document does.</p>
+      <p>Fourth, nothing was placed between the ends. The whole measurement rested on two points, laser at one end and camera at the other. The three-point figure, the one that settled the Bedford Level dispute in 1870 and has been the standard since, was suggested to the team more than once and set aside each time.</p>
+
+      <div class="subhead">HOW THIS PROTOCOL DIFFERS</div>
+      <p>This protocol is built against those four points. Refraction is logged at both ends as a measured quantity, with vertical profile sampling and a two-colour run to turn the bounded estimate into a measured one, rather than inferred from endpoint readings. The laser's horizontal axis is locked and its vertical axis is left free with the tilt logged the whole time, and the drone follows the beam rather than the operator aiming at the drone, which removes the aiming-at-target problem at the root. The reading does not rest on one distant photograph, because the drone carries a downward rangefinder logging height above water continuously and a quadrant sensor recording where the beam falls on it moment by moment. And where a marker can be anchored, the three-point geometry, the strongest reading the protocol offers, fills exactly the gap the two-point measurement left.</p>
+
+      <p>None of this makes FECORE's effort worthless. The opposite. A measurement set down in enough detail to be checked is a gift to whoever measures next, because its weak points become a list of things to design around. This protocol took that list. It answers the structural problems, the levelling and the aiming and the two-point geometry, and it treats refraction as something to measure rather than assume. That is what prior work is for, whichever way its own numbers came out. Flat is a result. Curved is a result. The work is to build the apparatus that can tell them apart, and FECORE's record helped show what that apparatus has to do.</p>
+    </div>
+  </div>
+
+  <div class="section-header" style="margin-top:36px">
     <span>REFERENCES</span>
   </div>
   <div style="font-size:12px;line-height:1.7;color:var(--ink-l)">
@@ -1028,8 +1052,10 @@
     <p style="padding-left:2em;text-indent:-2em;margin:0 0 10px">Harley, J. B. (1989). Deconstructing the map. <em>Cartographica, 26</em>(2), 1&ndash;20. https://doi.org/10.3138/E635-7827-1757-9T53</p>
     <p style="padding-left:2em;text-indent:-2em;margin:0 0 10px">Hirt, C., Guillaume, S., Wisbar, A., Bürki, B., &amp; Sternberg, H. (2010). Monitoring of the refraction coefficient in the lower atmosphere using a controlled setup of simultaneous reciprocal vertical angle measurements. <em>Journal of Geophysical Research: Atmospheres, 115</em>(D21), D21102. https://doi.org/10.1029/2010JD014067</p>
     <p style="padding-left:2em;text-indent:-2em;margin:0 0 10px">Oldham, H. Y. (1901). The experimental demonstration of the curvature of the earth's surface. <em>Report of the British Association for the Advancement of Science, 71</em>, 725&ndash;726.</p>
+    <p style="padding-left:2em;text-indent:-2em;margin:0 0 10px">Szekely, S., &amp; Cavanaugh, M. (2018). <em>Laser level experiments measuring curvature over water surface: Terrestrial laser targeting (TLT) method to measure curvature of water surface on Lake Balaton, Hungary and Lake Ijssel, Netherlands</em>. FECORE Inc.</p>
     <p style="padding-left:2em;text-indent:-2em;margin:0 0 10px">Wallace, A. R. (1908). <em>My life: A record of events and opinions</em>. Chapman &amp; Hall.</p>
     <p style="padding-left:2em;text-indent:-2em;margin:0 0 10px">West, M. (2018). <em>Soundly: Proving the curvature of the Earth at Lake Pontchartrain</em> [Online forum post]. Metabunk. https://www.metabunk.org/threads/soundly-proving-the-curvature-of-the-earth-at-lake-pontchartrain.8939/</p>
+    <p style="padding-left:2em;text-indent:-2em;margin:0 0 10px">West, M. (2021, May 10). <em>Flat earth claim: "The greatest laser experiment in history," FECORE</em> [Online forum post]. Metabunk. https://www.metabunk.org/threads/flat-earth-claim-the-greatest-laser-experiment-in-history-fecore.11728/</p>
     <p style="padding-left:2em;text-indent:-2em;margin:0">Young, A. T. (n.d.). <em>Atmospheric refraction</em>. San Diego State University. https://aty.sdsu.edu/explain/atmos_refr/</p>
   </div>
 
