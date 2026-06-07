@@ -463,15 +463,15 @@
     <div class="detail-inner">
       <div class="subhead">THE GEOMETRY</div>
       <p>The diagram is a side view. The operator stands on a height overlooking open water, a sea cliff or a lakeside bluff, high enough that the beam rides well clear of the surface and the horizon never enters the picture. The drone starts at the elevation of the beam and flies out over the water.</p>
-      <p>Hold two possibilities side by side, and give each the same weight. If the water beneath the beam is flat, the drone keeps its starting height above the surface the whole way. The beam runs parallel to the water. The tilt encoder stays at zero. The clinometer reads the same angle to Polaris at the end as it did at the start.</p>
-      <p>If the surface curves away instead, the water falls below where it began. The drone climbs to stay on the beam, because the beam is a straight line and the water surface is not. The rangefinder logs the climb. The encoder logs the operator tilting up to follow. The clinometer reads a different angle to Polaris, because the drone has moved along the surface. The protocol does not decide between these in advance. It builds the apparatus that can tell them apart, and then it reads the dials.</p>
+      <p>Hold two possibilities side by side, and give each the same weight. If the water beneath the beam is flat, the drone keeps its starting height above the surface the whole way. The beam runs parallel to the water, and the tilt encoder stays at zero.</p>
+      <p>If the surface curves away instead, the water falls below where it began. The drone climbs to stay on the beam, because the beam is a straight line and the water surface is not. The rangefinder logs the climb, and the encoder logs the operator tilting up to follow. Polaris is the exception. An east run barely changes the drone's latitude, so the clinometer reads close to the same at both ends whether the surface is flat or curved, which makes it a check that the run held its line rather than the thing that tells the two apart. That work is done by the altitude, the tilt, and the midpoint figure. The protocol does not decide between these in advance. It builds the apparatus that can tell them apart, and then it reads the dials.</p>
 
       <div class="subhead">WHY HEIGHT, AND WHY WATER</div>
       <p>Two choices of venue do real work. The first is height. A sea cliff or bluff of even modest rise, 50 to 200 metres, keeps obstructions out of the beam and lifts it above the boundary layer near the surface, where the temperature gradient and the bending it causes are strongest (Young, n.d.). It also gives the equipment a platform that will not shift during the run.</p>
       <p>The second is water. The surface the drone measures against has to be level, or its own rise and fall reads as a curve that is not there. Land has topography, and to take that back out you would need a survey of the ground beneath the whole path, which is a map by another name. Calm water needs no survey. It settles to an equipotential surface, the very surface whose shape is in question, so the height above it is a clean reading. Where no water is reachable, a large dry lakebed is the only good substitute, flat and level for the same reason. Fire from the height, out over the water.</p>
 
       <div class="subhead">WHY EAST</div>
-      <p>Firing the beam east points the run square across the north-south line, so the run carries no deliberate change of latitude of its own. Whatever the Polaris angle does from start to finish then has to come from the surface, not from the beam being aimed toward a pole. Point it north or south instead and a latitude change rides straight into the path before the surface has said anything, tangling the variables together. East and west keep that one signal clean. East over west is arbitrary. West would do the same job.</p>
+      <p>Firing the beam east points the run square across the north-south line, so the run carries no deliberate change of latitude of its own. On an east run the latitude barely shifts either way, so the Polaris angle should hold steady, and a swing in it points to the drone wandering off its line rather than to the surface. Point the beam north or south instead and a latitude change rides straight into the path before the surface has said anything, tangling the variables together. East and west keep that reading clean. East over west is arbitrary. West would do the same job.</p>
     </div>
   </div>
 
@@ -822,7 +822,7 @@
   <div class="detail" id="procedure">
     <div class="detail-inner">
       <div class="subhead">STEP 01 — RECORDING ALPHA</div>
-      <p>Operator and drone start at the same spot on the bluff. One Polaris reading is taken with both parties standing there to witness it. That removes any argument about the baseline later, because no one is taking the starting number on faith. Polaris sits within about half a degree of the celestial north pole, and its height above the horizon runs close to the observer's latitude (Bowditch, 2019). That is the value the experiment watches for change.</p>
+      <p>Operator and drone start at the same spot on the bluff. One Polaris reading is taken with both parties standing there to witness it. That removes any argument about the baseline later, because no one is taking the starting number on faith. Polaris sits within about half a degree of the celestial north pole, and its height above the horizon runs close to the observer's latitude (Bowditch, 2019). That is the baseline the end reading is checked against.</p>
 
       <div class="subhead">STEP 02 — FIRING THE LASER EAST</div>
       <p>The horizontal axis of the mount is locked. Locked mechanically, with clamps, not locked by a promise to be careful. The vertical axis stays free, because the drone may rise or fall as it follows the beam and the operator has to follow it. The encoder writes down every vertical move.</p>
@@ -846,28 +846,28 @@
     </h2>
 
     <div class="meas">
-      <div class="label">MEASUREMENT 1  —  POLARIS ANGLE  (BETA minus ALPHA)</div>
+      <div class="label">MEASUREMENT 1  —  POLARIS ANGLE  (a heading control)</div>
       <div class="row">
         <div class="cell teal">
           <div class="letter">A</div>
           <div class="eq">BETA = ALPHA</div>
           <hr>
           <div class="l1">Polaris unchanged.</div>
-          <div class="l2">No N/S drift detected.</div>
+          <div class="l2">Run held its line. As expected.</div>
         </div>
         <div class="cell coral">
           <div class="letter">B</div>
           <div class="eq">BETA &lt; ALPHA</div>
           <hr>
           <div class="l1">Polaris lower.</div>
-          <div class="l2">Drone ended further south.</div>
+          <div class="l2">Drone drifted south. Heading slip, or curvature at long range.</div>
         </div>
         <div class="cell purple">
           <div class="letter">C</div>
           <div class="eq">BETA &gt; ALPHA</div>
           <hr>
           <div class="l1">Polaris higher.</div>
-          <div class="l2">Drone ended further north.</div>
+          <div class="l2">Drone drifted north. Heading slip. Investigate.</div>
         </div>
       </div>
     </div>
@@ -958,11 +958,12 @@
     <div class="detail-inner">
       <div class="subhead">WHY MORE THAN ONE MEASUREMENT</div>
       <p>Any one instrument can lie. A clinometer can be miscalibrated. A rangefinder can carry a software bias. An encoder can slip a tooth. One number, on its own, is hard to trust and easy to argue with.</p>
-      <p>So log more than one. The angle to a star, the height above the water, the pitch of a mounted laser, and where a midpoint marker can be anchored, the midpoint set against the chord. Quantities from unrelated principles. If a real signal is there, all of them carry it, and they carry it the same way. If one wanders off from the rest, the suspect is that instrument or that step, not the world. The experiment checks itself.</p>
+      <p>So log more than one. The height above the water, the pitch of a mounted laser, and where a midpoint marker can be anchored, the midpoint against the chord, each carry the curvature if it is there, and they carry it the same way. The angle to a star sits alongside them as a control, holding steady on an east run to confirm the drone kept its line. Readings from unrelated principles, so if one wanders off from the rest, the suspect is that instrument or that step, not the world. The experiment checks itself.</p>
 
       <div class="subhead">MEASUREMENT 1 — POLARIS ANGLE</div>
       <p>Polaris sits within about half a degree of the celestial north pole, and its height above the horizon tracks the observer's latitude (Bowditch, 2019). A change in that angle from start to end is a change in latitude, a step north or south across the surface.</p>
-      <p>This one comes with a caveat, and it is fair to state it plainly: people who hold different models of the sky read a star's angle differently. So the weight here does not rest on Polaris alone. It rests on whether Polaris agrees with Measurements 2 and 3.</p>
+      <p>On an east run that step is small. The run is aimed across the north-south line, so the drone barely changes latitude, and even over a curved surface the far end drifts only slightly toward the equator, far under a tenth of a degree at the distances here, below what the clinometer can read. So at this scale Polaris is not the sharp test of curvature. It is a control. It confirms the run held its heading and the drone did not wander north or south, the kind of wander that would otherwise leak into the altitude and the tilt. The curvature itself shows up in those, and in the midpoint figure. Only over much greater distances would the southward drift grow into a reading of its own.</p>
+      <p>It also comes with a caveat worth stating plainly: people who hold different models of the sky read a star's angle differently. So no weight rests on Polaris alone. It rests on whether it agrees with the rest.</p>
 
       <div class="subhead">MEASUREMENT 2 — DRONE ALTITUDE ABOVE WATER</div>
       <p>This is the plainest of the running instruments. The drone follows a straight beam of light. If the water stays the same distance below the beam for the whole flight, the surface is flat across that span. If the water falls away from the beam, the surface curves across it. The reading does not depend on which way the result comes out. It only reports the distance.</p>
@@ -974,10 +975,10 @@
 
       <div class="subhead">MEASUREMENT 4 — MIDPOINT AGAINST THE CHORD</div>
       <p>Where a midpoint marker can be anchored, this is the geometric signature, and it carries the most weight, because it is one figure read in a single instant rather than a series built up over a run. Three markers at equal height, origin, midpoint, and far end, photographed together from the origin. On flat water the midpoint marker falls on the line joining the other two. On curved water it rides above that line, by an amount that grows with the square of the run length. Alfred Russel Wallace recorded it in 1870, Henry Oldham repeated it in 1901, and it is the same figure visible across Lake Pontchartrain (Wallace, 1908; Oldham, 1901; West, 2017).</p>
-      <p>It does not lean on the drone holding altitude or the encoder holding zero. It is read straight off the image. That is why it sits beside the other three rather than replacing them. When a one-instant geometric figure and three running instruments all point the same way, there is little left for a single fault to hide in.</p>
+      <p>It does not lean on the drone holding altitude or the encoder holding zero. It is read straight off the image. That is why it sits beside the others rather than replacing them. When the geometric figure, the altitude, and the tilt all point the same way, and Polaris confirms the run held its line, there is little left for a single fault to hide in.</p>
 
       <div class="subhead">READING THE RESULTS</div>
-      <p>Take the three outcomes at face value, without deciding ahead of time which one you hope to see. Outcome A across the readings is a flat reading over the run: the surface held level beneath the beam. Outcome B across the readings is a curved reading, the water falling away in the direction a sphere would produce. Outcome C is the surprising case: Polaris higher than it started, or the water rising toward the beam rather than falling away. That pattern is not predicted by either a level or a curved surface, so it points back at the setup, not outward at a conclusion.</p>
+      <p>Take the outcomes at face value, without deciding ahead of time which one you hope to see. A flat reading is the altitude holding level and the tilt staying at zero across the run, with the midpoint, if one is set, sitting on the chord. A curved reading is the altitude climbing and the tilt rising in the direction a sphere would produce, with the midpoint riding above the chord. Polaris should hold steady through either, because the run is east and west, so a Polaris that swings is the drone wandering north or south, a heading problem to fix rather than a result to keep. The genuinely surprising case is the water rising toward the beam rather than falling away, a pattern neither a level nor a curved surface predicts, which points back at the setup, not outward at a conclusion.</p>
       <p>The result that matters is agreement. When the readings line up, you have a measurement worth reporting, whatever it says. When they disagree, the run is telling you something was off, and the answer is to fix it and run again, not to pick the number you liked best.</p>
     </div>
   </div>
