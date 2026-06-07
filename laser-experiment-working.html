@@ -286,7 +286,7 @@
       <p>The experiment does not assume an answer. It records what the surface does beneath a straight line of light, and it reports whatever the numbers report. Flat is a result. Curved is a result. Neither is the goal.</p>
 
       <h4>What it can show, and what it cannot</h4>
-      <p>This is not the one test that ends an argument. There is no such test. What it is, is a measurement of four quantities that are independent of one another: the angle to Polaris, the drone's height above the water, the tilt of the laser at its mount, and the midpoint marker read against the chord between the two ends. Each can come out level, or changing, or somewhere that needs explaining. Read together, across a measured distance, they describe what the surface did. Nothing more, and nothing less.</p>
+      <p>This is not the one test that ends an argument. There is no such test. What it is, is a measurement of three quantities that are independent of one another: the angle to Polaris, the drone's height above the water, and the tilt of the laser at its mount. Where a marker can be anchored at the midpoint of the run, it adds a fourth and stronger reading, the midpoint set against the chord between the two ends. Each can come out level, or changing, or somewhere that needs explaining. Read together, across a measured distance, they describe what the surface did. Nothing more, and nothing less.</p>
       <p>One run settles nothing on its own. Run it again. On another night, in another season, from another latitude, and the reading either holds or it does not. That is the only test a result has to pass: whether it survives being repeated. The cost of admission is a few hundred dollars and a stretch of open water, which is the point. Anyone can check the work.</p>
 
       <div class="subhead">WHY NO MAP</div>
@@ -331,7 +331,7 @@
       <li><span class="item-text">Digital clinometer  0.1 degree resolution</span><span class="cost">$30 – $65</span></li>
       <li><span class="item-text">Weather sensors  temp + humidity + pressure  drone and origin</span><span class="cost">$20 – $60</span></li>
       <li><span class="item-text">Datalogger + microSD  origin weather and tilt log</span><span class="cost">$15 – $40</span></li>
-      <li><span class="item-text">Midpoint reference marker  anchored float, mast + retroreflector</span><span class="cost">$40 – $80</span></li>
+      <li><span class="item-text">Midpoint reference marker (optional)  anchored float + retroreflector</span><span class="cost">$40 – $80</span></li>
       <li><span class="item-text">Range markers / buoys  backup distance over water</span><span class="cost">$20 – $50</span></li>
       <li><span class="item-text">Walkie-talkies  operator to chase crew</span><span class="cost">$25 – $50</span></li>
       <li><span class="item-text">Miscellaneous  batteries  cable ties  notebook</span><span class="cost">$30 – $60</span></li>
@@ -741,6 +741,8 @@
 
   <div class="detail" id="threepoint">
     <div class="detail-inner">
+      <p>This part is optional, and the reason is logistics, not weight. A marker has to be anchored at the midpoint of the run, at a set height, holding station against wind and current, and that is not possible at every site, least of all far out on open water. Where it can be done, it is the strongest single piece of evidence the protocol produces, so it is worth real effort to include. On a short run it is easy. On a long one it is a question to settle before the night, not on it.</p>
+
       <div class="subhead">WHY THREE POINTS BEAT TWO</div>
       <p>The drone run on its own is a time series. One instrument, the rangefinder, logging height against a moving position. A time series can be argued with, because every point in it rests on the instrument behaving the same way from the first reading to the last. Three fixed points read at once are a different kind of evidence. Set a marker at the origin, a marker at the midpoint of the run, and a marker at the far end, each carrying a reflector at the same height above the water. Photograph all three in one frame from the origin. Their positions relative to each other are a single figure, captured in one instant, that does not depend on anything drifting over time. On a flat surface the three equal heights fall on one straight line, so the midpoint marker sits on the line joining the origin and the far marker. On a curved surface the water stands higher in the middle of the run than along the chord between the two ends, so the midpoint marker rides above that line. The figure is the reading. Flat is a result. Curved is a result.</p>
 
@@ -845,7 +847,7 @@
 
   <div class="results">
     <h2>
-      <span>FOUR INDEPENDENT MEASUREMENTS — COMPARE ALL</span>
+      <span>INDEPENDENT MEASUREMENTS — COMPARE ALL</span>
       <button class="expand-trigger" onclick="toggleDetail('measurements')">EXPAND ▾</button>
     </h2>
 
@@ -931,7 +933,7 @@
     </div>
 
     <div class="meas">
-      <div class="label">MEASUREMENT 4  —  MIDPOINT AGAINST THE CHORD  (one framed image)</div>
+      <div class="label">MEASUREMENT 4  —  MIDPOINT AGAINST THE CHORD  (optional, one framed image)</div>
       <div class="row">
         <div class="cell teal">
           <div class="letter">A</div>
@@ -960,9 +962,9 @@
 
   <div class="detail" id="measurements">
     <div class="detail-inner">
-      <div class="subhead">WHY FOUR MEASUREMENTS AND NOT ONE</div>
+      <div class="subhead">WHY MORE THAN ONE MEASUREMENT</div>
       <p>Any one instrument can lie. A clinometer can be miscalibrated. A rangefinder can carry a software bias. An encoder can slip a tooth. One number, on its own, is hard to trust and easy to argue with.</p>
-      <p>So log four. The angle to a star, the height above the water, the pitch of a mounted laser, and the midpoint marker set against the chord. Four quantities from unrelated principles. If a real signal is there, all of them carry it, and they carry it the same way. If one wanders off from the rest, the suspect is that instrument or that step, not the world. The experiment checks itself.</p>
+      <p>So log more than one. The angle to a star, the height above the water, the pitch of a mounted laser, and where a midpoint marker can be anchored, the midpoint set against the chord. Quantities from unrelated principles. If a real signal is there, all of them carry it, and they carry it the same way. If one wanders off from the rest, the suspect is that instrument or that step, not the world. The experiment checks itself.</p>
 
       <div class="subhead">MEASUREMENT 1 — POLARIS ANGLE</div>
       <p>Polaris sits within about half a degree of the celestial north pole, and its height above the horizon tracks the observer's latitude (Bowditch, 2019). A change in that angle from start to end is a change in latitude, a step north or south across the surface.</p>
@@ -977,11 +979,11 @@
       <p>Because it watches the same thing from the other side, it is a cross-check on the second reading. If altitude says the drone rose 600 feet and tilt says it rose 100, one of the two instruments is wrong, and the run waits until you find out which.</p>
 
       <div class="subhead">MEASUREMENT 4 — MIDPOINT AGAINST THE CHORD</div>
-      <p>This is the geometric signature, and it carries the most weight, because it is one figure read in a single instant rather than a series built up over a run. Three markers at equal height, origin, midpoint, and far end, photographed together from the origin. On flat water the midpoint marker falls on the line joining the other two. On curved water it rides above that line, by an amount that grows with the square of the run length. Alfred Russel Wallace recorded it in 1870, Henry Oldham repeated it in 1901, and it is the same figure visible across Lake Pontchartrain (Wallace, 1908; Oldham, 1901; West, 2018).</p>
+      <p>Where a midpoint marker can be anchored, this is the geometric signature, and it carries the most weight, because it is one figure read in a single instant rather than a series built up over a run. Three markers at equal height, origin, midpoint, and far end, photographed together from the origin. On flat water the midpoint marker falls on the line joining the other two. On curved water it rides above that line, by an amount that grows with the square of the run length. Alfred Russel Wallace recorded it in 1870, Henry Oldham repeated it in 1901, and it is the same figure visible across Lake Pontchartrain (Wallace, 1908; Oldham, 1901; West, 2018).</p>
       <p>It does not lean on the drone holding altitude or the encoder holding zero. It is read straight off the image. That is why it sits beside the other three rather than replacing them. When a one-instant geometric figure and three running instruments all point the same way, there is little left for a single fault to hide in.</p>
 
       <div class="subhead">READING THE RESULTS</div>
-      <p>Take the three outcomes at face value, without deciding ahead of time which one you hope to see. Outcome A across all four is a flat reading over the run: the surface held level beneath the beam. Outcome B across all four is a curved reading, the water falling away in the direction a sphere would produce. Outcome C is the surprising case: Polaris higher than it started, or the water rising toward the beam rather than falling away. That pattern is not predicted by either a level or a curved surface, so it points back at the setup, not outward at a conclusion.</p>
+      <p>Take the three outcomes at face value, without deciding ahead of time which one you hope to see. Outcome A across the readings is a flat reading over the run: the surface held level beneath the beam. Outcome B across the readings is a curved reading, the water falling away in the direction a sphere would produce. Outcome C is the surprising case: Polaris higher than it started, or the water rising toward the beam rather than falling away. That pattern is not predicted by either a level or a curved surface, so it points back at the setup, not outward at a conclusion.</p>
       <p>The result that matters is agreement. When the readings line up, you have a measurement worth reporting, whatever it says. When they disagree, the run is telling you something was off, and the answer is to fix it and run again, not to pick the number you liked best.</p>
     </div>
   </div>
@@ -1032,7 +1034,7 @@
   </div>
 
   <div class="closing-notes">
-    WHEN ALL FOUR READINGS POINT THE SAME DIRECTION — FOUR MEASUREMENTS AGREE FROM ONE RUN.<br>
+    WHEN THE READINGS POINT THE SAME DIRECTION — INDEPENDENT MEASUREMENTS AGREE FROM ONE RUN.<br>
     <span class="secondary">IF ANY MEASUREMENT DISAGREES — REPEAT THE EXPERIMENT BEFORE DRAWING ANY CONCLUSION.</span>
   </div>
 
