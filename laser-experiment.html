@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A reproducible DIY field protocol: a drone follows a horizontal laser beam to measure whether the surface beneath it curves, cross-checked by Polaris angle, drone altitude, and laser tilt.">
 <title>Laser Beam Follow Experiment — A Field Protocol</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,700;1,400&family=Jura:wght@500&display=swap">
@@ -279,7 +280,7 @@
       <p>The experiment does not assume an answer. It records what the surface does beneath a straight line of light, and it reports whatever the numbers report. Flat is a result. Curved is a result. Neither is the goal.</p>
 
       <h4>What it can show, and what it cannot</h4>
-      <p>This is not the one test that ends an argument. There is no such test. What it is, is a measurement of three quantities that are independent of one another: the angle to Polaris, the drone's height above the water, and the tilt of the laser at its mount. Each can come out level, or changing, or somewhere that needs explaining. Read together, across a measured distance, they describe what the surface did. Nothing more, and nothing less.</p>
+      <p>This is not the one test that ends an argument. There is no such test. What it is, is a measurement of three quantities that are independent of one another: the angle to Polaris, the drone's height above the water, and the tilt of the laser at its mount. Where a marker can be anchored at the midpoint of the run, it adds a fourth and stronger reading, the midpoint set against the chord between the two ends. Each can come out level, or changing, or somewhere that needs explaining. Read together, across a measured distance, they describe what the surface did. Nothing more, and nothing less.</p>
       <p>One run settles nothing on its own. Run it again. On another night, in another season, from another latitude, and the reading either holds or it does not. That is the only test a result has to pass: whether it survives being repeated. The cost of admission is a few hundred dollars and a stretch of open water, which is the point. Anyone can check the work.</p>
 
       <div class="subhead">WHY NO MAP</div>
@@ -314,7 +315,7 @@
 
     <div class="eq-main">
     <ul class="eq-list">
-      <li><span class="item-text">High-power green laser  532 nm  200mW+</span><span class="cost">$80 – $150</span></li>
+      <li><span class="item-text">Green laser  532 nm  200mW long run, 50mW short</span><span class="cost">$30 – $150</span></li>
       <li><span class="item-text">Laser safety goggles  532 nm  OD 4+  one per person</span><span class="cost">$20 – $50</span></li>
       <li><span class="item-text">Motorised pan/tilt mount with tilt encoder</span><span class="cost">$80 – $250</span></li>
       <li><span class="item-text">Surveyor tripod + leveling head for the mount</span><span class="cost">$40 – $120</span></li>
@@ -324,22 +325,28 @@
       <li><span class="item-text">Digital clinometer  0.1 degree resolution</span><span class="cost">$30 – $65</span></li>
       <li><span class="item-text">Weather sensors  temp + humidity + pressure  drone and origin</span><span class="cost">$20 – $60</span></li>
       <li><span class="item-text">Datalogger + microSD  origin weather and tilt log</span><span class="cost">$15 – $40</span></li>
+      <li><span class="item-text">Midpoint reference marker (optional)  anchored float + retroreflector</span><span class="cost">$40 – $80</span></li>
       <li><span class="item-text">Range markers / buoys  backup distance over water</span><span class="cost">$20 – $50</span></li>
       <li><span class="item-text">Walkie-talkies  operator to chase crew</span><span class="cost">$25 – $50</span></li>
       <li><span class="item-text">Miscellaneous  batteries  cable ties  notebook</span><span class="cost">$30 – $60</span></li>
     </ul>
 
     <div class="total">
-      <span class="lbl">TOTAL ESTIMATE</span>
-      <span class="val">$580 – $1,355</span>
+      <span class="lbl">SHORT RUN  ·  3 TO 5 MILES</span>
+      <span class="val">$280 – $520</span>
     </div>
+    <div class="total">
+      <span class="lbl">LONG RUN  ·  TO 20 TO 30 MILES</span>
+      <span class="val">$620 – $1,435</span>
+    </div>
+    <div style="text-align:right;font-family:ui-monospace,monospace;font-size:10px;color:var(--ink-lll);letter-spacing:0.04em;margin-top:6px">EVERY PART IS PRICED ONCE ABOVE. A RUN USES A SUBSET.</div>
     </div>
   </div>
 
   <div class="detail" id="equipment">
     <div class="detail-inner">
       <div class="subhead">532 NM GREEN LASER</div>
-      <p>Green is the brightest visible color per watt, and it carries through clear air at range. The silicon photodiodes in the drone's sensor respond well at 532 nm, so the beam the eye sees and the beam the sensor reads are the same beam. A 200 mW unit is the practical floor for daytime work; 500 mW buys margin past 5 miles. More power than that means eye-safety protocols, and in some places, permits.</p>
+      <p>Green is the brightest visible color per watt, and it carries through clear air at range. The silicon photodiodes in the drone's sensor respond well at 532 nm, so the beam the eye sees and the beam the sensor reads are the same beam. A 200 mW unit is the practical floor for daytime work; 500 mW buys margin past 5 miles. More power than that means eye-safety protocols, and in some places, permits. For a short run of a few miles at night, far less will do. A 50 to 100 mW unit reaches the markers, which drops the laser from the costliest line on the list to one of the cheapest. The power follows the distance you choose, not the other way around.</p>
 
       <div class="subhead">MOTORISED PAN/TILT MOUNT</div>
       <p>The mount has one demand on it. Lock the horizontal axis dead still, and leave the vertical axis free to move. A tilt encoder logs the vertical angle the whole time. That log is Measurement 3. Quality earns its place here: a cheap mount has backlash, and backlash is angular noise sitting right on top of the signal you came to read. Look for backlash under 0.05 degrees.</p>
@@ -356,11 +363,14 @@
       <div class="subhead">SAFETY, MOUNTING, AND LOGGING</div>
       <p>A 200 mW green laser is bright enough to injure an eye, so everyone on the crew wears 532 nm goggles rated OD 4 or better, and the beam is kept above head height once it is lit. The mount rides on a surveyor tripod with a leveling head, because a beam that drifts only because its platform sagged is noise you cannot take back out later. And the origin needs a small datalogger with a microSD card to timestamp the mount's weather and tilt readings, so the two ends of the run can be lined up second for second when it is over.</p>
 
-      <div class="subhead">WEATHER SENSORS (BOTH ENDS)</div>
-      <p>A combined module like the BME280 reads temperature, relative humidity, and barometric pressure from one small chip, for a few dollars. Carry one at the origin, mounted at beam height on the bluff, and one on the drone at the far end. Those three numbers fix the refractivity of the air the beam crosses: N = 77.6·P/T + 3.73 × 10⁵ · e/T², where P is the pressure in hPa, T the temperature in kelvin, and e the water-vapor pressure that the humidity reading gives (Hirt et al., 2010). Logged at both ends through the run, they turn the refraction correction from an estimate into a measured quantity. Let the flight controller record the drone's and add a small datalogger at the mount; two modules and a logger cost about the price of a meal.</p>
+      <div class="subhead">WEATHER SENSORS (ORIGIN AND DRONE)</div>
+      <p>A combined module like the BME280 reads temperature, relative humidity, and barometric pressure from one small chip, for a few dollars. Carry one at the origin, mounted at beam height on the bluff, and one on the drone, which traces the air along the whole path as it flies, not just at the far end. Those three numbers fix the refractivity of the air the beam crosses: N = 77.6·P/T + 3.73 × 10⁵ · e/T², where P is the pressure in hPa, T the temperature in kelvin, and e the water-vapor pressure that the humidity reading gives (Hirt et al., 2010). Logged through the run, they turn the refraction correction from an estimate into a measured quantity. Let the flight controller record the drone's and add a small datalogger at the mount; two modules and a logger cost about the price of a meal.</p>
 
       <div class="subhead">OPTIONAL EXTRAS FOR THE REFRACTION CONTROLS</div>
       <p>The refraction section describes checks that ask for a little more gear. A second laser in another color, red at 635 nm, runs the two-color test for roughly $40 to $90. A second drone, about the price of the first, lets you fly the run in reverse at the same time. Neither is needed for a first run. Both turn a bounded estimate of the bending into a measured one, so budget for them if the early numbers come out close.</p>
+
+      <div class="subhead">PHOTOGRAPHIC RECORD</div>
+      <p>The midpoint figure is something you see, so it has to be photographed, not only described. Frame all three markers, origin, midpoint, and far end, in one shot, with enough zoom to resolve the gap between the midpoint and the chord. A camera with a long lens does this, and on a short run a phone with a telephoto adapter is often enough, gear many people already own. The known heights of the markers are the scale in the frame, so no separate ruler is needed. Take a series across the run rather than a single frame, because the air changes minute to minute, and a series shows whether the figure holds or drifts.</p>
 
       <div class="subhead">PRICE SOURCES</div>
       <p>Laser prices were checked against the Zeus Lasers and Wicked Lasers consumer catalogs (June 2026). Drone parts were priced from common F450 kit suppliers. Sensor, mount, and weather-module prices came from AliExpress, eBay surveying listings, and Banggood industrial pages. The range runs from the cheapest gear that still does the job to mid-tier prosumer. Spending past that buys precision and reliability. It does not buy a different answer.</p>
@@ -562,7 +572,7 @@
       <p>A leveled, rigid base. A beam that drifts only because its platform sagged is noise you cannot take back out later, so the station is leveled once and left untouched for the run.</p>
 
       <div class="subhead">WEATHER SENSOR (BEAM HEIGHT)</div>
-      <p>Temperature, humidity, and pressure, read at the height the beam leaves the mount. This is the origin half of the pair carried on the drone; together they fix the refractivity at both ends of the path.</p>
+      <p>Temperature, humidity, and pressure, read at the height the beam leaves the mount. This is the origin half of the pair carried on the drone; together they fix the refractivity of the air the beam crosses, fixed here and traced along the path by the drone.</p>
 
       <div class="subhead">DATALOGGER</div>
       <p>A small logger with a microSD card timestamps the mount's weather and the encoder's tilt, so the origin record lines up against the drone's second for second once the run is over.</p>
@@ -683,6 +693,77 @@
   </div>
 
   <div class="section-header">
+    <span>THE THREE-POINT GEOMETRY</span>
+    <button class="expand-trigger" onclick="toggleDetail('threepoint')">EXPAND ▾</button>
+  </div>
+
+  <div class="diagram">
+    <svg viewBox="0 0 1000 400" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="1000" height="400" fill="#f0f4fc"/>
+      <path d="M0,312 Q500,180 1000,312 L1000,400 L0,400 Z" fill="#cdddec"/>
+      <path d="M0,312 Q500,180 1000,312" fill="none" stroke="#7fa6c4" stroke-width="2"/>
+
+      <line x1="140" y1="190" x2="860" y2="190" stroke="#969692" stroke-width="1" stroke-dasharray="6 4"/>
+      <text x="672" y="184" font-family="ui-monospace,monospace" font-size="9" fill="#7a7468" letter-spacing="0.04em">CHORD  (ORIGIN TOP TO FAR TOP)</text>
+
+      <line x1="140" y1="280" x2="140" y2="190" stroke="#3c3c38" stroke-width="2.5"/>
+      <line x1="500" y1="246" x2="500" y2="156" stroke="#3c3c38" stroke-width="2.5"/>
+      <line x1="860" y1="280" x2="860" y2="190" stroke="#3c3c38" stroke-width="2.5"/>
+      <circle cx="140" cy="190" r="3.5" fill="#a06e14"/>
+      <circle cx="500" cy="156" r="3.5" fill="#a06e14"/>
+      <circle cx="860" cy="190" r="3.5" fill="#a06e14"/>
+
+      <line x1="116" y1="190" x2="116" y2="280" stroke="#969692" stroke-width="0.8"/>
+      <text x="108" y="240" font-family="ui-monospace,monospace" font-size="10" fill="#7a7468" text-anchor="end">H</text>
+      <line x1="884" y1="190" x2="884" y2="280" stroke="#969692" stroke-width="0.8"/>
+      <text x="892" y="240" font-family="ui-monospace,monospace" font-size="10" fill="#7a7468">H</text>
+
+      <line x1="516" y1="156" x2="516" y2="190" stroke="#a06e14" stroke-width="1.4"/>
+      <polygon points="516,156 512,164 520,164" fill="#a06e14"/>
+      <polygon points="516,190 512,182 520,182" fill="#a06e14"/>
+      <text x="526" y="170" font-family="ui-monospace,monospace" font-size="10" fill="#a06e14" letter-spacing="0.03em">MIDPOINT RISE</text>
+      <text x="526" y="183" font-family="ui-monospace,monospace" font-size="9" fill="#a06e14">CURVATURE SIGNATURE</text>
+
+      <text x="500" y="58" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" text-anchor="middle" letter-spacing="0.06em">MARKERS AT EQUAL HEIGHT ABOVE THE WATER</text>
+
+      <text x="140" y="334" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" text-anchor="middle" letter-spacing="0.04em">ORIGIN REFERENCE</text>
+      <text x="500" y="334" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" text-anchor="middle" letter-spacing="0.04em">MIDPOINT MARKER</text>
+      <text x="860" y="334" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" text-anchor="middle" letter-spacing="0.04em">FAR MARKER / DRONE</text>
+    </svg>
+    <div class="dist-caption">SIDE VIEW  ·  VERTICAL SCALE EXAGGERATED  ·  FLAT KEEPS THE MIDPOINT ON THE CHORD, CURVED LIFTS IT ABOVE</div>
+  </div>
+
+  <div class="detail" id="threepoint">
+    <div class="detail-inner">
+      <p>This part is optional, and the reason is logistics, not weight. A marker has to be anchored at the midpoint of the run, at a set height, holding station against wind and current, and that is not possible at every site, least of all far out on open water. Where it can be done, it is the strongest single piece of evidence the protocol produces, so it is worth real effort to include. On a short run it is easy. On a long one it is a question to settle before the night, not on it.</p>
+
+      <div class="subhead">WHY THREE POINTS BEAT TWO</div>
+      <p>The drone run on its own is a time series. One instrument, the rangefinder, logging height against a moving position. A time series can be argued with, because every point in it rests on the instrument behaving the same way from the first reading to the last. Three fixed points read at once are a different kind of evidence. Set a marker at the origin, a marker at the midpoint of the run, and a marker at the far end, each carrying a reflector at the same height above the water. Photograph all three in one frame from the origin. Their positions relative to each other are a single figure, captured in one instant, that does not depend on anything drifting over time. On a flat surface the three equal heights fall on one straight line, so the midpoint marker sits on the line joining the origin and the far marker. On a curved surface the water stands higher in the middle of the run than along the chord between the two ends, so the midpoint marker rides above that line. The figure is the reading. Flat is a result. Curved is a result.</p>
+
+      <div class="subhead">THE HISTORICAL LINEAGE</div>
+      <p>This is an old measurement. Alfred Russel Wallace set it up on the Old Bedford Canal in 1870, sighting between two marks at equal height six miles apart with a third at the midpoint, and recorded the midpoint mark standing above the line of the other two (Wallace, 1908). Henry Oldham repeated the demonstration for the British Association in 1901 and reported the same figure (Oldham, 1901). More recently the photographer known as Soundly has documented the same geometry across Lake Pontchartrain, where a line of equal-height transmission towers shows the middle towers riding above the chord, imagery examined in detail in a long public thread (West, 2017). The three-point figure is what each of these records in common. The protocol here is a way to produce it on demand, with markers you control and heights you set.</p>
+
+      <div class="subhead">WHY THE SIGNATURE SURVIVES REFRACTION</div>
+      <p>Refraction is the standard objection to any curvature measurement, so it is worth saying exactly what it can and cannot do to this figure. Ordinary refraction bends light toward the denser air near the water, and the shift it adds to apparent height grows in step with distance along the path. A shift that grows evenly with distance moves three equally spaced markers by amounts in the same proportion, which keeps them on a straight line. So a uniform atmosphere, the normal case, cannot lift the midpoint off the chord. It leaves a flat surface reading flat. The curvature signature is different in kind. The rise of the midpoint grows with the square of the run length, not in step with it, which is why no even gradient can imitate it. To push the midpoint above the chord over genuinely flat water, light would have to bend the other way, upward and away from the surface, which is the hot-surface mirage regime, and it brings its own shimmer and inversion that are plain to see. Running on settled nights, across more than one night, with two colors and logged temperature and pressure, is what bounds that case. Normal refraction does not manufacture the signature. It only shrinks a real one.</p>
+
+      <div class="subhead">SETTING UP THE MIDPOINT MARKER</div>
+      <p>The marker is a small anchored mast on a float, carrying a retroreflector at the same height above the water as the laser at the origin and the beam sensor on the drone. Equal heights are the whole point, so set them against the same tape, not by eye. Fix the float at the geometric midpoint of the run, half the straight-line distance between the origin and the far end. A handheld GPS will place it closely enough, and because the midpoint only has to sit near the middle, nothing in the result rests on that fix. Anchor it so it holds station against wind and current, and check its height again at the end of the run, because a float that has settled or ridden up has changed the one number that matters.</p>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span>THE SHORT RUN</span>
+    <button class="expand-trigger" onclick="toggleDetail('shortrun')">EXPAND ▾</button>
+  </div>
+  <div class="detail" id="shortrun">
+    <div class="detail-inner">
+      <p>The run does not have to be long. A long reach asks for a powerful laser, a wide body of water, and a flight that holds the beam for tens of miles, and not everyone can field that. The three-point figure does not need any of it. The rise of the midpoint above the chord grows with the square of the run, so even a short run leaves a signal a plain camera can see.</p>
+      <p>At three miles the midpoint stands about one and a half feet above the chord. At five miles it stands about four feet. Those are not subtle amounts in a framed image with markers of known height beside them. A fifty to one hundred milliwatt green laser reaches these distances on a clear night, which moves the laser from the most expensive line on the list to one of the cheapest. The far point can be a fixed marker rather than a flown drone, since at these ranges the markers can simply be photographed in place.</p>
+      <p>A short run also keeps the whole path in more even air. The worst refraction lives in long, low, grazing sight lines that cross miles of changing boundary layer. A few miles of elevated beam over settled water is the easier case to control, not the harder one. The limit is at the short end. At two miles the rise is only about eight inches, and under a mile just a couple of inches, small enough to lose in the wobble of the float and the grain of the image. Three to five miles is the range where the figure is both easy to see and easy to defend.</p>
+    </div>
+  </div>
+
+  <div class="section-header">
     <span>PROCEDURE</span>
     <button class="expand-trigger" onclick="toggleDetail('procedure')">EXPAND ▾</button>
   </div>
@@ -760,7 +841,7 @@
 
   <div class="results">
     <h2>
-      <span>THREE INDEPENDENT MEASUREMENTS — COMPARE ALL</span>
+      <span>INDEPENDENT MEASUREMENTS — COMPARE ALL</span>
       <button class="expand-trigger" onclick="toggleDetail('measurements')">EXPAND ▾</button>
     </h2>
 
@@ -844,29 +925,60 @@
         </div>
       </div>
     </div>
+
+    <div class="meas">
+      <div class="label">MEASUREMENT 4  —  MIDPOINT AGAINST THE CHORD  (optional, one framed image)</div>
+      <div class="row">
+        <div class="cell teal">
+          <div class="letter">A</div>
+          <div class="eq">ON THE CHORD</div>
+          <hr>
+          <div class="l1">Midpoint on the line.</div>
+          <div class="l2">Flat reading across the run.</div>
+        </div>
+        <div class="cell coral">
+          <div class="letter">B</div>
+          <div class="eq">ABOVE THE CHORD</div>
+          <hr>
+          <div class="l1">Midpoint rides high.</div>
+          <div class="l2">Curved reading (Wallace, Oldham, Soundly).</div>
+        </div>
+        <div class="cell purple">
+          <div class="letter">C</div>
+          <div class="eq">BELOW THE CHORD</div>
+          <hr>
+          <div class="l1">Midpoint sits low.</div>
+          <div class="l2">Strong refraction or error. Investigate.</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="detail" id="measurements">
     <div class="detail-inner">
-      <div class="subhead">WHY THREE MEASUREMENTS AND NOT ONE</div>
+      <div class="subhead">WHY MORE THAN ONE MEASUREMENT</div>
       <p>Any one instrument can lie. A clinometer can be miscalibrated. A rangefinder can carry a software bias. An encoder can slip a tooth. One number, on its own, is hard to trust and easy to argue with.</p>
-      <p>So log three. Three quantities from three unrelated physical principles: the angle to a star, the height above the water, the pitch of a mounted laser. If a real signal is there, all three carry it, and they carry it the same way. If one of them wanders off from the other two, the suspect is that instrument or that step, not the world. The experiment checks itself.</p>
+      <p>So log more than one. The angle to a star, the height above the water, the pitch of a mounted laser, and where a midpoint marker can be anchored, the midpoint set against the chord. Quantities from unrelated principles. If a real signal is there, all of them carry it, and they carry it the same way. If one wanders off from the rest, the suspect is that instrument or that step, not the world. The experiment checks itself.</p>
 
       <div class="subhead">MEASUREMENT 1 — POLARIS ANGLE</div>
       <p>Polaris sits within about half a degree of the celestial north pole, and its height above the horizon tracks the observer's latitude (Bowditch, 2019). A change in that angle from start to end is a change in latitude, a step north or south across the surface.</p>
       <p>This one comes with a caveat, and it is fair to state it plainly: people who hold different models of the sky read a star's angle differently. So the weight here does not rest on Polaris alone. It rests on whether Polaris agrees with Measurements 2 and 3.</p>
 
       <div class="subhead">MEASUREMENT 2 — DRONE ALTITUDE ABOVE WATER</div>
-      <p>This is the plainest of the three. The drone follows a straight beam of light. If the water stays the same distance below the beam for the whole flight, the surface is flat across that span. If the water falls away from the beam, the surface curves across it. The reading does not depend on which way the result comes out. It only reports the distance.</p>
+      <p>This is the plainest of the running instruments. The drone follows a straight beam of light. If the water stays the same distance below the beam for the whole flight, the surface is flat across that span. If the water falls away from the beam, the surface curves across it. The reading does not depend on which way the result comes out. It only reports the distance.</p>
       <p>No star to interpret. No claim about how light travels through space. A rangefinder pointed down, logging the height to the water, second after second, for the length of the flight.</p>
 
       <div class="subhead">MEASUREMENT 3 — LASER TILT ANGLE</div>
       <p>Measurement 3 is Measurement 2 read from the far end of the beam. If the drone climbs, the operator tilts the laser up to keep it lit, and the encoder records the tilt. The total change in tilt is the angle the drone's altitude change subtends back at the mount.</p>
       <p>Because it watches the same thing from the other side, it is a cross-check on the second reading. If altitude says the drone rose 600 feet and tilt says it rose 100, one of the two instruments is wrong, and the run waits until you find out which.</p>
 
+      <div class="subhead">MEASUREMENT 4 — MIDPOINT AGAINST THE CHORD</div>
+      <p>Where a midpoint marker can be anchored, this is the geometric signature, and it carries the most weight, because it is one figure read in a single instant rather than a series built up over a run. Three markers at equal height, origin, midpoint, and far end, photographed together from the origin. On flat water the midpoint marker falls on the line joining the other two. On curved water it rides above that line, by an amount that grows with the square of the run length. Alfred Russel Wallace recorded it in 1870, Henry Oldham repeated it in 1901, and it is the same figure visible across Lake Pontchartrain (Wallace, 1908; Oldham, 1901; West, 2017).</p>
+      <p>It does not lean on the drone holding altitude or the encoder holding zero. It is read straight off the image. That is why it sits beside the other three rather than replacing them. When a one-instant geometric figure and three running instruments all point the same way, there is little left for a single fault to hide in.</p>
+
       <div class="subhead">READING THE RESULTS</div>
-      <p>Take the three outcomes at face value, without deciding ahead of time which one you hope to see. Outcome A across all three is a flat reading over the run: the surface held level beneath the beam. Outcome B across all three is a curved reading, the water falling away in the direction a sphere would produce. Outcome C is the surprising case: Polaris higher than it started, or the water rising toward the beam rather than falling away. That pattern is not predicted by either a level or a curved surface, so it points back at the setup, not outward at a conclusion.</p>
-      <p>The result that matters is agreement. When the three readings line up, you have a measurement worth reporting, whatever it says. When they disagree, the run is telling you something was off, and the answer is to fix it and run again, not to pick the number you liked best.</p>
+      <p>Take the three outcomes at face value, without deciding ahead of time which one you hope to see. Outcome A across the readings is a flat reading over the run: the surface held level beneath the beam. Outcome B across the readings is a curved reading, the water falling away in the direction a sphere would produce. Outcome C is the surprising case: Polaris higher than it started, or the water rising toward the beam rather than falling away. That pattern is not predicted by either a level or a curved surface, so it points back at the setup, not outward at a conclusion.</p>
+      <p>The result that matters is agreement. When the readings line up, you have a measurement worth reporting, whatever it says. When they disagree, the run is telling you something was off, and the answer is to fix it and run again, not to pick the number you liked best.</p>
     </div>
   </div>
 
@@ -884,8 +996,8 @@
       <div class="subhead">MEASURE REFRACTION DIRECTLY</div>
       <p>Refraction can be measured, not just feared. Fire a second laser between two fixed points of known height and distance, in the same air, on the same night. Surveyors do a version of this with reciprocal leveling: two instruments sight each other at the same moment from known positions, and whatever remains after the known geometry is removed is the bending (Hirt et al., 2010). Log that coefficient during the run and take it back out of the altitude reading.</p>
 
-      <div class="subhead">LOG THE AIR AT BOTH ENDS</div>
-      <p>The temperature, humidity, and pressure sensors on the mount and the drone measure the cause of refraction directly. The bending of the beam is set by how refractivity changes along the path and, most of all, with height (Hirt et al., 2010). Convert each reading to N and you have the air at both ends as a single number. Better still, let the drone hold station and sample at two heights a few metres apart: the change in N over that height is the vertical gradient, and the vertical gradient is what curves the beam. Measured that way, the refraction for the moment is a reading rather than a guess, and it drops straight into the correction beside the two-color and reciprocal checks.</p>
+      <div class="subhead">LOG THE AIR ALONG THE PATH</div>
+      <p>The temperature, humidity, and pressure sensors measure the cause of refraction directly. One sits at the origin. The other rides the drone, so as the drone flies it traces the air the beam crosses for the whole length of the run, not only at the two ends. The bending of the beam is set by how refractivity changes along the path and, most of all, with height (Hirt et al., 2010). Convert each reading to N and you have the air the light passed through, point by point. Better still, let the drone hold station and sample at two heights a few metres apart: the change in N over that height is the vertical gradient, and the vertical gradient is what curves the beam. Measured that way, the refraction for the moment is a reading rather than a guess, and it drops straight into the correction beside the two-color and reciprocal checks.</p>
 
       <div class="subhead">USE MULTIPLE WAVELENGTHS</div>
       <p>Refraction depends on color. Red light bends less than blue through the same air (Young, n.d.). Fly a red beam and a green beam to the same drone at once. If refraction is present, the two will not agree, in their tilt or in where they fall, and the size of the disagreement is the size of the refraction. If they sit on top of each other, refraction is negligible. Either way, two colors measure the effect instead of assuming it.</p>
@@ -903,17 +1015,46 @@
   </div>
 
   <div class="section-header" style="margin-top:36px">
+    <span>A NOTE ON FECORE</span>
+    <button class="expand-trigger" onclick="toggleDetail('fecore')">EXPAND ▾</button>
+  </div>
+  <div class="detail" id="fecore">
+    <div class="detail-inner">
+      <p>Before this protocol, the most ambitious amateur attempt to measure curvature with a laser over water was run by a volunteer group called FECORE, at Lake Balaton in Hungary in the winter of 2018 and at Lake Ijssel in the Netherlands that spring. They called it the greatest distance laser optical measurement over water, ran seven measurements from twelve to forty kilometres, and reported the lake surfaces as flat (Szekely &amp; Cavanaugh, 2018). The work was examined closely afterward, and the examination is worth having, because a measurement documented in enough detail to be checked is something a later design can be built against, whatever it concluded (Rodoxag, 2021).</p>
+
+      <div class="subhead">WHAT FECORE DID RIGHT</div>
+      <p>Credit where it is due. They wrote their methodology down, in detail, and put it where others could read it. They reported all seven measurements rather than keeping only the ones they liked. They worked over open water, which is the right surface for the reasons given earlier. They recorded temperature, humidity, and pressure at the endpoints, and on the later runs they aimed the laser by GPS. For a volunteer effort with no institution behind it, the record is thorough, and thorough is what lets anyone learn from it.</p>
+
+      <div class="subhead">WHERE IT WAS CRITIQUED</div>
+      <p>The critiques converge on four points. First, refraction was inferred, not measured. FECORE compared the refractive index figured from temperature and humidity at the two ends, found the end values close, and reasoned that the bending along the path was small. The geometry does not work that way. Horizontal refraction is set by the vertical temperature gradient through the air the beam crosses, not by the spot readings at the ends. The two ends can read the same while the layer between them holds a strong inversion that bends the beam. The Balaton runs were taken at night in cold winter weather, warmer air sitting over a near-freezing lake, which is exactly the setup for a surface inversion. The vertical profile that would have shown it was never taken.</p>
+      <p>Second, the laser was aimed at the target instead of levelled on its own. To say anything about the surface with a laser, the beam has to be set parallel to the surface first, by independent levelling, and only then does where it lands at distance carry meaning. FECORE pointed the laser until it hit the target, recorded the hit, and read that as flat. The same hit is just as consistent with a curved surface and a beam aimed slightly upward. The setup could not tell the two apart.</p>
+      <p>Third, the beam spread too far to support the precision claimed. A green beam that leaves the mount as a point is feet wide within a few kilometres and tens of feet wide by forty. A reported beam height of a few metres is the centre of a wide cone, not a hard line, and the optics do not support reading it as finely as the document does.</p>
+      <p>Fourth, nothing was placed between the ends. The whole measurement rested on two points, laser at one end and camera at the other. The three-point figure, the one Wallace used on the Bedford Level in 1870 and the standard ever since, was suggested to the team more than once and set aside each time.</p>
+
+      <div class="subhead">HOW THIS PROTOCOL DIFFERS</div>
+      <p>This protocol is built against those four points. Refraction is sampled along the whole path, not inferred from the two ends. The drone carries temperature, humidity, and pressure as it flies, logging the air the beam actually crosses for the length of the run, with vertical profile sampling for the gradient that does the bending and a two-color run to turn the bounded estimate into a measured one. The laser's horizontal axis is locked and its vertical axis is left free with the tilt logged the whole time, and the drone follows the beam rather than the operator aiming at the drone, which removes the aiming-at-target problem at the root. The reading does not rest on one distant photograph, because the drone carries a downward rangefinder logging height above water continuously and a quadrant sensor recording where the beam falls on it moment by moment. And where a marker can be anchored, the three-point geometry, the strongest reading the protocol offers, fills exactly the gap the two-point measurement left.</p>
+
+      <p>None of this makes FECORE's effort worthless. The opposite. A measurement set down in enough detail to be checked is a gift to whoever measures next, because its weak points become a list of things to design around. This protocol took that list. It answers the structural problems, the levelling and the aiming and the two-point geometry, and it treats refraction as something to measure rather than assume. That is what prior work is for, whichever way its own numbers came out. Flat is a result. Curved is a result. The work is to build the apparatus that can tell them apart, and FECORE's record helped show what that apparatus has to do.</p>
+    </div>
+  </div>
+
+  <div class="section-header" style="margin-top:36px">
     <span>REFERENCES</span>
   </div>
   <div style="font-size:12px;line-height:1.7;color:var(--ink-l)">
     <p style="padding-left:2em;text-indent:-2em;margin:0 0 10px">Bowditch, N. (2019). <em>The American practical navigator: An epitome of navigation</em> (Pub. No. 9). National Geospatial-Intelligence Agency.</p>
     <p style="padding-left:2em;text-indent:-2em;margin:0 0 10px">Harley, J. B. (1989). Deconstructing the map. <em>Cartographica, 26</em>(2), 1&ndash;20. https://doi.org/10.3138/E635-7827-1757-9T53</p>
     <p style="padding-left:2em;text-indent:-2em;margin:0 0 10px">Hirt, C., Guillaume, S., Wisbar, A., Bürki, B., &amp; Sternberg, H. (2010). Monitoring of the refraction coefficient in the lower atmosphere using a controlled setup of simultaneous reciprocal vertical angle measurements. <em>Journal of Geophysical Research: Atmospheres, 115</em>(D21), D21102. https://doi.org/10.1029/2010JD014067</p>
+    <p style="padding-left:2em;text-indent:-2em;margin:0 0 10px">Oldham, H. Y. (1901). The experimental demonstration of the curvature of the earth's surface. <em>Report of the British Association for the Advancement of Science</em>, 725&ndash;726.</p>
+    <p style="padding-left:2em;text-indent:-2em;margin:0 0 10px">Rodoxag. (2021, May 10). <em>Flat earth claim: "The greatest laser experiment in history," FECORE</em> [Online forum post]. Metabunk. https://www.metabunk.org/threads/flat-earth-claim-the-greatest-laser-experiment-in-history-fecore.11728/</p>
+    <p style="padding-left:2em;text-indent:-2em;margin:0 0 10px">Szekely, S., &amp; Cavanaugh, M. (2018). <em>Laser level experiments measuring curvature over water surface: Terrestrial laser targeting (TLT) method to measure curvature of water surface on Lake Balaton, Hungary and Lake Ijssel, Netherlands</em>. FECORE Inc.</p>
+    <p style="padding-left:2em;text-indent:-2em;margin:0 0 10px">Wallace, A. R. (1908). <em>My life: A record of events and opinions</em>. Chapman &amp; Hall.</p>
+    <p style="padding-left:2em;text-indent:-2em;margin:0 0 10px">West, M. (2017). <em>Soundly: Proving the curvature of the Earth at Lake Pontchartrain</em> [Online forum post]. Metabunk. https://www.metabunk.org/threads/soundly-proving-the-curvature-of-the-earth-at-lake-pontchartrain.8939/</p>
     <p style="padding-left:2em;text-indent:-2em;margin:0">Young, A. T. (n.d.). <em>Atmospheric refraction</em>. San Diego State University. https://aty.sdsu.edu/explain/atmos_refr/</p>
   </div>
 
   <div class="closing-notes">
-    WHEN ALL THREE READINGS POINT THE SAME DIRECTION — THREE INSTRUMENTS AGREE FROM ONE RUN.<br>
+    WHEN THE READINGS POINT THE SAME DIRECTION — INDEPENDENT MEASUREMENTS AGREE FROM ONE RUN.<br>
     <span class="secondary">IF ANY MEASUREMENT DISAGREES — REPEAT THE EXPERIMENT BEFORE DRAWING ANY CONCLUSION.</span>
   </div>
 
