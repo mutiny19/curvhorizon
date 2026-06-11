@@ -252,6 +252,14 @@
     .equipment { flex-direction: column; }
     .polaris-inset { margin: 0 auto 16px; }
   }
+
+  @media print {
+    body { padding: 0; background: #fff; }
+    .poster { box-shadow: none; border: none; padding: 0; }
+    .detail { max-height: none !important; }
+    .expand-trigger, .global-controls { display: none !important; }
+    .diagram svg { max-height: 300px; }
+  }
 </style>
 </head>
 <body>
@@ -321,7 +329,8 @@
       <li><span class="item-text">Surveyor tripod + leveling head for the mount</span><span class="cost">$40 – $120</span></li>
       <li><span class="item-text">Drone frame + flight controller + motors + ESC</span><span class="cost">$150 – $300</span></li>
       <li><span class="item-text">Quadrant beam sensor  retroreflector + detector array</span><span class="cost">$40 – $100</span></li>
-      <li><span class="item-text">Optical flow + downward rangefinder  distance + altitude</span><span class="cost">$30 – $60</span></li>
+      <li><span class="item-text">Optical flow module  distance over the surface</span><span class="cost">$30 – $60</span></li>
+      <li><span class="item-text">Downward lidar altimeter  100 m class  height above water</span><span class="cost">$60 – $350</span></li>
       <li><span class="item-text">Digital clinometer  0.1 degree resolution</span><span class="cost">$30 – $65</span></li>
       <li><span class="item-text">Weather sensors  temp + humidity + pressure  drone and origin</span><span class="cost">$20 – $60</span></li>
       <li><span class="item-text">Datalogger + microSD  origin weather and tilt log</span><span class="cost">$15 – $40</span></li>
@@ -332,30 +341,30 @@
     </ul>
 
     <div class="total">
-      <span class="lbl">SHORT RUN  ·  3 TO 5 MILES</span>
-      <span class="val">$280 – $520</span>
+      <span class="lbl">SHORT RUN  ·  3 TO 5 MILES  ·  FIXED MARKERS, NO DRONE</span>
+      <span class="val">$350 – $975</span>
     </div>
     <div class="total">
-      <span class="lbl">LONG RUN  ·  TO 20 TO 30 MILES</span>
-      <span class="val">$620 – $1,435</span>
+      <span class="lbl">LONG RUN  ·  FULL KIT WITH DRONE</span>
+      <span class="val">$630 – $1,785</span>
     </div>
-    <div style="text-align:right;font-family:ui-monospace,monospace;font-size:10px;color:var(--ink-lll);letter-spacing:0.04em;margin-top:6px">EVERY PART IS PRICED ONCE ABOVE. A RUN USES A SUBSET.</div>
+    <div style="text-align:right;font-family:ui-monospace,monospace;font-size:10px;color:var(--ink-lll);letter-spacing:0.04em;margin-top:6px">EVERY PART IS PRICED ONCE ABOVE. THE SHORT RUN DROPS THE DRONE, QUADRANT SENSOR, OPTICAL FLOW, AND LIDAR.</div>
     </div>
   </div>
 
   <div class="detail" id="equipment">
     <div class="detail-inner">
       <div class="subhead">532 NM GREEN LASER</div>
-      <p>Green is the brightest visible color per watt, and it carries through clear air at range. The silicon photodiodes in the drone's sensor respond well at 532 nm, so the beam the eye sees and the beam the sensor reads are the same beam. A 200 mW unit is the practical floor for daytime work; 500 mW buys margin past 5 miles. More power than that means eye-safety protocols, and in some places, permits. For a short run of a few miles at night, far less will do. A 50 to 100 mW unit reaches the markers, which drops the laser from the costliest line on the list to one of the cheapest. The power follows the distance you choose, not the other way around.</p>
+      <p>Green is the brightest visible color per watt, and it carries through clear air at range. The silicon photodiodes in the drone's sensor respond well at 532 nm, so the beam the eye sees and the beam the sensor reads are the same beam. A 200 mW unit is the practical floor for daytime work; 500 mW buys margin past 5 miles. More power than that means eye-safety protocols, and in some places, permits. For a short run of a few miles at night, far less will do. A 50 to 100 mW unit reaches the markers, which drops the laser from the costliest line on the list to one of the cheapest. The power follows the distance you choose, not the other way around. Power is also only half the spec. Divergence is the other half: a bare pointer spreads about a milliradian, a metre of beam width for every kilometre of path, which swallows a centimetre-scale sensor within a few miles. A 10x beam expander brings the spread toward a tenth of that for $30 to $60, and it is not optional on a drone run, because it is what keeps the spot small enough for the quadrant sensor to read a gradient across it.</p>
 
       <div class="subhead">MOTORISED PAN/TILT MOUNT</div>
-      <p>The mount has one demand on it. Lock the horizontal axis dead still, and leave the vertical axis free to move. A tilt encoder logs the vertical angle the whole time. That log is Measurement 3. Quality earns its place here: a cheap mount has backlash, and backlash is angular noise sitting right on top of the signal you came to read. Look for backlash under 0.05 degrees.</p>
+      <p>The mount has two demands on it. Hold the beam dead still for the whole run, both axes clamped, because a beam that gets re-aimed mid-run stops being an independent reference and becomes a pointer at the target, the exact fault this protocol is built to avoid. Then, at the end of the run only, release the vertical axis and tilt down to the drone for one reading. The encoder records that depression angle, and it is Measurement 3. Quality earns its place here: a cheap mount has backlash, and backlash is angular noise sitting right on top of the signal you came to read. The signal at short range is hundredths of a degree, so the encoder readout needs to resolve 0.01 degrees, and backlash should sit well under that reading.</p>
 
       <div class="subhead">QUADRANT BEAM SENSOR</div>
       <p>Four photodiodes in a cross, around a center aperture. Beam on center, all four read the same. Beam drifts up, the top pair brightens. The difference between them tells the flight controller which way to nudge. This is the quiet trick of the whole rig: the drone never has to know which way is east. It only has to keep four numbers equal.</p>
 
-      <div class="subhead">OPTICAL FLOW + DOWNWARD RANGEFINDER</div>
-      <p>A combined module like the Matek 3901-L0X carries two instruments looking down. A laser rangefinder reads the height to the surface, the running value that becomes Measurement 2. A camera tracks distance traveled by reading the texture of the surface passing beneath it, though over calm water there is little texture, so on a glassy night markers at measured ranges carry the distance instead. Both look down directly. Neither asks a satellite anything.</p>
+      <div class="subhead">LIDAR ALTIMETER + OPTICAL FLOW</div>
+      <p>Two instruments look down, and they are separate purchases for a reason. The altitude log that becomes Measurement 2 needs a single-point lidar with real reach, because the drone rides at beam height, tens to a couple of hundred metres above the water. A 100 metre class unit such as a Benewake TF03 covers a typical bluff; the short-range lidar built into hobby optical-flow boards reads only a metre or two and cannot do this job. Pick a unit rated for dark, low-reflectivity targets, since calm water returns little light straight down. The optical-flow camera is the second instrument. It tracks distance by the texture of the surface passing beneath, though calm water offers little texture, so on a glassy night markers at measured ranges carry the distance instead. Both look down directly. Neither asks a satellite anything.</p>
 
       <div class="subhead">CLINOMETER</div>
       <p>A digital inclinometer good to 0.1 degrees is enough. That resolution catches a Polaris shift of about 7 miles of north/south travel, which is the scale this protocol works at. Sextants reach finer, into the arcminutes, but they cost more and ask more of the hands holding them. For a protocol meant to be repeated by ordinary people, 0.1 degrees is the floor that still works.</p>
@@ -422,7 +431,7 @@
       <text x="546" y="128" font-family="ui-monospace,monospace" font-size="11" fill="#646460" text-anchor="middle" letter-spacing="0.06em">LASER BEAM — EAST — STRAIGHT LINE OF LIGHT</text>
 
       <line x1="210" y1="146" x2="210" y2="170" stroke="#2d64a5" stroke-width="1"/>
-      <text x="220" y="174" font-family="ui-monospace,monospace" font-size="11" fill="#2d64a5" letter-spacing="0.04em">HORIZONTAL AXIS LOCKED — TILT ANGLE LOGGED</text>
+      <text x="220" y="174" font-family="ui-monospace,monospace" font-size="11" fill="#2d64a5" letter-spacing="0.04em">BEAM LEVELLED, BOTH AXES LOCKED — TILT READ AT RUN'S END</text>
 
       <g transform="translate(900,138)">
         <g>
@@ -463,8 +472,8 @@
     <div class="detail-inner">
       <div class="subhead">THE GEOMETRY</div>
       <p>The diagram is a side view. The operator stands on a height overlooking open water, a sea cliff or a lakeside bluff, high enough that the beam rides well clear of the surface and the horizon never enters the picture. The drone starts at the elevation of the beam and flies out over the water.</p>
-      <p>Hold two possibilities side by side, and give each the same weight. If the water beneath the beam is flat, the drone keeps its starting height above the surface the whole way. The beam runs parallel to the water, and the tilt encoder stays at zero.</p>
-      <p>If the surface curves away instead, the water falls below where it began. The drone climbs to stay on the beam, because the beam is a straight line and the water surface is not. The rangefinder logs the climb, and the encoder logs the operator tilting up to follow. Polaris is the exception. An east run barely changes the drone's latitude, so the clinometer reads close to the same at both ends whether the surface is flat or curved, which makes it a check that the run held its line rather than the thing that tells the two apart. That work is done by the altitude, the tilt, and the midpoint figure. The protocol does not decide between these in advance. It builds the apparatus that can tell them apart, and then it reads the dials.</p>
+      <p>Hold two possibilities side by side, and give each the same weight. If the water beneath the beam is flat, the drone keeps its starting height above the surface the whole way. The beam runs parallel to the water, and the end depression reading comes out at exactly height over distance, nothing extra.</p>
+      <p>If the surface curves away instead, the water falls below where it began. The drone climbs to stay on the beam, because the beam is a straight line and the water surface is not. The rangefinder logs the climb. The beam itself is never touched during the run; at the end, with the drone hovering just above the water at the far point, the operator tilts the laser down to it for one reading, and the encoder records how far below the level line the far water sits. Polaris is the exception. An east run barely changes the drone's latitude, so the clinometer reads close to the same at both ends whether the surface is flat or curved, which makes it a check that the run held its line rather than the thing that tells the two apart. That work is done by the altitude, the tilt, and the midpoint figure. The protocol does not decide between these in advance. It builds the apparatus that can tell them apart, and then it reads the dials.</p>
 
       <div class="subhead">WHY HEIGHT, AND WHY WATER</div>
       <p>Two choices of venue do real work. The first is height. A sea cliff or bluff of even modest rise, 50 to 200 metres, keeps obstructions out of the beam and lifts it above the boundary layer near the surface, where the temperature gradient and the bending it causes are strongest (Young, n.d.). It also gives the equipment a platform that will not shift during the run.</p>
@@ -550,7 +559,7 @@
 
       <line x1="549" y1="232" x2="658" y2="300" stroke="#969692" stroke-width="0.8"/>
       <text x="664" y="298" font-family="ui-monospace,monospace" font-size="10" fill="#a06e14" letter-spacing="0.04em">PAN / TILT MOUNT + TILT ENCODER</text>
-      <text x="664" y="311" font-family="ui-monospace,monospace" font-size="9" fill="#969692">horizontal locked, vertical free; tilt = M3</text>
+      <text x="664" y="311" font-family="ui-monospace,monospace" font-size="9" fill="#969692">both axes locked; end tilt reading = M3</text>
 
       <line x1="528" y1="300" x2="658" y2="344" stroke="#969692" stroke-width="0.8"/>
       <text x="664" y="347" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" letter-spacing="0.04em">SURVEYOR TRIPOD + LEVELING HEAD</text>
@@ -566,7 +575,7 @@
       <p>The instrument the whole rig answers to. It fires east and holds its line, and the drone follows the light, not a heading. A compass points the first shot east, then comes off the mount. From there nothing about the path comes from a map or a compass.</p>
 
       <div class="subhead">PAN / TILT MOUNT + TILT ENCODER</div>
-      <p>The horizontal axis is clamped dead still, so the beam cannot wander north or south. The vertical axis is left free, because the drone may rise or fall and the operator tilts the laser to keep it lit. The encoder writes down every vertical move, and that record is Measurement 3.</p>
+      <p>Both axes are clamped dead still for the run, so the beam cannot wander in any direction and stays a fixed, independent reference. The vertical axis is released once, at the end, to tilt down to the drone hovering at the far water for a single depression reading. The encoder records that angle, and it is Measurement 3.</p>
 
       <div class="subhead">SURVEYOR TRIPOD + LEVELING HEAD</div>
       <p>A leveled, rigid base. A beam that drifts only because its platform sagged is noise you cannot take back out later, so the station is leveled once and left untouched for the run.</p>
@@ -578,7 +587,7 @@
       <p>A small logger with a microSD card timestamps the mount's weather and the encoder's tilt, so the origin record lines up against the drone's second for second once the run is over.</p>
 
       <div class="subhead">CLINOMETER AND POLARIS</div>
-      <p>Set apart from the laser, a clinometer reads the angle from the horizon up to Polaris, which sits within about half a degree of the celestial north pole (Bowditch, 2019). That angle is Measurement 1, taken at the start and again at the end.</p>
+      <p>Set apart from the laser, a clinometer reads the angle from the horizon up to Polaris, which sits within about two thirds of a degree of the celestial north pole (Bowditch, 2019). That angle is Measurement 1, taken at the start and again at the end.</p>
 
       <div class="subhead">RED LASER (OPTIONAL, TWO-COLOR)</div>
       <p>A second beam in red, run beside the green, measures refraction directly. The two colors bend by different amounts, and the gap between where they land is the size of the bending.</p>
@@ -679,7 +688,7 @@
       <p>The sensor faces back along the beam, toward the origin in the west. Four photodiodes around a center aperture read the light; when all four match, the beam is centered, and keeping them matched is the flight controller's whole job. Mounting it at the rear keeps it square to the incoming beam through the run.</p>
 
       <div class="subhead">RETROREFLECTOR (REAR)</div>
-      <p>Beside the sensor, a retroreflector sends part of the beam straight back to the origin. That return is what the operator's encoder tracks for the tilt reading, Measurement 3, and it lets a reciprocal refraction check work from the origin end.</p>
+      <p>Beside the sensor, a retroreflector sends part of the beam straight back to the origin. That return is what the operator sights at the end of the run for the depression reading, Measurement 3, and it lets a reciprocal refraction check work from the origin end.</p>
 
       <div class="subhead">OPTICAL FLOW + RANGEFINDER (UNDERSIDE)</div>
       <p>Both look straight down. The laser rangefinder reads the height to the water, which is Measurement 2 and the reading that matters. The optical-flow camera counts distance from the surface texture sliding past, though calm water gives it little to track; on a glassy night the distance is carried instead by markers set at measured ranges. Neither asks anything of a satellite.</p>
@@ -760,6 +769,7 @@
       <p>The run does not have to be long. A long reach asks for a powerful laser, a wide body of water, and a flight that holds the beam for tens of miles, and not everyone can field that. The three-point figure does not need any of it. The rise of the midpoint above the chord grows with the square of the run, so even a short run leaves a signal a plain camera can see.</p>
       <p>At three miles the midpoint stands about one and a half feet above the chord. At five miles it stands about four feet. Those are not subtle amounts in a framed image with markers of known height beside them. A fifty to one hundred milliwatt green laser reaches these distances on a clear night, which moves the laser from the most expensive line on the list to one of the cheapest. The far point can be a fixed marker rather than a flown drone, since at these ranges the markers can simply be photographed in place.</p>
       <p>A short run also keeps the whole path in more even air. The worst refraction lives in long, low, grazing sight lines that cross miles of changing boundary layer. A few miles of elevated beam over settled water is the easier case to control, not the harder one. The limit is at the short end. At two miles the rise is only about eight inches, and under a mile just a couple of inches, small enough to lose in the wobble of the float and the grain of the image. Three to five miles is the range where the figure is both easy to see and easy to defend.</p>
+      <p>The long run is the aspirational form, and it carries logistics the budget lines do not: a DIY quad flies fifteen to twenty five minutes on a battery, which is five to eight miles at beam-follow speed, so anything past that means battery legs staged at marker buoys and a chase boat to serve as the landing platform, the battery relay, and the far-end reading station. The lidar's ceiling binds too, since the drone rides higher above the water as the climb accumulates. None of that is a reason not to attempt it. It is a reason to treat the three to five mile run as the protocol's primary form and the long run as the expedition version, planned like one.</p>
     </div>
   </div>
 
@@ -788,8 +798,8 @@
       <hr>
       <ul>
         <li>Mount laser on bluff.</li>
-        <li>Lock horizontal axis east.</li>
-        <li>Vertical tilt only permitted.</li>
+        <li>Level the beam, then lock both axes.</li>
+        <li>Beam stays fixed all run.</li>
         <li>Beam is the only authority.</li>
       </ul>
     </div>
@@ -813,7 +823,7 @@
       <ul>
         <li>Polaris angle at end position.</li>
         <li>Final drone altitude.</li>
-        <li>Final laser tilt angle.</li>
+        <li>End depression angle.</li>
         <li>BETA = ____ degrees</li>
       </ul>
     </div>
@@ -822,19 +832,19 @@
   <div class="detail" id="procedure">
     <div class="detail-inner">
       <div class="subhead">STEP 01 — RECORDING ALPHA</div>
-      <p>Operator and drone start at the same spot on the bluff. One Polaris reading is taken with both parties standing there to witness it. That removes any argument about the baseline later, because no one is taking the starting number on faith. Polaris sits within about half a degree of the celestial north pole, and its height above the horizon runs close to the observer's latitude (Bowditch, 2019). That is the baseline the end reading is checked against.</p>
+      <p>Operator and drone start at the same spot on the bluff. One Polaris reading is taken with both parties standing there to witness it. That removes any argument about the baseline later, because no one is taking the starting number on faith. Polaris sits within about two thirds of a degree of the celestial north pole, and its height above the horizon runs close to the observer's latitude (Bowditch, 2019). Because of that offset the star traces a small circle around the pole through the night, wider than the clinometer can resolve, so note the clock time of this reading; the end reading is compared at a noted time too, with a standard Polaris correction table closing the gap between them (Bowditch, 2019). That is the baseline the end reading is checked against.</p>
 
       <div class="subhead">STEP 02 — FIRING THE LASER EAST</div>
-      <p>The horizontal axis of the mount is locked. Locked mechanically, with clamps, not locked by a promise to be careful. The vertical axis stays free, because the drone may rise or fall as it follows the beam and the operator has to follow it. The encoder writes down every vertical move.</p>
+      <p>The beam is levelled with the leveling head, the encoder is zeroed against that level line, and then both axes are locked. Locked mechanically, with clamps, not locked by a promise to be careful. Nothing about the beam changes for the rest of the run, because the moment a beam is re-aimed at its target it stops measuring the surface and starts measuring the operator. The vertical axis is opened again exactly once, at the end, for the depression reading.</p>
       <p>A compass points the first shot east. That is the only thing the compass does. Once the beam is set and the axis is clamped, the compass comes off the mount. From there on, the beam is the path. Not the compass. Not a map. Not a model of what the path should be.</p>
 
       <div class="subhead">STEP 03 — FOLLOWING THE BEAM</div>
       <p>The flight controller is wired to one input: the quadrant sensor. No waypoints. No satellite guidance. No heading to hold. The single instruction is to keep the beam in the center of the sensor. Beam rides up, the drone climbs. Beam slides left, the drone goes left. Where the drone ends up, in height and in line, is set entirely by where the light goes.</p>
       <p>The optical-flow module logs the distance actually traveled, not a straight-line guess. If the path bends, the odometer counts the length of the bend.</p>
-      <p>Settle the stopping distance before the run. The reach is set by the laser and the night. A 200 mW beam stays usable to roughly 20 to 30 miles on clear, dry air, and falls to 5 to 10 miles when it is hazy or humid.</p>
+      <p>Settle the stopping distance before the run. The reach is set by the laser, the night, and the beam's spread. A 200 mW beam stays visible to roughly 20 to 30 miles on clear, dry air, and falls to 5 to 10 miles when it is hazy or humid. Tracking is the tighter bound: even expanded, the spot is metres wide past 10 miles, and the quadrant sensor's centering signal fades as the spot grows around it. The beam-follow is solid to roughly 5 to 10 miles and degrades beyond, and that bound, more than the laser's brightness, is what sets the practical long-run distance.</p>
 
       <div class="subhead">STEP 04 — THREE READINGS AT END POSITION</div>
-      <p>The drone reaches the agreed distance and lands. The chase crew takes a fresh Polaris reading, same clinometer, same method as Step 01. The altitude log comes off the drone. The tilt reading comes off the operator's encoder.</p>
+      <p>The drone reaches the agreed distance and descends to hover just above the water, its lidar reading that hover height. The operator releases the vertical axis, tilts the laser down until the drone's retroreflector lights, and the encoder records the depression angle below the level line. That single angle is Measurement 3. The chase crew takes a fresh Polaris reading, same clinometer, same method as Step 01, with the clock time noted. Then the drone lands and the altitude log comes off it.</p>
       <p>Those three end values, set beside their three starting values, are the whole output. Everything after this is comparison.</p>
     </div>
   </div>
@@ -880,7 +890,7 @@
           <div class="eq">ALTITUDE FLAT</div>
           <hr>
           <div class="l1">Drone stayed level.</div>
-          <div class="l2">Same height all the way.</div>
+          <div class="l2">Flat reading, or strong ducting. Check the logged gradient.</div>
         </div>
         <div class="cell coral">
           <div class="letter">B</div>
@@ -894,33 +904,33 @@
           <div class="eq">ALTITUDE FALLS</div>
           <hr>
           <div class="l1">Drone descended.</div>
-          <div class="l2">Neither model predicts this. Verify setup.</div>
+          <div class="l2">Setup error or super-refraction. Check the temperature profile.</div>
         </div>
       </div>
     </div>
 
     <div class="meas">
-      <div class="label">MEASUREMENT 3  —  LASER TILT ANGLE  (logged at origin mount)</div>
+      <div class="label">MEASUREMENT 3  —  END DEPRESSION ANGLE  (one reading, down to the drone at the far water)</div>
       <div class="row">
         <div class="cell teal">
           <div class="letter">A</div>
-          <div class="eq">TILT UNCHANGED</div>
+          <div class="eq">MATCHES FLAT</div>
           <hr>
-          <div class="l1">Laser stayed level.</div>
-          <div class="l2">No upward correction needed.</div>
+          <div class="l1">Height over distance only.</div>
+          <div class="l2">Flat reading across the run.</div>
         </div>
         <div class="cell coral">
           <div class="letter">B</div>
-          <div class="eq">TILT INCREASES</div>
+          <div class="eq">STEEPER THAN FLAT</div>
           <hr>
-          <div class="l1">Laser tilted upward.</div>
-          <div class="l2">Drone rose to stay on beam.</div>
+          <div class="l1">Extra depression beyond it.</div>
+          <div class="l2">Far water sits below the level line. Curved reading.</div>
         </div>
         <div class="cell purple">
           <div class="letter">C</div>
-          <div class="eq">TILT DECREASES</div>
+          <div class="eq">SHALLOWER THAN FLAT</div>
           <hr>
-          <div class="l1">Laser tilted downward.</div>
+          <div class="l1">Less than height over distance.</div>
           <div class="l2">Neither model predicts this. Verify setup.</div>
         </div>
       </div>
@@ -958,10 +968,10 @@
     <div class="detail-inner">
       <div class="subhead">WHY MORE THAN ONE MEASUREMENT</div>
       <p>Any one instrument can lie. A clinometer can be miscalibrated. A rangefinder can carry a software bias. An encoder can slip a tooth. One number, on its own, is hard to trust and easy to argue with.</p>
-      <p>So log more than one. The height above the water, the pitch of a mounted laser, and where a midpoint marker can be anchored, the midpoint against the chord, each carry the curvature if it is there, and they carry it the same way. The angle to a star sits alongside them as a control, holding steady on an east run to confirm the drone kept its line. Readings from unrelated principles, so if one wanders off from the rest, the suspect is that instrument or that step, not the world. The experiment checks itself.</p>
+      <p>So log more than one. The height above the water, the depression angle read back from the mount, and where a midpoint marker can be anchored, the midpoint against the chord, each carry the curvature if it is there, and they carry it the same way. The angle to a star sits alongside them as a control, holding steady on an east run to confirm the drone kept its line. Readings from unrelated principles, so if one wanders off from the rest, the suspect is that instrument or that step, not the world. The experiment checks itself.</p>
 
       <div class="subhead">MEASUREMENT 1 — POLARIS ANGLE</div>
-      <p>Polaris sits within about half a degree of the celestial north pole, and its height above the horizon tracks the observer's latitude (Bowditch, 2019). A change in that angle from start to end is a change in latitude, a step north or south across the surface.</p>
+      <p>Polaris sits within about two thirds of a degree of the celestial north pole, and its height above the horizon tracks the observer's latitude (Bowditch, 2019). A change in that angle from start to end is a change in latitude, a step north or south across the surface.</p>
       <p>On an east run that step is small. The run is aimed across the north-south line, so the drone barely changes latitude, and even over a curved surface the far end drifts only slightly toward the equator, far under a tenth of a degree at the distances here, below what the clinometer can read. So at this scale Polaris is not the sharp test of curvature. It is a control. It confirms the run held its heading and the drone did not wander north or south, the kind of wander that would otherwise leak into the altitude and the tilt. The curvature itself shows up in those, and in the midpoint figure. Only over much greater distances would the southward drift grow into a reading of its own.</p>
       <p>It also comes with a caveat worth stating plainly: people who hold different models of the sky read a star's angle differently. So no weight rests on Polaris alone. It rests on whether it agrees with the rest.</p>
 
@@ -969,13 +979,33 @@
       <p>This is the plainest of the running instruments. The drone follows a straight beam of light. If the water stays the same distance below the beam for the whole flight, the surface is flat across that span. If the water falls away from the beam, the surface curves across it. The reading does not depend on which way the result comes out. It only reports the distance.</p>
       <p>No star to interpret. No claim about how light travels through space. A rangefinder pointed down, logging the height to the water, second after second, for the length of the flight.</p>
 
-      <div class="subhead">MEASUREMENT 3 — LASER TILT ANGLE</div>
-      <p>Measurement 3 is Measurement 2 read from the far end of the beam. If the drone climbs, the operator tilts the laser up to keep it lit, and the encoder records the tilt. The total change in tilt is the angle the drone's altitude change subtends back at the mount.</p>
-      <p>Because it watches the same thing from the other side, it is a cross-check on the second reading. If altitude says the drone rose 600 feet and tilt says it rose 100, one of the two instruments is wrong, and the run waits until you find out which.</p>
+      <div class="subhead">MEASUREMENT 3 — END DEPRESSION ANGLE</div>
+      <p>Measurement 3 is Measurement 2 read from the other end of the beam. The beam itself is never moved during the run. At the end, the drone descends to hover just above the far water, the operator releases the vertical axis and tilts down until the retroreflector lights, and the encoder records one number: the depression angle from the level line down to the drone. On a flat surface that angle is simply the mount's height over the distance, the angle any level line makes down to a point near the surface far away. On a curved surface the far water has also dropped below the level line, and the depression comes out steeper than height over distance by that extra amount.</p>
+      <p>Because it watches the same thing from the other side, it is a cross-check on the second reading. The extra depression, multiplied by the distance, says how far the far water sits below the level line, and that should match the climb the altitude log recorded. If the lidar says the drone climbed 600 feet and the depression angle accounts for 100, one of the two instruments is wrong, and the run waits until you find out which.</p>
 
       <div class="subhead">MEASUREMENT 4 — MIDPOINT AGAINST THE CHORD</div>
       <p>Where a midpoint marker can be anchored, this is the geometric signature, and it carries the most weight, because it is one figure read in a single instant rather than a series built up over a run. Three markers at equal height, origin, midpoint, and far end, photographed together from the origin. On flat water the midpoint marker falls on the line joining the other two. On curved water it rides above that line, by an amount that grows with the square of the run length. Alfred Russel Wallace recorded it in 1870, Henry Oldham repeated it in 1901, and it is the same figure visible across Lake Pontchartrain (Wallace, 1908; Oldham, 1901; West, 2017).</p>
       <p>It does not lean on the drone holding altitude or the encoder holding zero. It is read straight off the image. That is why it sits beside the others rather than replacing them. When the geometric figure, the altitude, and the tilt all point the same way, and Polaris confirms the run held its line, there is little left for a single fault to hide in.</p>
+
+      <div class="subhead">WHAT EACH MODEL PREDICTS, BY THE NUMBERS</div>
+      <p>Direction is not enough. To judge whether an observed reading is signal or noise, you need the size a sphere of radius 6,371 km predicts at your distance, and the flat prediction beside it. The flat prediction is zero for every row: no climb, no midpoint rise, and a depression of exactly height over distance with nothing extra.</p>
+      <table style="width:100%;border-collapse:collapse;font-family:ui-monospace,monospace;font-size:12px;color:var(--ink-l);margin:10px 0">
+        <tr style="border-bottom:1px solid var(--rule);color:var(--gold);letter-spacing:0.05em;font-size:11px">
+          <td style="padding:5px 4px">RUN</td>
+          <td style="padding:5px 4px;text-align:right">DRONE CLIMB d&sup2;/2R</td>
+          <td style="padding:5px 4px;text-align:right">MIDPOINT RISE d&sup2;/8R</td>
+          <td style="padding:5px 4px;text-align:right">EXTRA DEPRESSION d/2R</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:4px">3 miles</td><td style="padding:4px;text-align:right">6 ft</td><td style="padding:4px;text-align:right">1.5 ft</td><td style="padding:4px;text-align:right">0.022&deg;</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:4px">5 miles</td><td style="padding:4px;text-align:right">17 ft</td><td style="padding:4px;text-align:right">4.2 ft</td><td style="padding:4px;text-align:right">0.036&deg;</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:4px">10 miles</td><td style="padding:4px;text-align:right">67 ft</td><td style="padding:4px;text-align:right">17 ft</td><td style="padding:4px;text-align:right">0.072&deg;</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:4px">20 miles</td><td style="padding:4px;text-align:right">267 ft</td><td style="padding:4px;text-align:right">67 ft</td><td style="padding:4px;text-align:right">0.145&deg;</td></tr>
+        <tr><td style="padding:4px">30 miles</td><td style="padding:4px;text-align:right">600 ft</td><td style="padding:4px;text-align:right">150 ft</td><td style="padding:4px;text-align:right">0.217&deg;</td></tr>
+      </table>
+      <p>Standard refraction shrinks every spherical figure by roughly 13 to 17 percent, the effective-radius correction, so an observed value a shade under the table is still a clean curved reading. Write down the prediction for your distance before the run, then compare what the instruments returned.</p>
+
+      <div class="subhead">ERROR BUDGET</div>
+      <p>Each instrument earns its row by resolving the signal at the chosen distance. The lidar is comfortable everywhere: a tenth of a metre of noise against a predicted climb of 1.8 metres at 3 miles and 183 at 30. The tilt encoder is the tight one: the extra depression is 0.022 degrees at 3 miles, so the readout needs 0.01 degree resolution and backlash below that, and the depression reading is strongest from 5 miles out. The clinometer's 0.1 degrees cannot see curvature at any distance here, which is why Polaris serves as a heading control and nothing more. The weather chips read absolute temperature only to about half a degree, so for the vertical gradient use one sensor moved between the two heights, letting the offset cancel, rather than two chips compared. And the midpoint float wobbles on the order of inches against a rise of 1.5 feet at 3 miles, which is why its height is taped, anchored, and checked again at the end.</p>
 
       <div class="subhead">READING THE RESULTS</div>
       <p>Take the outcomes at face value, without deciding ahead of time which one you hope to see. A flat reading is the altitude holding level and the tilt staying at zero across the run, with the midpoint, if one is set, sitting on the chord. A curved reading is the altitude climbing and the tilt rising in the direction a sphere would produce, with the midpoint riding above the chord. Polaris should hold steady through either, because the run is east and west, so a Polaris that swings is the drone wandering north or south, a heading problem to fix rather than a result to keep. The genuinely surprising case is the water rising toward the beam rather than falling away, a pattern neither a level nor a curved surface predicts, which points back at the setup, not outward at a conclusion.</p>
@@ -1033,9 +1063,35 @@
       <p>Fourth, nothing was placed between the ends. The whole measurement rested on two points, laser at one end and camera at the other. The three-point figure, the one Wallace used on the Bedford Level in 1870 and the standard ever since, was suggested to the team more than once and set aside each time.</p>
 
       <div class="subhead">HOW THIS PROTOCOL DIFFERS</div>
-      <p>This protocol is built against those four points. Refraction is sampled along the whole path, not inferred from the two ends. The drone carries temperature, humidity, and pressure as it flies, logging the air the beam actually crosses for the length of the run, with vertical profile sampling for the gradient that does the bending and a two-color run to turn the bounded estimate into a measured one. The laser's horizontal axis is locked and its vertical axis is left free with the tilt logged the whole time, and the drone follows the beam rather than the operator aiming at the drone, which removes the aiming-at-target problem at the root. The reading does not rest on one distant photograph, because the drone carries a downward rangefinder logging height above water continuously and a quadrant sensor recording where the beam falls on it moment by moment. And where a marker can be anchored, the three-point geometry, the strongest reading the protocol offers, fills exactly the gap the two-point measurement left.</p>
+      <p>This protocol is built against those four points. Refraction is sampled along the whole path, not inferred from the two ends. The drone carries temperature, humidity, and pressure as it flies, logging the air the beam actually crosses for the length of the run, with vertical profile sampling for the gradient that does the bending and a two-color run to turn the bounded estimate into a measured one. The beam is levelled against an independent reference and then locked on both axes for the whole run, with one encoder reading taken down to the drone at the end, and the drone follows the beam rather than the operator aiming at the drone, which removes the aiming-at-target problem at the root. The reading does not rest on one distant photograph, because the drone carries a downward lidar logging height above water continuously and a quadrant sensor recording where the beam falls on it moment by moment. And where a marker can be anchored, the three-point geometry, the strongest reading the protocol offers, fills exactly the gap the two-point measurement left.</p>
 
       <p>None of this makes FECORE's effort worthless. The opposite. A measurement set down in enough detail to be checked is a gift to whoever measures next, because its weak points become a list of things to design around. This protocol took that list. It answers the structural problems, the levelling and the aiming and the two-point geometry, and it treats refraction as something to measure rather than assume. That is what prior work is for, whichever way its own numbers came out. Flat is a result. Curved is a result. The work is to build the apparatus that can tell them apart, and FECORE's record helped show what that apparatus has to do.</p>
+    </div>
+  </div>
+
+  <div class="section-header" style="margin-top:36px">
+    <span>FIELD RECORD</span>
+    <button class="expand-trigger" onclick="toggleDetail('fieldrecord')">EXPAND ▾</button>
+  </div>
+  <div class="detail" id="fieldrecord">
+    <div class="detail-inner">
+      <p>One run, one sheet. Print this page and fill it in on the night, because a result that cannot be compared against another run is a story, not a measurement. Every blank gets a value or the word none. The repeats section in About explains why: the only test a result has to pass is whether it survives being run again, and these sheets are what get compared.</p>
+      <table style="width:100%;border-collapse:collapse;font-family:ui-monospace,monospace;font-size:12px;color:var(--ink-l)">
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px;width:46%">Date / site / observers</td><td style="padding:6px 4px">_______________________________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Run distance / heading</td><td style="padding:6px 4px">______________ mi&nbsp;&nbsp;/&nbsp;&nbsp;______________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Mount height above water / drone hover height</td><td style="padding:6px 4px">______________&nbsp;&nbsp;/&nbsp;&nbsp;______________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Sphere predictions for this distance (climb / midpoint / extra depression)</td><td style="padding:6px 4px">__________&nbsp;&nbsp;/&nbsp;&nbsp;__________&nbsp;&nbsp;/&nbsp;&nbsp;__________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">ALPHA (Polaris, start) and clock time</td><td style="padding:6px 4px">__________ deg&nbsp;&nbsp;at&nbsp;&nbsp;__________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">BETA (Polaris, end) and clock time</td><td style="padding:6px 4px">__________ deg&nbsp;&nbsp;at&nbsp;&nbsp;__________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Encoder zero confirmed before lock (yes / no)</td><td style="padding:6px 4px">__________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">End depression angle (Measurement 3)</td><td style="padding:6px 4px">__________ deg</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Altitude above water: start / end / log file</td><td style="padding:6px 4px">__________&nbsp;&nbsp;/&nbsp;&nbsp;__________&nbsp;&nbsp;/&nbsp;&nbsp;__________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Origin T / RH / P at start and end</td><td style="padding:6px 4px">_______________________________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Drone T / RH / P at far end (and two-height gradient if taken)</td><td style="padding:6px 4px">_______________________________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Midpoint marker height: set / rechecked at end</td><td style="padding:6px 4px">__________&nbsp;&nbsp;/&nbsp;&nbsp;__________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Photo series: frame numbers and times</td><td style="padding:6px 4px">_______________________________</td></tr>
+        <tr><td style="padding:6px 4px">Sky / water / wind conditions</td><td style="padding:6px 4px">_______________________________</td></tr>
+      </table>
     </div>
   </div>
 
