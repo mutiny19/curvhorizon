@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   Earth Curvature & Horizon Simulator
-  Version 1.7.0  ·  Last revised 2026-06-06
+  Version 1.8.0  ·  Last revised 2026-06-06
   Spherical/WGS84 curvature & visibility model with observer/camera view.
 
   Copyright (c) 2026 mutiny19.
@@ -74,6 +74,7 @@
   .laser-only{display:none}
   .laser-active .laser-only{display:block}
   .laser-active .hide-laser{display:none}
+  .controls:not(.adv-active) .adv{display:none!important}
   /* Input summary (top-right of view) */
   .summary{position:absolute;top:10px;right:10px;background:rgba(10,14,23,0.82);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:11px;color:var(--text);pointer-events:none;min-width:140px;line-height:1.55}
   .summary h5{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:4px;font-weight:600}
@@ -118,13 +119,17 @@
     <span class="sub">Spherical model &middot; R = 6,371 km</span>
   </div>
   <div style="display:flex;align-items:center;gap:14px">
-    <span class="hide-mobile" style="font-size:10px;color:#556" title="Last revised 2026-06-06">v1.7.0 &middot; 2026-06-06</span>
+    <span class="hide-mobile" style="font-size:10px;color:#556" title="Last revised 2026-06-06">v1.8.0 &middot; 2026-06-06</span>
     <button id="btnGuide">? How to use</button>
     <span class="hide-mobile" style="font-size:11px;color:#556">Scroll to zoom &middot; Drag to pan</span>
   </div>
 </header>
 <div class="main">
   <div class="controls" id="controlsPanel">
+    <div class="view-toggle" style="margin-bottom:10px">
+      <button class="vt-btn active" id="btnSimpleMode" title="Show the core controls only">Simple</button>
+      <button class="vt-btn" id="btnAdvMode" title="Show all settings: refraction profiles, terrain, sea state, Earth model, and the photo overlay">Advanced</button>
+    </div>
     <div class="sec">
       <h3>View</h3>
       <div class="view-toggle">
@@ -162,7 +167,7 @@
       </div>
       <div class="note" id="opticsNote">50mm ≈ naked eye. Scrolling to zoom changes the focal length.</div>
     </div>
-    <div class="sec obs-only">
+    <div class="sec obs-only adv">
       <h3>Photo Overlay <span style="font-size:9px;color:#e84393;border:1px solid #e84393;border-radius:3px;padding:1px 4px;vertical-align:middle">EXPERIMENTAL</span></h3>
       <div class="row"><label for="iPhoto">Load photo</label><input type="file" id="iPhoto" accept="image/*" style="font-size:10px"></div>
       <div class="note">Drop in a real photo. If it has EXIF, the focal length and sensor size are read and filled in automatically; otherwise set them above to the camera that took it. Then set Eye height and the target Distance/Height. The photo is drawn at the matching field of view, so once you line up its horizon the predicted hidden/visible split becomes a direct overlay on the real scene.</div>
@@ -229,8 +234,8 @@
       </div>
       <div class="row" id="customKRow" style="display:none"><label>Custom k</label><input type="number" id="iK" value="0.17" min="0" max="1" step="0.01"></div>
       <div class="note" id="kNote">Typical visual observation conditions. Slightly more bending than standard.</div>
-      <div class="row" style="margin-top:6px"><label>Show bands</label><input type="checkbox" id="iShowBands" style="width:auto;flex:0"><span class="u" style="width:auto;color:#8899aa;font-size:10px">k=0 / .13 / .25 / .5</span></div>
-      <div class="row" style="margin-top:6px"><label>Ray trace</label>
+      <div class="row adv" style="margin-top:6px"><label>Show bands</label><input type="checkbox" id="iShowBands" style="width:auto;flex:0"><span class="u" style="width:auto;color:#8899aa;font-size:10px">k=0 / .13 / .25 / .5</span></div>
+      <div class="row adv" style="margin-top:6px"><label>Ray trace</label>
         <select id="iRayProfile">
           <option value="off">Off (effective radius only)</option>
           <option value="standard">Standard profile (matches k)</option>
@@ -238,11 +243,11 @@
           <option value="mirage">Surface mirage</option>
         </select>
       </div>
-      <div class="note" id="rayNote" style="display:none">Traces the actual light path through a layered air profile and overlays it on the constant-k geometry. The constant-k result assumes the bending never changes with height; a real inversion or hot surface does, which is what produces ducting, looming, and mirages.</div>
-      <div class="row"><label>Visual range</label><input type="number" id="iVis" value="0" min="0" step="5"><span class="u">km</span></div>
-      <div class="note">Air clarity / haze limit. 0 = ignore. Even when geometry says a target is visible, haze can hide it.</div>
+      <div class="note adv" id="rayNote" style="display:none">Traces the actual light path through a layered air profile and overlays it on the constant-k geometry. The constant-k result assumes the bending never changes with height; a real inversion or hot surface does, which is what produces ducting, looming, and mirages.</div>
+      <div class="row adv"><label>Visual range</label><input type="number" id="iVis" value="0" min="0" step="5"><span class="u">km</span></div>
+      <div class="note adv">Air clarity / haze limit. 0 = ignore. Even when geometry says a target is visible, haze can hide it.</div>
     </div>
-    <div class="sec">
+    <div class="sec adv">
       <h3>Terrain &amp; Sea State</h3>
       <div class="row"><label>Obstacle dist.</label><input type="number" id="iObsD" value="0" min="0" step="1"><span class="u">km</span></div>
       <div class="row"><label>Obstacle height</label><input type="number" id="iObsH" value="0" min="0" step="1"><span class="u">m</span></div>
@@ -250,7 +255,7 @@
       <div class="row" style="margin-top:6px"><label>Wave height</label><input type="number" id="iWave" value="0" min="0" step="0.1"><span class="u">m</span></div>
       <div class="note">Sea state. The visible horizon is formed by the nearest wave crests, not the mean surface, so waves hide a little more (approximate).</div>
     </div>
-    <div class="sec">
+    <div class="sec adv">
       <h3>Earth Model</h3>
       <div class="row"><label>Shape</label>
         <select id="iEarthModel">
@@ -263,7 +268,7 @@
       <div class="note" id="earthNote">Mean sphere R = 6,371 km.</div>
     </div>
     <div class="sec">
-      <h3>Famous Observations</h3>
+      <h3>Famous Observations <span style="font-size:9px;color:#e0a64b;border:1px solid #e0a64b;border-radius:3px;padding:1px 4px;vertical-align:middle">WORK IN PROGRESS</span></h3>
       <div class="presets">
         <button class="pre obs-pre" data-d="96.5" data-h="442" data-t="building" data-h0="1.8" data-k="0.17" data-note="Chicago skyline from ~60mi across Lake Michigan. Geometrically the base is fully hidden; real sightings are a superior mirage (looming) under a temperature inversion, a separate intermittent effect, not ordinary refraction.">Chicago / Lake Michigan</button>
         <button class="pre obs-pre" data-d="68" data-h="553" data-t="building" data-h0="2" data-k="0.13" data-note="Toronto skyline ~68km across Lake Ontario from the NY shore. Lower floors sit below the horizon; only the upper buildings and the CN Tower's top (553m) show, and only on rare clear days, since haze usually intervenes. A textbook 'partly hidden' case.">Toronto / Lake Ontario</button>
@@ -277,7 +282,7 @@
         <button class="pre obs-pre" data-d="381" data-h="2744" data-t="mountain" data-h0="2784" data-k="0.17" data-note="Prior distance record (~381km): Pic du Canigou in the Pyrenees → Tête de Chabrière in the Alps. Same principle as the 443km record: two high peaks (≈2,780m and ≈2,740m) sitting above the curve. Heights approximate.">Pyrenees → Alps 381km</button>
         <button class="pre obs-pre" data-d="370" data-h="6190" data-t="mountain" data-h0="4900" data-k="0.13" data-note="Denali (6,190m), North America's highest peak, photographed ~370km away across Alaska from high ground near Mt Sanford (~4,900m). A high-to-high pair: a giant mountain seen from altitude. It is the altitude of both peaks that makes such a distance possible despite the curve. Heights approximate.">Denali ~370km (Alaska)</button>
       </div>
-      <div class="note" id="obsNote">Documented real-world observations &amp; record long-distance photos. Click for details on each.</div>
+      <div class="note" id="obsNote">Documented real-world observations &amp; record long-distance photos. Click for details on each. These cases are still being reviewed and refined.</div>
     </div>
     <div class="sec">
       <h3>Results</h3>
@@ -301,7 +306,7 @@
         <div class="rr" id="rHazeRow" style="display:none"><span class="l">Through haze</span><span class="v" id="oHaze">-</span></div>
       </div>
     </div>
-    <div class="sec">
+    <div class="sec adv">
       <h3>Visibility limits</h3>
       <div class="rp">
         <div class="rr"><span class="l" title="Beyond this distance the target's top drops below the horizon. Equals horizon(eye) + horizon(target).">Top visible within</span><span class="v g" id="oLimTop">-</span></div>
@@ -359,7 +364,7 @@
         <p><strong style="color:var(--text)">Photo overlay (experimental):</strong> The Observer View can load a real photograph as a background. Because the view maps the horizontal field of view (2·arctan(sensor / 2·focal)) across the full frame, a photo shot at a known focal length and sensor size shares the same angular scale as the overlays. When a JPEG carries EXIF, the focal length and sensor width are read automatically (the sensor is derived from the 35mm-equivalent focal length, or from the focal-plane resolution tags); otherwise you enter them. After you register the photo's horizon against the orange horizon line, the predicted hidden/visible split lands on the real scene at the correct pixel height. The alignment nudges (move, roll, scale) only register the image; a roll control levels a tilted horizon, and fine scale absorbs lens distortion and EXIF rounding. None of these feed back into any calculation, so treat it as a comparison aid rather than a measurement.</p>
         <p><strong style="color:var(--text)">What this does <em>not</em> show:</strong> it predicts the <em>geometry</em> of what curvature hides. It cannot tell you whether a specific photo is genuine clear-air, a mirage, or intervening terrain; those depend on conditions on the day.</p>
         <p style="margin-top:6px"><strong style="color:var(--text)">Credit:</strong> The core curvature formulas follow and match the widely used <a href="https://dizzib.github.io/earth/curve-calc/" target="_blank" rel="noopener" style="color:var(--accent)">dizzib Earth curve calculator</a>; this tool adds scaled visualization, an observer/camera view, refraction bands, and visual range.</p>
-        <p style="margin-top:6px;color:#667">Version 1.7.0 &middot; last revised 2026-06-06</p>
+        <p style="margin-top:6px;color:#667">Version 1.8.0 &middot; last revised 2026-06-06</p>
         <p style="margin-top:8px"><strong style="color:var(--text)">Glossary</strong> <span style="color:#667">(terms link to neutral, scientific definitions)</span></p>
         <dl style="margin:2px 0 4px 0">
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon" target="_blank" rel="noopener" style="color:var(--accent)">Horizon</a></dt>
@@ -762,12 +767,12 @@ function exportPNG(){
   o.fillStyle='#0a0e17';o.fillRect(0,0,off.width,off.height);o.drawImage(src,0,0);
   o.fillStyle='#0c1320';o.fillRect(0,src.height,off.width,footH);
   o.fillStyle='#8aa0b8';o.font=(13*dpr)+"px 'SF Mono',monospace";o.textBaseline='middle';
-  o.fillText('Earth Curvature Simulator v1.7.0  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  mutiny19.github.io/curvhorizon',10*dpr,src.height+footH/2);
+  o.fillText('Earth Curvature Simulator v1.8.0  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  mutiny19.github.io/curvhorizon',10*dpr,src.height+footH/2);
   off.toBlob(function(b){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='curvature-'+S.view+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);});
 }
 function exportCSV(){
   const R=effR(S.k),gR=baseR(),h0=S.h0,hT=S.hT,fin=isFinite(R);
-  const lines=['# Earth Curvature & Horizon Simulator v1.7.0',
+  const lines=['# Earth Curvature & Horizon Simulator v1.8.0',
     '# eye_height_m='+h0+',target_height_m='+hT+',k='+S.k+',earth='+earthLabel(),
     '# permalink='+buildPermalink(),
     'distance_km,horizon_km,drop_below_tangent_m,bulge_m,hidden_m_kSel,visible_m,hidden_m_k0'];
@@ -1124,7 +1129,22 @@ function init(){
   document.getElementById('btnPNG').addEventListener('click',exportPNG);
   document.getElementById('btnCSV').addEventListener('click',exportCSV);
 
-  if(applyStateFromURL())syncControlsFromState();
+  // Simple / Advanced disclosure: hide the expert controls until asked for, remembered across visits.
+  function setAdvMode(on){
+    document.getElementById('controlsPanel').classList.toggle('adv-active',on);
+    document.getElementById('btnSimpleMode').classList.toggle('active',!on);
+    document.getElementById('btnAdvMode').classList.toggle('active',on);
+    try{localStorage.setItem('curvhorizon.adv',on?'1':'0');}catch(e){}
+  }
+  document.getElementById('btnSimpleMode').addEventListener('click',()=>setAdvMode(false));
+  document.getElementById('btnAdvMode').addEventListener('click',()=>setAdvMode(true));
+
+  const hadURL=applyStateFromURL();
+  if(hadURL)syncControlsFromState();
+  // A link that carries any advanced setting opens Advanced so nothing is hidden behind the scenes.
+  const advFromLink=S.obsD>0||S.obsH>0||S.wave>0||S.flat||S.oblate||S.showBands||S.rayProfile!=='off'||S.visRange>0;
+  let advPref=false;try{advPref=localStorage.getItem('curvhorizon.adv')==='1';}catch(e){}
+  setAdvMode(advPref||advFromLink);
   render();
 }
 
