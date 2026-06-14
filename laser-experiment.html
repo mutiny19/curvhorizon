@@ -267,6 +267,25 @@
     .expand-trigger, .global-controls { display: none !important; }
     .diagram svg { max-height: 300px; }
   }
+
+  /* Embedded run simulation */
+  .sim { margin-top: 6px; }
+  .sim canvas { width: 100%; height: 340px; display: block; border: 1px solid var(--rule); border-radius: 3px; }
+  .sim-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 26px; margin-top: 16px; font-family: ui-monospace, monospace; font-size: 12px; }
+  .sim-ctrl label { display: flex; justify-content: space-between; color: var(--ink-ll); letter-spacing: 0.03em; margin-bottom: 3px; }
+  .sim-ctrl label .val { color: var(--gold); font-weight: 700; }
+  .sim-ctrl input[type=range] { width: 100%; accent-color: var(--gold); margin: 0; }
+  .sim-opts { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; padding-top: 4px; }
+  .sim-opts label { color: var(--ink-l); display: inline-flex; gap: 5px; align-items: center; cursor: pointer; }
+  .sim-readout { margin-top: 16px; border-top: 1px solid var(--rule-2); padding-top: 12px; }
+  .sim-readout table { width: 100%; border-collapse: collapse; font-family: ui-monospace, monospace; font-size: 12px; color: var(--ink-l); }
+  .sim-readout td { padding: 4px 2px; }
+  .sim-readout tr.hd td { color: var(--gold); font-size: 11px; letter-spacing: 0.05em; border-bottom: 1px solid var(--rule-2); }
+  .sim-readout .num { text-align: right; white-space: nowrap; }
+  .sim-readout .cold { color: var(--cold); }
+  .sim-readout .green { color: var(--green); }
+  .sim-cap { margin-top: 10px; font-family: ui-monospace, monospace; font-size: 10px; color: var(--ink-lll); letter-spacing: 0.03em; line-height: 1.5; }
+  @media (max-width: 600px) { .sim-controls { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -297,7 +316,7 @@
     <div class="detail-inner">
       <h4>What this measures</h4>
       <p>A laser points east and holds still. A drone hangs in the air in front of it, reading nothing but the beam on its sensor. No map. No compass. No heading typed into a flight computer. When the beam drifts up the sensor face, the drone climbs to meet it. When it drifts sideways, the drone slides over. Wherever the light goes, the machine goes.</p>
-      <p>The experiment does not assume an answer. It records what the surface does beneath a straight line of light, and it reports whatever the numbers report. Flat is a result. Curved is a result. Neither is the goal.</p>
+      <p>The experiment does not assume an answer. It records what the surface does beneath a levelled beam of light, and it reports whatever the numbers report. Flat is a result. Curved is a result. Neither is the goal.</p>
 
       <h4>What it can show, and what it cannot</h4>
       <p>This is not the one test that ends an argument. There is no such test. What it is, is a measurement of three quantities that are independent of one another: the angle to Polaris, the drone's height above the water, and the tilt of the laser at its mount. Where a marker can be anchored at the midpoint of the run, it adds a fourth and stronger reading, the midpoint set against the chord between the two ends. Each can come out level, or changing, or somewhere that needs explaining. Read together, across a measured distance, they describe what the surface did. Nothing more, and nothing less.</p>
@@ -461,7 +480,7 @@
       <line x1="192" y1="138" x2="900" y2="138" stroke="url(#beamGlow)" stroke-width="10"/>
       <line x1="192" y1="138" x2="900" y2="138" stroke="#a06e14" stroke-width="1.8" stroke-dasharray="10 4"/>
       <polygon points="900,138 880,131 880,145" fill="#a06e14"/>
-      <text x="546" y="128" font-family="ui-monospace,monospace" font-size="11" fill="#646460" text-anchor="middle" letter-spacing="0.06em">LASER BEAM — EAST — STRAIGHT LINE OF LIGHT</text>
+      <text x="546" y="128" font-family="ui-monospace,monospace" font-size="11" fill="#646460" text-anchor="middle" letter-spacing="0.06em">LASER BEAM — EAST — LEVELLED AND LOCKED</text>
 
       <line x1="210" y1="146" x2="210" y2="170" stroke="#2d64a5" stroke-width="1"/>
       <text x="220" y="174" font-family="ui-monospace,monospace" font-size="11" fill="#2d64a5" letter-spacing="0.04em">BEAM LEVELLED, BOTH AXES LOCKED — TILT READ AT RUN'S END</text>
@@ -506,7 +525,7 @@
       <div class="subhead">THE GEOMETRY</div>
       <p>The diagram is a side view. The operator stands on a height overlooking open water, a sea cliff or a lakeside bluff, high enough that the beam rides well clear of the surface and the horizon never enters the picture. The drone starts at the elevation of the beam and flies out over the water.</p>
       <p>Hold two possibilities side by side, and give each the same weight. If the water beneath the beam is flat, the drone keeps its starting height above the surface the whole way. The beam runs parallel to the water, and the end depression reading comes out at exactly height over distance, nothing extra.</p>
-      <p>If the surface curves away instead, the water falls below where it began. The drone climbs to stay on the beam, because the beam is a straight line and the water surface is not. The rangefinder logs the climb. The beam itself is never touched during the run; at the end, with the drone hovering just above the water at the far point, the operator tilts the laser down to it for one reading, and the encoder records how far below the level line the far water sits. Polaris is the exception. An east run barely changes the drone's latitude, so the clinometer reads close to the same at both ends whether the surface is flat or curved, which makes it a check that the run held its line rather than the thing that tells the two apart. That work is done by the altitude, the tilt, and the midpoint figure. The protocol does not decide between these in advance. It builds the apparatus that can tell them apart, and then it reads the dials.</p>
+      <p>If the surface curves away instead, the water falls below where it began. The drone climbs to stay on the beam, because the water falls away beneath it. The beam is a levelled, locked reference rather than a perfect straight edge: light bends in the air it crosses, so over a long run the beam itself sags gently toward the surface, by a fraction of the curvature set by the refraction on the night. The climb the rangefinder logs is what is left after that sag, the surface dropping away faster than the beam does, and measuring the sag and taking it back out is the work of the refraction section. The beam itself is never touched during the run; at the end, with the drone hovering just above the water at the far point, the operator tilts the laser down to it for one reading, and the encoder records how far below the level line the far water sits. Polaris is the exception. An east run barely changes the drone's latitude, so the clinometer reads close to the same at both ends whether the surface is flat or curved, which makes it a check that the run held its line rather than the thing that tells the two apart. That work is done by the altitude, the tilt, and the midpoint figure. The protocol does not decide between these in advance. It builds the apparatus that can tell them apart, and then it reads the dials.</p>
 
       <div class="subhead">WHY HEIGHT, AND WHY WATER</div>
       <p>Two choices of venue do real work. The first is height. A sea cliff or bluff of even modest rise, 50 to 200 metres, keeps obstructions out of the beam and lifts it above the boundary layer near the surface, where the temperature gradient and the bending it causes are strongest (Young, n.d.). It also gives the equipment a platform that will not shift during the run.</p>
@@ -514,6 +533,42 @@
 
       <div class="subhead">WHY EAST</div>
       <p>Firing the beam east points the run square across the north-south line, so the run carries no deliberate change of latitude of its own. On an east run the latitude barely shifts either way, so the Polaris angle should hold steady, and a swing in it points to the drone wandering off its line rather than to the surface. Point the beam north or south instead and a latitude change rides straight into the path before the surface has said anything, tangling the variables together. East and west keep that reading clean. East over west is arbitrary. West would do the same job.</p>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span>SIMULATE A RUN</span>
+    <button class="expand-trigger" onclick="toggleDetail('simhow')">EXPAND ▾</button>
+  </div>
+  <div class="sim">
+    <canvas id="simCanvas" width="1000" height="340"></canvas>
+    <div class="sim-controls">
+      <div class="sim-ctrl"><label>Distance to drone <span class="val" id="simDVal">3.00 mi</span></label><input type="range" id="simD" min="0.2" max="30" step="0.1" value="3"></div>
+      <div class="sim-ctrl"><label>Mount height <span class="val" id="simHVal">100 m</span></label><input type="range" id="simH" min="1" max="300" step="1" value="100"></div>
+      <div class="sim-ctrl"><label>Refraction k <span class="val" id="simKVal">0.13</span></label><input type="range" id="simK" min="0" max="0.9" step="0.01" value="0.13"></div>
+      <div class="sim-ctrl"><label>Options</label>
+        <div class="sim-opts">
+          <label><input type="checkbox" id="simMid"> Midpoint marker</label>
+          <label><input type="checkbox" id="simUnit"> km / m</label>
+        </div>
+      </div>
+    </div>
+    <div class="sim-readout">
+      <table>
+        <tr class="hd"><td>At this distance</td><td class="num">FLAT PLANE</td><td class="num">SPHERE  R=6,371 km</td></tr>
+        <tr><td>Drone height above water (M2)</td><td class="num cold" id="simM2f">-</td><td class="num green" id="simM2s">-</td></tr>
+        <tr><td>Climb from the start</td><td class="num cold" id="simClimbf">-</td><td class="num green" id="simClimbs">-</td></tr>
+        <tr><td>End depression to far water (M3)</td><td class="num cold" id="simM3f">-</td><td class="num green" id="simM3s">-</td></tr>
+        <tr id="simMidRow" style="display:none"><td>Midpoint rise above the chord (M4)</td><td class="num cold" id="simM4f">-</td><td class="num green" id="simM4s">-</td></tr>
+      </table>
+    </div>
+    <div class="sim-cap" id="simCap">SIDE VIEW · VERTICAL SCALE EXAGGERATED · THE NUMBERS BELOW ARE REAL</div>
+  </div>
+  <div class="detail" id="simhow">
+    <div class="detail-inner">
+      <p>This is the protocol drawn live, and it decides nothing. The mount sits on the left at the height you set, the beam runs level to the right, and the water is drawn two ways at once: a dashed line for the flat-plane prediction, where the water stays parallel to the beam, and a curve for the sphere, where it falls away as the square of the distance. Neither is asserted. The run is what would tell them apart.</p>
+      <p>Drag the drone out and watch the gap between the beam and the curved water open up. That gap is the height the lidar would log, Measurement 2, and the table reads it for both models at the distance you set. The faint line dropping to the far water is Measurement 3, the depression angle read back at the mount: on the flat plane it is just the mount height over the distance, and on the sphere the far water has sunk below the level line, so the angle comes out steeper. Turn on the midpoint marker for the three-point figure, three equal-height marks and the chord between the outer two, with the middle one riding above the chord by an amount that grows as the square of the run.</p>
+      <p>The vertical scale is exaggerated, because at true scale the climb is a few feet across miles of water and the line would look flat. The exaggeration is only in the drawing. Every figure in the table is the real predicted value, and standard refraction, set by the k slider, shrinks the sphere figures through the effective radius. The simulation shows what each model says the instruments should read. The night decides which one they do.</p>
     </div>
   </div>
 
@@ -1009,7 +1064,7 @@
       <p>It also comes with a caveat worth stating plainly: people who hold different models of the sky read a star's angle differently. So no weight rests on Polaris alone. It rests on whether it agrees with the rest.</p>
 
       <div class="subhead">MEASUREMENT 2 — DRONE ALTITUDE ABOVE WATER</div>
-      <p>This is the plainest of the running instruments. The drone follows a straight beam of light. If the water stays the same distance below the beam for the whole flight, the surface is flat across that span. If the water falls away from the beam, the surface curves across it. The reading does not depend on which way the result comes out. It only reports the distance.</p>
+      <p>This is the plainest of the running instruments. The drone follows a levelled, locked beam. That beam is nearly straight but not perfectly so: light bends a little in the air it crosses, and over the run it sags toward the surface by a small amount the refraction section measures and removes. If the water stays the same distance below the beam for the whole flight, the surface is flat across that span. If the water falls away from the beam by more than that sag, the surface is curving across it. The reading does not depend on which way the result comes out. It only reports the distance.</p>
       <p>No star to interpret. No claim about how light travels through space. A rangefinder pointed down, logging the height to the water, second after second, for the length of the flight.</p>
 
       <div class="subhead">MEASUREMENT 3 — END DEPRESSION ANGLE</div>
@@ -1182,6 +1237,123 @@
 
     btn.textContent = anyClosed ? 'COLLAPSE ALL' : 'EXPAND ALL';
   }
+
+  // ===================== EMBEDDED RUN SIMULATION =====================
+  (function(){
+    var cv = document.getElementById('simCanvas');
+    if (!cv || !cv.getContext) return;
+    var ctx = cv.getContext('2d');
+    var R = 6371000, MI = 1609.344, FT = 0.3048;
+    var $ = function(id){ return document.getElementById(id); };
+    var elD=$('simD'), elH=$('simH'), elK=$('simK'), elMid=$('simMid'), elUnit=$('simUnit');
+
+    function lenH(m){ // a height, in the chosen units
+      if (elUnit.checked) return Math.abs(m) < 1 ? (m*100).toFixed(0)+' cm' : m.toFixed(m<10?2:1)+' m';
+      var ft = m/FT; return Math.abs(ft) < 1 ? (ft*12).toFixed(1)+' in' : (ft<20 ? ft.toFixed(1) : ''+Math.round(ft))+' ft';
+    }
+    function lenD(m){ return elUnit.checked ? (m/1000).toFixed(2)+' km' : (m/MI).toFixed(2)+' mi'; }
+    function ang(r){ var d=r*180/Math.PI; return (d<1 ? d.toFixed(3) : d.toFixed(2))+'°'; }
+    function txt(x,y,s,col,sz,al,bl){ ctx.fillStyle=col; ctx.font=(sz||10)+'px ui-monospace, monospace'; ctx.textAlign=al||'left'; ctx.textBaseline=bl||'alphabetic'; ctx.fillText(s,x,y); }
+
+    function model(){
+      var d=parseFloat(elD.value)*MI, H=parseFloat(elH.value), k=parseFloat(elK.value);
+      var Reff=R/(1-Math.min(k,0.99));
+      var drop=function(x){ return x*x/(2*Reff); };
+      var maxD=parseFloat(elD.max)*MI;
+      return { d:d, H:H, k:k, Reff:Reff, drop:drop, dD:drop(d), maxDrop:drop(maxD) };
+    }
+
+    function draw(){
+      var m=model();
+      var dpr=window.devicePixelRatio||1, W=cv.clientWidth||cv.parentElement.clientWidth||900, Hc=340;
+      cv.width=Math.round(W*dpr); cv.height=Math.round(Hc*dpr); ctx.setTransform(dpr,0,0,dpr,0,0);
+      ctx.clearRect(0,0,W,Hc);
+      var L=56, Rm=20, T=22, B=42, pw=W-L-Rm, ph=Hc-T-B;
+      var d=m.d, H=m.H, drop=m.drop, dD=m.dD;
+      // Horizontal fills the plot (0..d). Vertical is fixed to the maximum-distance scene so the
+      // beam stays put and the water visibly droops farther as the drone is dragged out.
+      var pad=(H+m.maxDrop)*0.05;
+      var yTop=H+pad, yBot=-m.maxDrop-pad, ySpan=yTop-yBot;
+      var X=function(x){ return L + (d>0 ? x/d : 0)*pw; };
+      var Y=function(y){ return T + (yTop-y)/ySpan*ph; };
+      var exag=(ph/ySpan)/(pw/d);
+
+      ctx.fillStyle='#f0f4fc'; ctx.fillRect(L,T,pw,ph);
+
+      // sphere water (fill + curve)
+      var N=180, i, x, py;
+      ctx.beginPath(); ctx.moveTo(X(0),Y(0));
+      for(i=0;i<=N;i++){ x=d*i/N; ctx.lineTo(X(x),Y(-drop(x))); }
+      ctx.lineTo(X(d),Y(yBot)); ctx.lineTo(X(0),Y(yBot)); ctx.closePath();
+      ctx.fillStyle='#cdddec'; ctx.fill();
+      ctx.beginPath();
+      for(i=0;i<=N;i++){ x=d*i/N; py=Y(-drop(x)); i?ctx.lineTo(X(x),py):ctx.moveTo(X(x),py); }
+      ctx.strokeStyle='#5d83a0'; ctx.lineWidth=2; ctx.stroke();
+      txt(X(d*0.5), Y(-drop(d*0.5))+13, 'sphere water', '#5d83a0', 9, 'center', 'top');
+
+      // flat-plane water reference (dashed, at y=0)
+      ctx.save(); ctx.setLineDash([6,4]); ctx.strokeStyle='#9bb6cf'; ctx.lineWidth=1.2;
+      ctx.beginPath(); ctx.moveTo(X(0),Y(0)); ctx.lineTo(X(d),Y(0)); ctx.stroke(); ctx.restore();
+      txt(X(d)-3, Y(0)-4, 'flat-plane water', '#8aa6c0', 9, 'right', 'bottom');
+
+      // M3 depression lines from the mount to the far water: flat (dashed) and sphere (solid)
+      ctx.save(); ctx.setLineDash([4,3]); ctx.strokeStyle='#c2ad79'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(X(0),Y(H)); ctx.lineTo(X(d),Y(0)); ctx.stroke(); ctx.restore();
+      ctx.strokeStyle='#a06e14'; ctx.lineWidth=1.4;
+      ctx.beginPath(); ctx.moveTo(X(0),Y(H)); ctx.lineTo(X(d),Y(-dD)); ctx.stroke();
+      txt(X(d*0.62), Y(-drop(d*0.62)*0.62+H*0.38)-2, 'M3 depression', '#a06e14', 9, 'center', 'bottom');
+
+      // midpoint three-point figure
+      if (elMid.checked){
+        var pink='#a03c6e';
+        var bases=[[0,0],[d/2,-drop(d/2)],[d,-dD]];
+        ctx.strokeStyle='rgba(160,60,110,0.45)'; ctx.lineWidth=1.4;
+        bases.forEach(function(p){ ctx.beginPath(); ctx.moveTo(X(p[0]),Y(p[1])); ctx.lineTo(X(p[0]),Y(p[1]+H)); ctx.stroke(); });
+        ctx.save(); ctx.setLineDash([5,3]); ctx.strokeStyle=pink; ctx.lineWidth=1.2;
+        ctx.beginPath(); ctx.moveTo(X(0),Y(H)); ctx.lineTo(X(d),Y(H-dD)); ctx.stroke(); ctx.restore();
+        bases.forEach(function(p){ ctx.fillStyle=pink; ctx.beginPath(); ctx.arc(X(p[0]),Y(p[1]+H),3,0,7); ctx.fill(); });
+        var midTopY=Y(H-drop(d/2)), chordMidY=Y(H-dD/2);
+        ctx.strokeStyle=pink; ctx.lineWidth=1.3; ctx.beginPath(); ctx.moveTo(X(d/2),midTopY); ctx.lineTo(X(d/2),chordMidY); ctx.stroke();
+        txt(X(d/2)+6, (midTopY+chordMidY)/2, 'midpoint rise', pink, 9, 'left', 'middle');
+      }
+
+      // beam (level, green)
+      ctx.strokeStyle='#1e8c50'; ctx.lineWidth=2.4;
+      ctx.beginPath(); ctx.moveTo(X(0),Y(H)); ctx.lineTo(X(d),Y(H)); ctx.stroke();
+      txt(X(d*0.03), Y(H)-6, 'LEVEL BEAM', '#1e8c50', 10, 'left', 'bottom');
+
+      // mount post + small bluff at x=0
+      ctx.fillStyle='#c3bcac'; ctx.beginPath(); ctx.moveTo(X(0)-11,Y(0)); ctx.lineTo(X(0),Y(Math.min(H,m.maxDrop+H)*0.16)); ctx.lineTo(X(0)+11,Y(0)); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle='#3c3c38'; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(X(0),Y(0)); ctx.lineTo(X(0),Y(H)); ctx.stroke();
+
+      // drone on the beam + dashed M2 gap to the water
+      var dx=X(d), dy=Y(H);
+      ctx.save(); ctx.setLineDash([3,3]); ctx.strokeStyle='#a03c6e'; ctx.lineWidth=1.2;
+      ctx.beginPath(); ctx.moveTo(dx,dy); ctx.lineTo(dx,Y(-dD)); ctx.stroke(); ctx.restore();
+      ctx.fillStyle='#3c3c38'; ctx.fillRect(dx-7,dy-2,14,4);
+      ctx.strokeStyle='#3c3c38'; ctx.lineWidth=1.4;
+      ctx.beginPath(); ctx.moveTo(dx-9,dy-5); ctx.lineTo(dx-5,dy-5); ctx.moveTo(dx+5,dy-5); ctx.lineTo(dx+9,dy-5); ctx.stroke();
+      txt(dx-11, dy-8, 'DRONE', '#3c3c38', 9, 'right', 'bottom');
+
+      // axis labels
+      txt(L, Hc-B+13, '0', '#969692', 9, 'left', 'top');
+      txt(X(d), Hc-B+13, lenD(d), '#969692', 9, 'right', 'top');
+      txt(L, Hc-B+27, 'distance along the run   ·   vertical ×' + Math.round(exag) + ' exaggerated', '#969692', 9, 'left', 'top');
+
+      // readouts
+      $('simDVal').textContent=lenD(d); $('simHVal').textContent=lenH(H); $('simKVal').textContent=m.k.toFixed(2);
+      $('simM2f').textContent=lenH(H);          $('simM2s').textContent=lenH(H+dD);
+      $('simClimbf').textContent='0';           $('simClimbs').textContent=lenH(dD);
+      $('simM3f').textContent=ang(Math.atan(H/d)); $('simM3s').textContent=ang(Math.atan((H+dD)/d));
+      $('simMidRow').style.display=elMid.checked?'':'none';
+      if (elMid.checked){ $('simM4f').textContent='0'; $('simM4s').textContent=lenH(d*d/(8*m.Reff)); }
+      $('simCap').textContent='SIDE VIEW · VERTICAL ×'+Math.round(exag)+' EXAGGERATED · THE NUMBERS BELOW ARE REAL · k='+m.k.toFixed(2)+' → effective radius '+Math.round(m.Reff/1000).toLocaleString()+' km';
+    }
+
+    [elD,elH,elK,elMid,elUnit].forEach(function(e){ e.addEventListener('input',draw); e.addEventListener('change',draw); });
+    var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(draw,120); });
+    if (document.readyState!=='loading') setTimeout(draw,30); else window.addEventListener('load',draw);
+  })();
 </script>
 
 </body>
