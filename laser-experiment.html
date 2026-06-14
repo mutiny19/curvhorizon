@@ -428,6 +428,7 @@
       <li><span class="item-text">Datalogger + microSD  origin weather and tilt log</span><span class="cost">$15 – $40</span></li>
       <li><span class="item-text">Midpoint reference marker (optional)  anchored float + retroreflector</span><span class="cost">$40 – $80</span></li>
       <li><span class="item-text">Range markers / buoys  backup distance over water</span><span class="cost">$20 – $50</span></li>
+      <li><span class="item-text">Water-level + wave logger  anchored pressure gauge  both ends  no GNSS</span><span class="cost">$60 – $250</span></li>
       <li><span class="item-text">Walkie-talkies  operator to chase crew</span><span class="cost">$25 – $50</span></li>
       <li><span class="item-text">Miscellaneous  batteries  cable ties  notebook</span><span class="cost">$30 – $60</span></li>
     </ul>
@@ -570,6 +571,7 @@
       <div class="subhead">WHY HEIGHT, AND WHY WATER</div>
       <p>Two choices of venue do real work. The first is height. A sea cliff or bluff of even modest rise, 50 to 200 metres, keeps obstructions out of the beam and lifts it above the boundary layer near the surface, where the temperature gradient and the bending it causes are strongest (Young, n.d.). It also gives the equipment a platform that will not shift during the run.</p>
       <p>The second is water. The surface the drone measures against has to be level, or its own rise and fall reads as a curve that is not there. Land has topography, and to take that back out you would need a survey of the ground beneath the whole path, which is a map by another name. Calm water needs no survey. It settles to an equipotential surface, the very surface whose shape is in question, so the height above it is a clean reading. Where no water is reachable, a large dry lakebed is the only good substitute, flat and level for the same reason. Fire from the height, out over the water.</p>
+      <p>Calm at the start is not the same as steady through the run, and the one surface the whole measurement leans on deserves a witness of its own. Over the hours a run takes, a tide can shift the far water against the near, and wind can pile the surface into a slope or set a lake rocking in a seiche, each of which leans the water the way a curve would and reads straight into the drop. So an anchored logger at the origin and another at the far end record the water level the whole time, and a reading that stays calm and level at both ends is what lets the surface be trusted as the reference rather than assumed at the start. The gauge is a pressure sensor resting on the bottom, the depth of water over a fixed point, not a satellite buoy, because a GNSS height is read in the very frame the run is testing and would settle nothing. It checks the water, which the beam rides far above, not the beam itself.</p>
 
       <div class="subhead">WHY EAST</div>
       <p>Firing the beam east points the run square across the north-south line, so the run carries no deliberate change of latitude of its own. On an east run the latitude barely shifts either way, so the Polaris angle should hold steady, and a swing in it points to the drone wandering off its line rather than to the surface. Point the beam north or south instead and a latitude change rides straight into the path before the surface has said anything, tangling the variables together. East and west keep that reading clean. East over west is arbitrary. West would do the same job.</p>
@@ -1249,6 +1251,7 @@
         <li><label><input type="checkbox"><span>Temperature, humidity, and pressure are logged at the origin and on the drone, with a two-height gradient taken for the bending.</span></label></li>
         <li><label><input type="checkbox"><span>Refraction is measured, not assumed: a two-color run or a reciprocal sighting is recorded on the same night.</span></label></li>
         <li><label><input type="checkbox"><span>If a midpoint marker is set, it is photographed in frame, and its height is taped and rechecked at the end.</span></label></li>
+        <li><label><input type="checkbox"><span>Water level is logged at the origin and the far end, by anchored pressure gauge rather than GNSS, and stays calm and level across the run, so no tide, wind setup, or seiche is leaning the surface.</span></label></li>
 
         <li class="grp">After the run, so the other side can check</li>
         <li><label><input type="checkbox"><span>The full profile is plotted, distance against height, with the on-center and off-center points marked.</span></label></li>
