@@ -571,69 +571,6 @@
   </div>
 
   <div class="section-header">
-    <span>SIMULATE A RUN</span>
-    <button class="expand-trigger" onclick="toggleDetail('simhow')">EXPAND ▾</button>
-  </div>
-  <div class="sim">
-    <canvas id="simCanvas" width="1000" height="340" role="img" tabindex="0" aria-label="Side view of the run. Use the sliders below to change it."></canvas>
-    <div class="sim-legend" id="simLegend" aria-hidden="true">
-      <span><i style="background:#1e8c50"></i>level beam</span>
-      <span><i style="background:#5d83a0"></i>sphere water</span>
-      <span><i class="dash" style="border-color:#9bb6cf"></i>flat-plane water</span>
-      <span><i style="background:#a06e14"></i>M3 depression</span>
-      <span class="legmid"><i style="background:#a03c6e"></i>midpoint figure</span>
-    </div>
-    <div class="sim-hint">Drag across the chart, or use the sliders, to change the distance to the drone.</div>
-    <div class="sim-controls">
-      <div class="sim-ctrl">
-        <label>Distance to drone <span class="val" id="simDVal">3.00 mi</span></label>
-        <input type="range" id="simD" min="0.2" max="30" step="0.1" value="3" aria-label="Distance to drone">
-        <div class="sim-chips" id="simDChips" role="group" aria-label="Distance presets"><span class="lbl">JUMP TO</span></div>
-      </div>
-      <div class="sim-ctrl">
-        <label>Mount height <span class="val" id="simHVal">50 m</span></label>
-        <input type="range" id="simH" min="1" max="300" step="1" value="50" aria-label="Mount height above water">
-        <div class="sim-chips" id="simHChips" role="group" aria-label="Mount height presets"><span class="lbl">JUMP TO</span></div>
-      </div>
-      <div class="sim-ctrl">
-        <label>Refraction k <span class="val" id="simKVal">0.17</span></label>
-        <input type="range" id="simK" min="-1" max="2" step="0.01" value="0.17" aria-label="Refraction coefficient k">
-        <div class="sim-chips" id="simKChips" role="group" aria-label="Refraction presets"><span class="lbl">PRESET</span></div>
-      </div>
-      <div class="sim-ctrl">
-        <label>Altimeter range <span class="val" id="simSVal">100 m</span></label>
-        <input type="range" id="simS" min="20" max="250" step="5" value="100" aria-label="Downward altimeter measurable range">
-        <div class="sim-chips" id="simSChips" role="group" aria-label="Altimeter range presets"><span class="lbl">JUMP TO</span></div>
-      </div>
-      <div class="sim-ctrl sim-toggles">
-        <label>Display <button class="sim-reset" id="simReset" type="button">RESET</button></label>
-        <button class="sim-toggle" id="simMidBtn" type="button" aria-pressed="false">Midpoint three-point marker</button>
-        <button class="sim-toggle" id="simUnitBtn" type="button" aria-pressed="false">Units<span class="sub">: miles / feet</span></button>
-      </div>
-    </div>
-    <p class="sim-summary" id="simSummary"></p>
-    <div class="sim-status" id="simStatus"></div>
-    <div class="sim-readout">
-      <table>
-        <tr class="hd"><td>At this distance</td><td class="num">FLAT PLANE</td><td class="num">SPHERE  R=6,371 km</td></tr>
-        <tr><td>Drone height above water (M2)</td><td class="num cold" id="simM2f">-</td><td class="num green" id="simM2s">-</td></tr>
-        <tr><td>Climb from the start</td><td class="num cold" id="simClimbf">-</td><td class="num green" id="simClimbs">-</td></tr>
-        <tr><td>End depression to far water (M3)</td><td class="num cold" id="simM3f">-</td><td class="num green" id="simM3s">-</td></tr>
-        <tr id="simMidRow" style="display:none"><td>Midpoint rise above the chord (M4)</td><td class="num cold" id="simM4f">-</td><td class="num green" id="simM4s">-</td></tr>
-      </table>
-    </div>
-    <div class="sim-cap" id="simCap">SIDE VIEW · VERTICAL SCALE EXAGGERATED · THE NUMBERS BELOW ARE REAL</div>
-  </div>
-  <div class="detail" id="simhow">
-    <div class="detail-inner">
-      <p>This is the protocol drawn live, and it decides nothing. The mount sits on the left at the height you set, the beam runs level to the right, and the water is drawn two ways at once: a dashed line for the flat-plane prediction, where the water stays parallel to the beam, and a curve for the sphere, where it falls away as the square of the distance. Neither is asserted. The run is what would tell them apart.</p>
-      <p>Drag the drone out and watch the gap between the beam and the curved water open up. That gap is the height the lidar would log, Measurement 2, and the table reads it for both models at the distance you set. The faint line dropping to the far water is Measurement 3, the depression angle read back at the mount: on the flat plane it is just the mount height over the distance, and on the sphere the far water has sunk below the level line, so the angle comes out steeper. Turn on the midpoint marker for the three-point figure, three equal-height marks and the chord between the outer two, with the middle one riding above the chord by an amount that grows as the square of the run.</p>
-      <p>The green band hugging the water is the altimeter's reach, the range the downward lidar can actually read, set by the altimeter slider. That gap, Measurement 2, only gets logged while the drone stays inside the band. It is the height above the water, the mount height plus whatever the surface has dropped, that the sensor must cover, so two things can push the drone out of range: a mount taller than the altimeter can see at all, or a run long enough that the surface falls away by more than the headroom left above the mount. When the drone leaves the band the reading is lost and the figure turns red, which sets a real ceiling on how high to mount and how far to fly with a given sensor. It is also the height-against-refraction trade in plain sight: a taller mount lifts the beam out of the worst near-surface bending but demands a longer-range altimeter to keep logging.</p>
-      <p>The vertical scale is exaggerated, because at true scale the climb is a few feet across miles of water and the line would look flat. The exaggeration is only in the drawing. Every figure in the table is the real predicted value, and the k slider sets the refraction through the effective radius. There is no single standard value near the surface, which is the whole reason the experiment measures k rather than assuming it. Slide it and watch what refraction can do: ordinary positive values shrink the sphere's drop, a strong inversion near k equal to one erases it so the beam runs parallel to the surface, a hot-surface mirage at negative k exaggerates it, and a ducting layer above one flips it, looming the far water up above the level line. A measured field near minus four to plus sixteen, the range Hirt and colleagues recorded a metre or two above the ground, covers every one of these. The simulation shows what each model says the instruments should read. The night decides which one they do.</p>
-    </div>
-  </div>
-
-  <div class="section-header">
     <span>LASER STATION LAYOUT</span>
     <button class="expand-trigger" onclick="toggleDetail('laserstation')">EXPAND ▾</button>
   </div>
@@ -1163,6 +1100,69 @@
   </div>
 
   <div class="section-header">
+    <span>SIMULATE A RUN</span>
+    <button class="expand-trigger" onclick="toggleDetail('simrun')">EXPAND ▾</button>
+  </div>
+  <div class="detail" id="simrun">
+  <div class="sim">
+    <canvas id="simCanvas" width="1000" height="340" role="img" tabindex="0" aria-label="Side view of the run. Use the sliders below to change it."></canvas>
+    <div class="sim-legend" id="simLegend" aria-hidden="true">
+      <span><i style="background:#1e8c50"></i>level beam</span>
+      <span><i style="background:#5d83a0"></i>sphere water</span>
+      <span><i class="dash" style="border-color:#9bb6cf"></i>flat-plane water</span>
+      <span><i style="background:#a06e14"></i>M3 depression</span>
+      <span class="legmid"><i style="background:#a03c6e"></i>midpoint figure</span>
+    </div>
+    <div class="sim-hint">Drag across the chart, or use the sliders, to change the distance to the drone.</div>
+    <div class="sim-controls">
+      <div class="sim-ctrl">
+        <label>Distance to drone <span class="val" id="simDVal">3.00 mi</span></label>
+        <input type="range" id="simD" min="0.2" max="30" step="0.1" value="3" aria-label="Distance to drone">
+        <div class="sim-chips" id="simDChips" role="group" aria-label="Distance presets"><span class="lbl">JUMP TO</span></div>
+      </div>
+      <div class="sim-ctrl">
+        <label>Mount height <span class="val" id="simHVal">50 m</span></label>
+        <input type="range" id="simH" min="1" max="300" step="1" value="50" aria-label="Mount height above water">
+        <div class="sim-chips" id="simHChips" role="group" aria-label="Mount height presets"><span class="lbl">JUMP TO</span></div>
+      </div>
+      <div class="sim-ctrl">
+        <label>Refraction k <span class="val" id="simKVal">0.17</span></label>
+        <input type="range" id="simK" min="-1" max="2" step="0.01" value="0.17" aria-label="Refraction coefficient k">
+        <div class="sim-chips" id="simKChips" role="group" aria-label="Refraction presets"><span class="lbl">PRESET</span></div>
+      </div>
+      <div class="sim-ctrl">
+        <label>Altimeter range <span class="val" id="simSVal">100 m</span></label>
+        <input type="range" id="simS" min="20" max="250" step="5" value="100" aria-label="Downward altimeter measurable range">
+        <div class="sim-chips" id="simSChips" role="group" aria-label="Altimeter range presets"><span class="lbl">JUMP TO</span></div>
+      </div>
+      <div class="sim-ctrl sim-toggles">
+        <label>Display <button class="sim-reset" id="simReset" type="button">RESET</button></label>
+        <button class="sim-toggle" id="simMidBtn" type="button" aria-pressed="false">Midpoint three-point marker</button>
+        <button class="sim-toggle" id="simUnitBtn" type="button" aria-pressed="false">Units<span class="sub">: miles / feet</span></button>
+      </div>
+    </div>
+    <p class="sim-summary" id="simSummary"></p>
+    <div class="sim-status" id="simStatus"></div>
+    <div class="sim-readout">
+      <table>
+        <tr class="hd"><td>At this distance</td><td class="num">FLAT PLANE</td><td class="num">SPHERE  R=6,371 km</td></tr>
+        <tr><td>Drone height above water (M2)</td><td class="num cold" id="simM2f">-</td><td class="num green" id="simM2s">-</td></tr>
+        <tr><td>Climb from the start</td><td class="num cold" id="simClimbf">-</td><td class="num green" id="simClimbs">-</td></tr>
+        <tr><td>End depression to far water (M3)</td><td class="num cold" id="simM3f">-</td><td class="num green" id="simM3s">-</td></tr>
+        <tr id="simMidRow" style="display:none"><td>Midpoint rise above the chord (M4)</td><td class="num cold" id="simM4f">-</td><td class="num green" id="simM4s">-</td></tr>
+      </table>
+    </div>
+    <div class="sim-cap" id="simCap">SIDE VIEW · VERTICAL SCALE EXAGGERATED · THE NUMBERS BELOW ARE REAL</div>
+  </div>
+    <div class="detail-inner" style="margin-top:18px">
+      <p>This is the protocol drawn live, and it decides nothing. The mount sits on the left at the height you set, the beam runs level to the right, and the water is drawn two ways at once: a dashed line for the flat-plane prediction, where the water stays parallel to the beam, and a curve for the sphere, where it falls away as the square of the distance. Neither is asserted. The run is what would tell them apart.</p>
+      <p>Drag the drone out and watch the gap between the beam and the curved water open up. That gap is the height the lidar would log, Measurement 2, and the table reads it for both models at the distance you set. The faint line dropping to the far water is Measurement 3, the depression angle read back at the mount: on the flat plane it is just the mount height over the distance, and on the sphere the far water has sunk below the level line, so the angle comes out steeper. Turn on the midpoint marker for the three-point figure, three equal-height marks and the chord between the outer two, with the middle one riding above the chord by an amount that grows as the square of the run.</p>
+      <p>The green band hugging the water is the altimeter's reach, the range the downward lidar can actually read, set by the altimeter slider. That gap, Measurement 2, only gets logged while the drone stays inside the band. It is the height above the water, the mount height plus whatever the surface has dropped, that the sensor must cover, so two things can push the drone out of range: a mount taller than the altimeter can see at all, or a run long enough that the surface falls away by more than the headroom left above the mount. When the drone leaves the band the reading is lost and the figure turns red, which sets a real ceiling on how high to mount and how far to fly with a given sensor. It is also the height-against-refraction trade in plain sight: a taller mount lifts the beam out of the worst near-surface bending but demands a longer-range altimeter to keep logging.</p>
+      <p>The vertical scale is exaggerated, because at true scale the climb is a few feet across miles of water and the line would look flat. The exaggeration is only in the drawing. Every figure in the table is the real predicted value, and the k slider sets the refraction through the effective radius. There is no single standard value near the surface, which is the whole reason the experiment measures k rather than assuming it. Slide it and watch what refraction can do: ordinary positive values shrink the sphere's drop, a strong inversion near k equal to one erases it so the beam runs parallel to the surface, a hot-surface mirage at negative k exaggerates it, and a ducting layer above one flips it, looming the far water up above the level line. A measured field near minus four to plus sixteen, the range Hirt and colleagues recorded a metre or two above the ground, covers every one of these. The simulation shows what each model says the instruments should read. The night decides which one they do.</p>
+    </div>
+  </div>
+
+  <div class="section-header">
     <span>HANDLING ATMOSPHERIC REFRACTION</span>
     <button class="expand-trigger" onclick="toggleDetail('refraction')">EXPAND ▾</button>
   </div>
@@ -1568,6 +1568,10 @@
     });
 
     var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(draw,120); });
+    // the section is collapsed by default; redraw when it (or EXPAND ALL) opens it, so the canvas sizes right
+    var simExpandBtn=document.querySelector('[onclick="toggleDetail(\'simrun\')"]'), allBtn=document.getElementById('toggleAllBtn');
+    if (simExpandBtn) simExpandBtn.addEventListener('click', function(){ setTimeout(draw,60); });
+    if (allBtn) allBtn.addEventListener('click', function(){ setTimeout(draw,60); });
     if (document.readyState!=='loading') setTimeout(draw,30); else window.addEventListener('load',draw);
   })();
 </script>
