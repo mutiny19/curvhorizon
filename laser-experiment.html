@@ -314,6 +314,18 @@
   .sim-reset:hover { color: var(--gold); }
   .sim canvas:focus-visible, .sim-chip:focus-visible, .sim-toggle:focus-visible, .sim input:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   @media (max-width: 600px) { .sim-controls { grid-template-columns: 1fr; } }
+
+  /* shared honesty checklist */
+  .checklist { margin: 4px 0 0; padding: 0; list-style: none; }
+  .checklist .grp { font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.1em; font-weight: 700; text-transform: uppercase; color: var(--gold); margin: 20px 0 8px; }
+  .checklist .grp:first-child { margin-top: 4px; }
+  .checklist li { margin: 0; }
+  .checklist label { display: flex; gap: 11px; align-items: flex-start; cursor: pointer; padding: 6px 0; border-bottom: 1px solid var(--rule-2); font-size: 13px; line-height: 1.5; color: var(--ink-l); }
+  .checklist input { margin: 3px 0 0; width: 15px; height: 15px; accent-color: var(--gold); flex: none; cursor: pointer; }
+  .checklist input:checked + span { color: var(--ink-lll); text-decoration: line-through; text-decoration-color: var(--gold); }
+  .checklist label:focus-within { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .signoff { display: flex; flex-wrap: wrap; gap: 18px 34px; margin-top: 18px; font-family: ui-monospace, monospace; font-size: 12px; color: var(--ink-ll); }
+  .signoff div { flex: 1 1 220px; border-top: 1px solid var(--ink-lll); padding-top: 5px; }
 </style>
 </head>
 <body>
@@ -766,6 +778,8 @@
 
       <div class="subhead">QUADRANT BEAM SENSOR (REAR)</div>
       <p>The sensor faces back along the beam, toward the origin in the west. Four photodiodes around a center aperture read the light; when all four match, the beam is centered, and keeping them matched is the flight controller's whole job. Mounting it at the rear keeps it square to the incoming beam through the run.</p>
+      <p>The four cells split into two pairs, one for each axis the drone has to hold. Top against bottom reads the beam riding high or low, which is height. Left against right reads it off to one side, which is north or south, because the beam runs east and the sensor faces square back down it. Matching the top-and-bottom pair holds the height, matching the left-and-right pair holds the line, and the beam counts as centered only when both pairs agree at once.</p>
+      <p>The point where all four match is the center of the beam's spot, and for a symmetric beam that center rides on the beam's own axis however wide the spot has spread. Balancing the quadrants therefore finds the axis to a small fraction of the spot, not to its width, which is how a beam metres across at range is still followed to centimetres. That holds only while the beam stays symmetric, so the spot is checked for shape before the run, because a lopsided beam would pull its center off the axis.</p>
 
       <div class="subhead">RETROREFLECTOR (REAR)</div>
       <p>Beside the sensor, a retroreflector sends part of the beam straight back to the origin. That return is what the operator sights at the end of the run for the depression reading, Measurement 3, and it lets a reciprocal refraction check work from the origin end.</p>
@@ -1058,6 +1072,8 @@
       <div class="subhead">MEASUREMENT 2 — DRONE ALTITUDE ABOVE WATER</div>
       <p>This is the plainest of the running instruments. The drone follows a levelled, locked beam. That beam is nearly straight but not perfectly so: light bends a little in the air it crosses, and over the run it sags toward the surface by a small amount the refraction section measures and removes. If the water stays the same distance below the beam for the whole flight, the surface is flat across that span. If the water falls away from the beam by more than that sag, the surface is curving across it. The reading does not depend on which way the result comes out. It only reports the distance.</p>
       <p>No star to interpret. No claim about how light travels through space. A rangefinder pointed down, logging the height to the water, second after second, for the length of the flight.</p>
+      <p>Each altitude sample is logged with the centering offset beside it, and that offset is two numbers, not one: the vertical miss and the lateral miss read from the four quadrant photodiodes, how far off the sensor center the beam sat up or down and to the north or south. So every point in the file is tagged on-center or off-center against a tolerance fixed before the run, and on-center means inside the tolerance on both axes at once. The drone advances along the run only while it reads on-center, and only on-center samples feed the result, while the off-center ones stay in the file, flagged, so nothing is quietly dropped. The vertical miss is the one that bears on height: a beam riding high on the sensor before the drone has climbed to meet it would otherwise log as the drone's own height after a gust, not the height of the beam. The lateral miss matters too, because a drone drifting north or south has wandered off the beam line and changed its latitude, which is exactly the heading wander Polaris is there to catch. Recording both beside the altitude is what keeps an off-center point from passing as a clean reading.</p>
+      <p>Because the rangefinder logs the whole flight, the run is not two numbers but a curve. Pair each height with the distance the optical-flow odometer counted at the same timestamp, and the height above the water is plotted along the entire path, not only at the start and the end. On a flat surface that plot is a level line, the drone holding the same height the whole way out. On a sphere it is a parabola, the height growing with the square of the distance, and the curvature of that parabola is the reading: its coefficient is one over twice the effective radius, so the shape of the logged profile gives the effective radius directly, refraction folded in, with the two-color and gradient measurements separating the bending from the geometry. Fitting a curve through hundreds of on-center points is a stronger measurement than differencing two, and it shows at a glance any stretch where the drone wandered or the air did something the rest of the run did not.</p>
 
       <div class="subhead">MEASUREMENT 3 — END DEPRESSION ANGLE</div>
       <p>Measurement 3 is Measurement 2 read from the other end of the beam. The beam itself is never moved during the run. At the end, the drone descends to hover just above the far water, the operator releases the vertical axis and tilts down until the retroreflector lights, and the encoder records one number: the depression angle from the level line down to the drone. On a flat surface that angle is simply the mount's height over the distance, the angle any level line makes down to a point near the surface far away. On a curved surface the far water has also dropped below the level line, and the depression comes out steeper than height over distance by that extra amount.</p>
@@ -1206,9 +1222,46 @@
       <p>Fourth, nothing was placed between the ends. The whole measurement rested on two points, laser at one end and camera at the other. The three-point figure, the one Wallace used on the Bedford Level in 1870 and the standard ever since, was suggested to the team more than once and set aside each time.</p>
 
       <div class="subhead">HOW THIS PROTOCOL DIFFERS</div>
-      <p>This protocol is built against those four points. Refraction is sampled along the whole path, not inferred from the two ends. The drone carries temperature, humidity, and pressure as it flies, logging the air the beam actually crosses for the length of the run, with vertical profile sampling for the gradient that does the bending and a two-color run to turn the bounded estimate into a measured one. The beam is levelled against an independent reference and then locked on both axes for the whole run, with one encoder reading taken down to the drone at the end, and the drone follows the beam rather than the operator aiming at the drone, which removes the aiming-at-target problem at the root. The reading does not rest on one distant photograph, because the drone carries a downward lidar logging height above water continuously and a quadrant sensor recording where the beam falls on it moment by moment. And where a marker can be anchored, the three-point geometry, the strongest reading the protocol offers, fills exactly the gap the two-point measurement left.</p>
+      <p>This protocol is built against those four points. Refraction is sampled along the whole path, not inferred from the two ends. The drone carries temperature, humidity, and pressure as it flies, logging the air the beam actually crosses for the length of the run, with vertical profile sampling for the gradient that does the bending and a two-color run to turn the bounded estimate into a measured one. The beam is levelled against an independent reference and then locked on both axes for the whole run, with one encoder reading taken down to the drone at the end, and the drone follows the beam rather than the operator aiming at the drone, which removes the aiming-at-target problem at the root. The reading does not rest on one distant photograph, because the drone carries a downward lidar logging height above water continuously and a quadrant sensor recording where the beam falls on it moment by moment. The width of the spread is met the same way: the centre of the cone is the beam's axis, and balancing the quadrants around that centre fixes the axis to a fraction of the spot rather than to its width, so a wide spot bounds how far the run can reach before the centring signal fades without blurring the height it reports. Because that height is logged the whole way out, the result is a curve fitted through hundreds of points along the path, not a single reading at one distant frame. And where a marker can be anchored, the three-point geometry, the strongest reading the protocol offers, fills exactly the gap the two-point measurement left.</p>
 
       <p>None of this makes FECORE's effort worthless. The opposite. A measurement set down in enough detail to be checked is a gift to whoever measures next, because its weak points become a list of things to design around. This protocol took that list. It answers the structural problems, the levelling and the aiming and the two-point geometry, and it treats refraction as something to measure rather than assume. That is what prior work is for, whichever way its own numbers came out. Flat is a result. Curved is a result. The work is to build the apparatus that can tell them apart, and FECORE's record helped show what that apparatus has to do.</p>
+    </div>
+  </div>
+
+  <div class="section-header" style="margin-top:36px">
+    <span>RUN IT YOURSELF</span>
+    <button class="expand-trigger" onclick="toggleDetail('challenge')">EXPAND ▾</button>
+  </div>
+  <div class="detail" id="challenge">
+    <div class="detail-inner">
+      <p>This is built to be run, not only read. Anyone on either side of the question can put it together, fly it, and publish what came back. The point of the list below is that both sides agree to it before a single number is taken, so neither can move the goalposts once the result is in. It is one checklist for the curve and the level alike. Tick it on screen or print it, run the night against it, and post the boxes you could honestly check beside your data. A run that skipped half the list is a story. A run that cleared all of it is a measurement, whichever way it came out. Its companion is the design section higher up, where the two sides settle the rules together first.</p>
+      <ul class="checklist">
+        <li class="grp">Before the run, agreed by both sides</li>
+        <li><label><input type="checkbox"><span>Both sides write down and sign the predicted numbers for the chosen distance, the flat line and the sphere parabola, before anything is measured.</span></label></li>
+        <li><label><input type="checkbox"><span>Stopping distance, the night and weather window, and the beam-centering tolerance are fixed in advance, in writing.</span></label></li>
+        <li><label><input type="checkbox"><span>The beam is levelled against an independent reference, then locked on both axes, with the level and the encoder zero witnessed by both parties.</span></label></li>
+        <li><label><input type="checkbox"><span>The Polaris baseline is read with both parties present, and the clock time is noted.</span></label></li>
+        <li><label><input type="checkbox"><span>Each instrument's resolution is checked against the predicted signal at the chosen distance, the error budget, so a null result cannot hide in noise.</span></label></li>
+
+        <li class="grp">During the run</li>
+        <li><label><input type="checkbox"><span>The drone advances only while on-center, and the quadrant centering offset, vertical and lateral, is logged beside every altitude sample.</span></label></li>
+        <li><label><input type="checkbox"><span>Height and distance are logged the whole way out, so the run is a profile to plot, not two endpoints.</span></label></li>
+        <li><label><input type="checkbox"><span>Temperature, humidity, and pressure are logged at the origin and on the drone, with a two-height gradient taken for the bending.</span></label></li>
+        <li><label><input type="checkbox"><span>Refraction is measured, not assumed: a two-color run or a reciprocal sighting is recorded on the same night.</span></label></li>
+        <li><label><input type="checkbox"><span>If a midpoint marker is set, it is photographed in frame, and its height is taped and rechecked at the end.</span></label></li>
+
+        <li class="grp">After the run, so the other side can check</li>
+        <li><label><input type="checkbox"><span>The full profile is plotted, distance against height, with the on-center and off-center points marked.</span></label></li>
+        <li><label><input type="checkbox"><span>The flat line and the sphere parabola are both fitted to the on-center points, and the effective radius and the implied k are reported.</span></label></li>
+        <li><label><input type="checkbox"><span>The raw logs, lidar, odometer, centering, and weather, are published openly so either side can re-fit them.</span></label></li>
+        <li><label><input type="checkbox"><span>The run is repeated on a separate night, because a result that does not survive a second run is not yet a result.</span></label></li>
+        <li><label><input type="checkbox"><span>Both sides sign the outcome, whatever it says.</span></label></li>
+      </ul>
+      <div class="signoff">
+        <div>Curve side, name and date</div>
+        <div>Level side, name and date</div>
+        <div>Neutral witness, if any</div>
+      </div>
     </div>
   </div>
 
@@ -1228,7 +1281,9 @@
         <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">BETA (Polaris, end) and clock time</td><td style="padding:6px 4px">__________ deg&nbsp;&nbsp;at&nbsp;&nbsp;__________</td></tr>
         <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Encoder zero confirmed before lock (yes / no)</td><td style="padding:6px 4px">__________</td></tr>
         <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">End depression angle (Measurement 3)</td><td style="padding:6px 4px">__________ deg</td></tr>
-        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Altitude above water: start / end / log file</td><td style="padding:6px 4px">__________&nbsp;&nbsp;/&nbsp;&nbsp;__________&nbsp;&nbsp;/&nbsp;&nbsp;__________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Altitude above water: start / end / profile log (distance vs height)</td><td style="padding:6px 4px">__________&nbsp;&nbsp;/&nbsp;&nbsp;__________&nbsp;&nbsp;/&nbsp;&nbsp;__________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Distance source for each sample (optical flow / markers)</td><td style="padding:6px 4px">_______________________________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Beam-centering tolerance / samples on-center of total (from log)</td><td style="padding:6px 4px">__________&nbsp;&nbsp;/&nbsp;&nbsp;__________ of __________</td></tr>
         <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Origin T / RH / P at start and end</td><td style="padding:6px 4px">_______________________________</td></tr>
         <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Drone T / RH / P at far end (and two-height gradient if taken)</td><td style="padding:6px 4px">_______________________________</td></tr>
         <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Midpoint marker height: set / rechecked at end</td><td style="padding:6px 4px">__________&nbsp;&nbsp;/&nbsp;&nbsp;__________</td></tr>
