@@ -270,7 +270,14 @@
 
   /* Embedded run simulation */
   .sim { margin-top: 6px; }
-  .sim canvas { width: 100%; height: 340px; display: block; border: 1px solid var(--rule); border-radius: 3px; }
+  .sim canvas { width: 100%; height: 340px; display: block; border: 1px solid var(--rule); border-radius: 3px; cursor: ew-resize; touch-action: pan-y; }
+  .sim-legend { display: flex; flex-wrap: wrap; gap: 7px 16px; margin-top: 9px; font-family: ui-monospace, monospace; font-size: 10px; color: var(--ink-ll); letter-spacing: 0.02em; }
+  .sim-legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .sim-legend i { width: 15px; height: 3px; border-radius: 2px; display: inline-block; flex: none; }
+  .sim-legend i.dash { height: 0; background: none !important; border-top: 2px dashed; border-radius: 0; }
+  .sim-legend span.legmid { display: none; }
+  .sim-legend.midon span.legmid { display: inline-flex; }
+  .sim-hint { font-family: ui-monospace, monospace; font-size: 10px; color: var(--ink-lll); letter-spacing: 0.03em; margin-top: 4px; }
   .sim-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 26px; margin-top: 16px; font-family: ui-monospace, monospace; font-size: 12px; }
   .sim-ctrl label { display: flex; justify-content: space-between; color: var(--ink-ll); letter-spacing: 0.03em; margin-bottom: 3px; }
   .sim-ctrl label .val { color: var(--gold); font-weight: 700; }
@@ -285,6 +292,24 @@
   .sim-readout .cold { color: var(--cold); }
   .sim-readout .green { color: var(--green); }
   .sim-cap { margin-top: 10px; font-family: ui-monospace, monospace; font-size: 10px; color: var(--ink-lll); letter-spacing: 0.03em; line-height: 1.5; }
+  .sim-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .sim-chips .lbl { font-family: ui-monospace, monospace; font-size: 10px; color: var(--ink-lll); letter-spacing: 0.04em; align-self: center; margin-right: 2px; }
+  .sim-chip { font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.02em; color: var(--ink-l); background: var(--bg); border: 1px solid var(--rule); border-radius: 11px; padding: 3px 10px; cursor: pointer; line-height: 1.4; transition: border-color .12s, color .12s, background .12s; }
+  .sim-chip:hover { border-color: var(--gold); color: var(--ink); }
+  .sim-chip.active { background: var(--gold); border-color: var(--gold); color: #fff; font-weight: 700; }
+  .sim-toggles { display: flex; flex-direction: column; gap: 8px; }
+  .sim-toggle { font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: 0.02em; color: var(--ink-l); background: var(--bg); border: 1px solid var(--rule); border-radius: 3px; padding: 6px 11px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; text-align: left; }
+  .sim-toggle::before { content: ''; width: 10px; height: 10px; border-radius: 2px; border: 1px solid var(--ink-lll); background: transparent; flex: none; }
+  .sim-toggle:hover { border-color: var(--gold); color: var(--ink); }
+  .sim-toggle[aria-pressed=true] { color: var(--ink); border-color: var(--gold); }
+  .sim-toggle[aria-pressed=true]::before { background: var(--gold); border-color: var(--gold); }
+  .sim-toggle .sub { color: var(--ink-lll); }
+  .sim-summary { margin-top: 16px; font-size: 13.5px; line-height: 1.6; color: var(--ink); }
+  .sim-summary b { color: var(--green); font-weight: 600; }
+  .sim-summary .fe { color: var(--cold); font-weight: 600; }
+  .sim-reset { background: none; border: none; color: var(--ink-lll); font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.06em; cursor: pointer; padding: 3px 4px; text-decoration: underline; }
+  .sim-reset:hover { color: var(--gold); }
+  .sim canvas:focus-visible, .sim-chip:focus-visible, .sim-toggle:focus-visible, .sim input:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   @media (max-width: 600px) { .sim-controls { grid-template-columns: 1fr; } }
 </style>
 </head>
@@ -541,18 +566,38 @@
     <button class="expand-trigger" onclick="toggleDetail('simhow')">EXPAND ▾</button>
   </div>
   <div class="sim">
-    <canvas id="simCanvas" width="1000" height="340"></canvas>
+    <canvas id="simCanvas" width="1000" height="340" role="img" tabindex="0" aria-label="Side view of the run. Use the sliders below to change it."></canvas>
+    <div class="sim-legend" id="simLegend" aria-hidden="true">
+      <span><i style="background:#1e8c50"></i>level beam</span>
+      <span><i style="background:#5d83a0"></i>sphere water</span>
+      <span><i class="dash" style="border-color:#9bb6cf"></i>flat-plane water</span>
+      <span><i style="background:#a06e14"></i>M3 depression</span>
+      <span class="legmid"><i style="background:#a03c6e"></i>midpoint figure</span>
+    </div>
+    <div class="sim-hint">Drag across the chart, or use the sliders, to change the distance to the drone.</div>
     <div class="sim-controls">
-      <div class="sim-ctrl"><label>Distance to drone <span class="val" id="simDVal">3.00 mi</span></label><input type="range" id="simD" min="0.2" max="30" step="0.1" value="3"></div>
-      <div class="sim-ctrl"><label>Mount height <span class="val" id="simHVal">100 m</span></label><input type="range" id="simH" min="1" max="300" step="1" value="100"></div>
-      <div class="sim-ctrl"><label>Refraction k <span class="val" id="simKVal">0.13</span></label><input type="range" id="simK" min="0" max="0.9" step="0.01" value="0.13"></div>
-      <div class="sim-ctrl"><label>Options</label>
-        <div class="sim-opts">
-          <label><input type="checkbox" id="simMid"> Midpoint marker</label>
-          <label><input type="checkbox" id="simUnit"> km / m</label>
-        </div>
+      <div class="sim-ctrl">
+        <label>Distance to drone <span class="val" id="simDVal">3.00 mi</span></label>
+        <input type="range" id="simD" min="0.2" max="30" step="0.1" value="3" aria-label="Distance to drone">
+        <div class="sim-chips" id="simDChips" role="group" aria-label="Distance presets"><span class="lbl">JUMP TO</span></div>
+      </div>
+      <div class="sim-ctrl">
+        <label>Mount height <span class="val" id="simHVal">100 m</span></label>
+        <input type="range" id="simH" min="1" max="300" step="1" value="100" aria-label="Mount height above water">
+        <div class="sim-chips" id="simHChips" role="group" aria-label="Mount height presets"><span class="lbl">JUMP TO</span></div>
+      </div>
+      <div class="sim-ctrl">
+        <label>Refraction k <span class="val" id="simKVal">0.13</span></label>
+        <input type="range" id="simK" min="0" max="0.9" step="0.01" value="0.13" aria-label="Refraction coefficient k">
+        <div class="sim-chips" id="simKChips" role="group" aria-label="Refraction presets"><span class="lbl">PRESET</span></div>
+      </div>
+      <div class="sim-ctrl sim-toggles">
+        <label>Display <button class="sim-reset" id="simReset" type="button">RESET</button></label>
+        <button class="sim-toggle" id="simMidBtn" type="button" aria-pressed="false">Midpoint three-point marker</button>
+        <button class="sim-toggle" id="simUnitBtn" type="button" aria-pressed="false">Units<span class="sub">: miles / feet</span></button>
       </div>
     </div>
+    <p class="sim-summary" id="simSummary"></p>
     <div class="sim-readout">
       <table>
         <tr class="hd"><td>At this distance</td><td class="num">FLAT PLANE</td><td class="num">SPHERE  R=6,371 km</td></tr>
@@ -1245,13 +1290,15 @@
     var ctx = cv.getContext('2d');
     var R = 6371000, MI = 1609.344, FT = 0.3048;
     var $ = function(id){ return document.getElementById(id); };
-    var elD=$('simD'), elH=$('simH'), elK=$('simK'), elMid=$('simMid'), elUnit=$('simUnit');
+    var elD=$('simD'), elH=$('simH'), elK=$('simK');
+    var metric=false, showMid=false;
+    var PAD_L=56, PAD_R=20;  // plot margins, shared with the canvas scrubber
 
     function lenH(m){ // a height, in the chosen units
-      if (elUnit.checked) return Math.abs(m) < 1 ? (m*100).toFixed(0)+' cm' : m.toFixed(m<10?2:1)+' m';
+      if (metric) return Math.abs(m) < 1 ? (m*100).toFixed(0)+' cm' : m.toFixed(m<10?2:1)+' m';
       var ft = m/FT; return Math.abs(ft) < 1 ? (ft*12).toFixed(1)+' in' : (ft<20 ? ft.toFixed(1) : ''+Math.round(ft))+' ft';
     }
-    function lenD(m){ return elUnit.checked ? (m/1000).toFixed(2)+' km' : (m/MI).toFixed(2)+' mi'; }
+    function lenD(m){ return metric ? (m/1000).toFixed(2)+' km' : (m/MI).toFixed(2)+' mi'; }
     function ang(r){ var d=r*180/Math.PI; return (d<1 ? d.toFixed(3) : d.toFixed(2))+'°'; }
     function txt(x,y,s,col,sz,al,bl){ ctx.fillStyle=col; ctx.font=(sz||10)+'px ui-monospace, monospace'; ctx.textAlign=al||'left'; ctx.textBaseline=bl||'alphabetic'; ctx.fillText(s,x,y); }
 
@@ -1268,7 +1315,7 @@
       var dpr=window.devicePixelRatio||1, W=cv.clientWidth||cv.parentElement.clientWidth||900, Hc=340;
       cv.width=Math.round(W*dpr); cv.height=Math.round(Hc*dpr); ctx.setTransform(dpr,0,0,dpr,0,0);
       ctx.clearRect(0,0,W,Hc);
-      var L=56, Rm=20, T=22, B=42, pw=W-L-Rm, ph=Hc-T-B;
+      var L=PAD_L, Rm=PAD_R, T=22, B=42, pw=W-L-Rm, ph=Hc-T-B;
       var d=m.d, H=m.H, drop=m.drop, dD=m.dD;
       // Horizontal fills the plot (0..d). Vertical is fixed to the maximum-distance scene so the
       // beam stays put and the water visibly droops farther as the drone is dragged out.
@@ -1304,7 +1351,7 @@
       txt(X(d*0.62), Y(-drop(d*0.62)*0.62+H*0.38)-2, 'M3 depression', '#a06e14', 9, 'center', 'bottom');
 
       // midpoint three-point figure
-      if (elMid.checked){
+      if (showMid){
         var pink='#a03c6e';
         var bases=[[0,0],[d/2,-drop(d/2)],[d,-dD]];
         ctx.strokeStyle='rgba(160,60,110,0.45)'; ctx.lineWidth=1.4;
@@ -1345,12 +1392,100 @@
       $('simM2f').textContent=lenH(H);          $('simM2s').textContent=lenH(H+dD);
       $('simClimbf').textContent='0';           $('simClimbs').textContent=lenH(dD);
       $('simM3f').textContent=ang(Math.atan(H/d)); $('simM3s').textContent=ang(Math.atan((H+dD)/d));
-      $('simMidRow').style.display=elMid.checked?'':'none';
-      if (elMid.checked){ $('simM4f').textContent='0'; $('simM4s').textContent=lenH(d*d/(8*m.Reff)); }
+      $('simMidRow').style.display=showMid?'':'none';
+      if (showMid){ $('simM4f').textContent='0'; $('simM4s').textContent=lenH(d*d/(8*m.Reff)); }
       $('simCap').textContent='SIDE VIEW · VERTICAL ×'+Math.round(exag)+' EXAGGERATED · THE NUMBERS BELOW ARE REAL · k='+m.k.toFixed(2)+' → effective radius '+Math.round(m.Reff/1000).toLocaleString()+' km';
+
+      // plain-language summary of what the two models predict here
+      var climbStr=lenH(dD), m3f=ang(Math.atan(H/d)), m3s=ang(Math.atan((H+dD)/d));
+      $('simSummary').innerHTML='At <b>'+lenD(d)+'</b> from a '+lenH(H)+' mount, a flat plane predicts <span class="fe">no climb</span> and a '+m3f
+        +' depression to the far water. A sphere predicts the drone climbs <b>'+climbStr+'</b> to stay on the beam, reading '+m3s+' down'
+        +(m.k>0?(', with refraction at k='+m.k.toFixed(2)+' folded in'):'')+'. The run is built to tell those two apart.';
+
+      // legend + accessibility reflect the current scene
+      $('simLegend').classList.toggle('midon', showMid);
+      cv.setAttribute('aria-label','Side view at '+lenD(d)+' from a '+lenH(H)+' mount. Flat plane: the drone holds '+lenH(H)+' above the water. Sphere: the drone climbs '+climbStr+' with an end depression of '+m3s+'.');
+      elD.setAttribute('aria-valuetext', lenD(d));
+      elH.setAttribute('aria-valuetext', lenH(H));
+      elK.setAttribute('aria-valuetext', m.k.toFixed(2));
+      markChips();
     }
 
-    [elD,elH,elK,elMid,elUnit].forEach(function(e){ e.addEventListener('input',draw); e.addEventListener('change',draw); });
+    // ---------- preset chips ----------
+    function setSlider(el, v){ el.value=v; draw(); }
+    function near(a,b,tol){ return Math.abs(a-b) <= tol; }
+    function buildChips(container, items, apply){
+      items.forEach(function(it){
+        var b=document.createElement('button');
+        b.type='button'; b.className='sim-chip'; b.textContent=it.label;
+        b.setAttribute('data-v', it.v);
+        b.addEventListener('click', function(){ apply(it.v); });
+        container.appendChild(b);
+      });
+    }
+    var DIST_MI=[3,5,10,20,30], DIST_KM=[5,10,20,30,50], HGT_M=[25,50,100,150,200];
+    function clearChips(c){ [].slice.call(c.querySelectorAll('.sim-chip')).forEach(function(n){ n.parentNode.removeChild(n); }); }
+    function rebuildScaleChips(){
+      var dc=$('simDChips'); clearChips(dc);
+      var arr = metric?DIST_KM:DIST_MI, du = metric?' km':' mi';
+      buildChips(dc, arr.map(function(v){ return { label:v+du, v: metric ? (v*1000/MI) : v }; }), function(v){ setSlider(elD, v); });
+      var hc=$('simHChips'); clearChips(hc);
+      buildChips(hc, HGT_M.map(function(v){ return { label: metric ? (v+' m') : (Math.round(v/0.3048)+' ft'), v:v }; }), function(v){ setSlider(elH, v); });
+    }
+    buildChips($('simKChips'), [
+      {label:'None', v:0}, {label:'Standard 0.13', v:0.13}, {label:'Strong 0.25', v:0.25}, {label:'Inversion 0.50', v:0.50}
+    ], function(v){ setSlider(elK, v); });
+    rebuildScaleChips();
+    function markChips(){
+      function mark(c, cur, tol){
+        [].slice.call(c.querySelectorAll('.sim-chip')).forEach(function(n){
+          n.classList.toggle('active', near(parseFloat(n.getAttribute('data-v')), cur, tol));
+        });
+      }
+      mark($('simDChips'), parseFloat(elD.value), 0.06);
+      mark($('simHChips'), parseFloat(elH.value), 0.5);
+      mark($('simKChips'), parseFloat(elK.value), 0.005);
+    }
+
+    // ---------- toggle buttons + reset ----------
+    var midBtn=$('simMidBtn'), unitBtn=$('simUnitBtn');
+    midBtn.addEventListener('click', function(){ showMid=!showMid; midBtn.setAttribute('aria-pressed', showMid); draw(); });
+    unitBtn.addEventListener('click', function(){
+      metric=!metric; unitBtn.setAttribute('aria-pressed', metric);
+      unitBtn.querySelector('.sub').textContent = metric ? ': kilometres / metres' : ': miles / feet';
+      rebuildScaleChips(); draw();
+    });
+    $('simReset').addEventListener('click', function(){
+      elD.value=3; elH.value=100; elK.value=0.13;
+      showMid=false; midBtn.setAttribute('aria-pressed','false');
+      metric=false; unitBtn.setAttribute('aria-pressed','false'); unitBtn.querySelector('.sub').textContent=': miles / feet';
+      rebuildScaleChips(); draw();
+    });
+
+    // ---------- sliders ----------
+    [elD,elH,elK].forEach(function(e){ e.addEventListener('input',draw); e.addEventListener('change',draw); });
+
+    // ---------- canvas scrubber: drag horizontally to set the distance ----------
+    var dragging=false;
+    function scrub(e){
+      var rect=cv.getBoundingClientRect(), pw=rect.width-PAD_L-PAD_R; if (pw<=0) return;
+      var fx=(e.clientX-rect.left-PAD_L)/pw; fx=Math.max(0,Math.min(1,fx));
+      var mn=parseFloat(elD.min), mx=parseFloat(elD.max), st=parseFloat(elD.step);
+      var v=Math.round((mn+fx*(mx-mn))/st)*st;
+      elD.value=v.toFixed(1); draw();
+    }
+    cv.addEventListener('pointerdown', function(e){ dragging=true; try{ cv.setPointerCapture(e.pointerId); }catch(_){ } scrub(e); });
+    cv.addEventListener('pointermove', function(e){ if (dragging) scrub(e); });
+    cv.addEventListener('pointerup', function(){ dragging=false; });
+    cv.addEventListener('pointercancel', function(){ dragging=false; });
+    cv.addEventListener('keydown', function(e){
+      var st=parseFloat(elD.step), mn=parseFloat(elD.min), mx=parseFloat(elD.max), v=parseFloat(elD.value);
+      if (e.key==='ArrowLeft'||e.key==='ArrowDown') v=Math.max(mn, v-st*10);
+      else if (e.key==='ArrowRight'||e.key==='ArrowUp') v=Math.min(mx, v+st*10);
+      else return;
+      e.preventDefault(); elD.value=v.toFixed(1); draw();
+    });
+
     var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(draw,120); });
     if (document.readyState!=='loading') setTimeout(draw,30); else window.addEventListener('load',draw);
   })();
