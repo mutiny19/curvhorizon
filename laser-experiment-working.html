@@ -594,7 +594,7 @@
       </div>
       <div class="sim-ctrl">
         <label>Refraction k <span class="val" id="simKVal">0.17</span></label>
-        <input type="range" id="simK" min="0" max="0.9" step="0.01" value="0.17" aria-label="Refraction coefficient k">
+        <input type="range" id="simK" min="-1" max="2" step="0.01" value="0.17" aria-label="Refraction coefficient k">
         <div class="sim-chips" id="simKChips" role="group" aria-label="Refraction presets"><span class="lbl">PRESET</span></div>
       </div>
       <div class="sim-ctrl sim-toggles">
@@ -619,7 +619,7 @@
     <div class="detail-inner">
       <p>This is the protocol drawn live, and it decides nothing. The mount sits on the left at the height you set, the beam runs level to the right, and the water is drawn two ways at once: a dashed line for the flat-plane prediction, where the water stays parallel to the beam, and a curve for the sphere, where it falls away as the square of the distance. Neither is asserted. The run is what would tell them apart.</p>
       <p>Drag the drone out and watch the gap between the beam and the curved water open up. That gap is the height the lidar would log, Measurement 2, and the table reads it for both models at the distance you set. The faint line dropping to the far water is Measurement 3, the depression angle read back at the mount: on the flat plane it is just the mount height over the distance, and on the sphere the far water has sunk below the level line, so the angle comes out steeper. Turn on the midpoint marker for the three-point figure, three equal-height marks and the chord between the outer two, with the middle one riding above the chord by an amount that grows as the square of the run.</p>
-      <p>The vertical scale is exaggerated, because at true scale the climb is a few feet across miles of water and the line would look flat. The exaggeration is only in the drawing. Every figure in the table is the real predicted value, and standard refraction, set by the k slider, shrinks the sphere figures through the effective radius. The simulation shows what each model says the instruments should read. The night decides which one they do.</p>
+      <p>The vertical scale is exaggerated, because at true scale the climb is a few feet across miles of water and the line would look flat. The exaggeration is only in the drawing. Every figure in the table is the real predicted value, and the k slider sets the refraction through the effective radius. There is no single standard value near the surface, which is the whole reason the experiment measures k rather than assuming it. Slide it and watch what refraction can do: ordinary positive values shrink the sphere's drop, a strong inversion near k equal to one erases it so the beam runs parallel to the surface, a hot-surface mirage at negative k exaggerates it, and a ducting layer above one flips it, looming the far water up above the level line. A measured field near minus four to plus sixteen, the range Hirt and colleagues recorded a metre or two above the ground, covers every one of these. The simulation shows what each model says the instruments should read. The night decides which one they do.</p>
     </div>
   </div>
 
@@ -1310,7 +1310,11 @@
 
     function model(){
       var d=parseFloat(elD.value)*MI, H=parseFloat(elH.value), k=parseFloat(elK.value);
-      var Reff=R/(1-Math.min(k,0.99));
+      // Effective-radius method, signed: k<0 (hot-surface mirage) shrinks R'<R and exaggerates the
+      // drop; k=1 makes R' infinite (beam follows the curve); k>1 (ducting) flips its sign and the
+      // surface looms upward. Clamp the denominator away from zero so k near 1 stays finite.
+      var denom=1-k; if (Math.abs(denom)<0.02) denom=(denom<0?-0.02:0.02);
+      var Reff=R/denom;
       var drop=function(x){ return x*x/(2*Reff); };
       var maxD=parseFloat(elD.max)*MI;
       return { d:d, H:H, k:k, Reff:Reff, drop:drop, dD:drop(d), maxDrop:drop(maxD) };
@@ -1324,9 +1328,11 @@
       var L=PAD_L, Rm=PAD_R, T=22, B=42, pw=W-L-Rm, ph=Hc-T-B;
       var d=m.d, H=m.H, drop=m.drop, dD=m.dD;
       // Horizontal fills the plot (0..d). Vertical is fixed to the maximum-distance scene so the
-      // beam stays put and the water visibly droops farther as the drone is dragged out.
-      var pad=(H+m.maxDrop)*0.05;
-      var yTop=H+pad, yBot=-m.maxDrop-pad, ySpan=yTop-yBot;
+      // beam stays put and the water visibly droops (or, under ducting, looms) as the drone moves.
+      var waterFar=-m.maxDrop;                       // world-y of the far water: <0 fallen, >0 risen
+      var hi=Math.max(H, 0, waterFar), lo=Math.min(0, waterFar);
+      var pad=(hi-lo)*0.08 || 1;
+      var yTop=hi+pad, yBot=lo-pad, ySpan=yTop-yBot;
       var X=function(x){ return L + (d>0 ? x/d : 0)*pw; };
       var Y=function(y){ return T + (yTop-y)/ySpan*ph; };
       var exag=(ph/ySpan)/(pw/d);
@@ -1376,7 +1382,7 @@
       txt(X(d*0.03), Y(H)-6, 'LEVEL BEAM', '#1e8c50', 10, 'left', 'bottom');
 
       // mount post + small bluff at x=0
-      ctx.fillStyle='#c3bcac'; ctx.beginPath(); ctx.moveTo(X(0)-11,Y(0)); ctx.lineTo(X(0),Y(Math.min(H,m.maxDrop+H)*0.16)); ctx.lineTo(X(0)+11,Y(0)); ctx.closePath(); ctx.fill();
+      ctx.fillStyle='#c3bcac'; ctx.beginPath(); ctx.moveTo(X(0)-11,Y(0)); ctx.lineTo(X(0),Y(H*0.16)); ctx.lineTo(X(0)+11,Y(0)); ctx.closePath(); ctx.fill();
       ctx.strokeStyle='#3c3c38'; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(X(0),Y(0)); ctx.lineTo(X(0),Y(H)); ctx.stroke();
 
       // drone on the beam + dashed M2 gap to the water
@@ -1400,17 +1406,28 @@
       $('simM3f').textContent=ang(Math.atan(H/d)); $('simM3s').textContent=ang(Math.atan((H+dD)/d));
       $('simMidRow').style.display=showMid?'':'none';
       if (showMid){ $('simM4f').textContent='0'; $('simM4s').textContent=lenH(d*d/(8*m.Reff)); }
-      $('simCap').textContent='SIDE VIEW · VERTICAL ×'+Math.round(exag)+' EXAGGERATED · THE NUMBERS BELOW ARE REAL · k='+m.k.toFixed(2)+' → effective radius '+Math.round(m.Reff/1000).toLocaleString()+' km';
+      var radTxt = Math.abs(1-m.k)<0.02 ? 'effective radius near infinite (beam follows the curve)' : 'effective radius '+Math.round(m.Reff/1000).toLocaleString()+' km';
+      $('simCap').textContent='SIDE VIEW · VERTICAL ×'+Math.round(exag)+' EXAGGERATED · THE NUMBERS BELOW ARE REAL · k='+m.k.toFixed(2)+' → '+radTxt;
 
-      // plain-language summary of what the two models predict here
-      var climbStr=lenH(dD), m3f=ang(Math.atan(H/d)), m3s=ang(Math.atan((H+dD)/d));
+      // plain-language summary, adapting to the refraction regime
+      var m3f=ang(Math.atan(H/d)), m3s=ang(Math.atan((H+dD)/d)), kNote=' (refraction at k='+m.k.toFixed(2)+' folded in)';
+      var sphereClause, ariaSphere;
+      if (dD > 0.03){
+        sphereClause='A sphere predicts the drone climbs <b>'+lenH(dD)+'</b> to stay on the beam, reading '+m3s+' down'+kNote+'.';
+        ariaSphere='the drone climbs '+lenH(dD)+', end depression '+m3s;
+      } else if (dD < -0.03){
+        sphereClause='With this much refraction the surface looms upward: a sphere predicts the drone <b>descends '+lenH(-dD)+'</b> and the far water sits above the level line'+kNote+'.';
+        ariaSphere='the surface looms, the drone descends '+lenH(-dD);
+      } else {
+        sphereClause='With this much refraction the beam nearly follows the surface, so a sphere predicts almost no climb at all'+kNote+'.';
+        ariaSphere='almost no change';
+      }
       $('simSummary').innerHTML='At <b>'+lenD(d)+'</b> from a '+lenH(H)+' mount, a flat plane predicts <span class="fe">no climb</span> and a '+m3f
-        +' depression to the far water. A sphere predicts the drone climbs <b>'+climbStr+'</b> to stay on the beam, reading '+m3s+' down'
-        +(m.k>0?(', with refraction at k='+m.k.toFixed(2)+' folded in'):'')+'. The run is built to tell those two apart.';
+        +' depression to the far water. '+sphereClause+' The run is built to tell those apart.';
 
       // legend + accessibility reflect the current scene
       $('simLegend').classList.toggle('midon', showMid);
-      cv.setAttribute('aria-label','Side view at '+lenD(d)+' from a '+lenH(H)+' mount. Flat plane: the drone holds '+lenH(H)+' above the water. Sphere: the drone climbs '+climbStr+' with an end depression of '+m3s+'.');
+      cv.setAttribute('aria-label','Side view at '+lenD(d)+' from a '+lenH(H)+' mount. Flat plane: the drone holds '+lenH(H)+' above the water. Sphere: '+ariaSphere+'.');
       elD.setAttribute('aria-valuetext', lenD(d));
       elH.setAttribute('aria-valuetext', lenH(H));
       elK.setAttribute('aria-valuetext', m.k.toFixed(2));
@@ -1439,7 +1456,8 @@
       buildChips(hc, HGT_M.map(function(v){ return { label: metric ? (v+' m') : (Math.round(v/0.3048)+' ft'), v:v }; }), function(v){ setSlider(elH, v); });
     }
     buildChips($('simKChips'), [
-      {label:'None', v:0}, {label:'Standard 0.13', v:0.13}, {label:'Strong 0.25', v:0.25}, {label:'Inversion 0.50', v:0.50}
+      {label:'Mirage -0.5', v:-0.5}, {label:'None 0', v:0}, {label:'0.17', v:0.17},
+      {label:'Strong 0.25', v:0.25}, {label:'Inversion 0.6', v:0.6}, {label:'Ducting 1.2', v:1.2}
     ], function(v){ setSlider(elK, v); });
     rebuildScaleChips();
     function markChips(){
