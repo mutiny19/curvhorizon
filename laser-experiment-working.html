@@ -1175,6 +1175,7 @@
       <div class="sim-ctrl sim-toggles">
         <label>Display <button class="sim-reset" id="simReset" type="button">RESET</button></label>
         <button class="sim-toggle" id="simMidBtn" type="button" aria-pressed="false">Midpoint three-point marker</button>
+        <button class="sim-toggle" id="simFlatRefBtn" type="button" aria-pressed="false">Refraction on the flat line</button>
         <button class="sim-toggle" id="simUnitBtn" type="button" aria-pressed="false">Units<span class="sub">: miles / feet</span></button>
       </div>
     </div>
@@ -1192,7 +1193,7 @@
     <div class="sim-cap" id="simCap">SIDE VIEW · VERTICAL SCALE EXAGGERATED · THE NUMBERS BELOW ARE REAL</div>
   </div>
     <div class="detail-inner" style="margin-top:18px">
-      <p>This is the protocol drawn live, and it decides nothing. The mount sits on the left at the height you set, the beam runs level to the right, and the water is drawn two ways at once: a dashed line for the flat-plane prediction, where the water stays parallel to the beam, and a curve for the sphere, where it falls away as the square of the distance. Neither is asserted. The run is what would tell them apart.</p>
+      <p>This is the protocol drawn live, and it decides nothing. The mount sits on the left at the height you set, the beam runs level to the right, and the water is drawn two ways at once: a dashed line for the flat-plane prediction, where the water stays parallel to the beam, and a curve for the sphere, where it falls away as the square of the distance. Neither is asserted. The run is what would tell them apart. The shaded band beneath the dashed line marks where the flat model puts the surface, and the refraction toggle lets that flat line carry the beam's own sag, so the flat-with-refraction baseline and the sphere curve can be read side by side, with the gap between them the curvature alone.</p>
       <p>Drag the drone out and watch the gap between the beam and the curved water open up. That gap is the height the lidar would log, Measurement 2, and the table reads it for both models at the distance you set. The faint line dropping to the far water is Measurement 3, the depression angle read back at the mount: on the flat plane it is just the mount height over the distance, and on the sphere the far water has sunk below the level line, so the angle comes out steeper. Turn on the midpoint marker for the three-point figure, three equal-height marks and the chord between the outer two, with the middle one riding above the chord by an amount that grows as the square of the run.</p>
       <p>The green band hugging the water is the altimeter's reach, the range the downward lidar can actually read, set by the altimeter slider. That gap, Measurement 2, only gets logged while the drone stays inside the band. It is the height above the water, the mount height plus whatever the surface has dropped, that the sensor must cover, so two things can push the drone out of range: a mount taller than the altimeter can see at all, or a run long enough that the surface falls away by more than the headroom left above the mount. When the drone leaves the band the reading is lost and the figure turns red, which sets a real ceiling on how high to mount and how far to fly with a given sensor. It is also the height-against-refraction trade in plain sight: a taller mount lifts the beam out of the worst near-surface bending but demands a longer-range altimeter to keep logging.</p>
       <p>The vertical scale is exaggerated, because at true scale the climb is a few feet across miles of water and the line would look flat. The exaggeration is only in the drawing. Every figure in the table is the real predicted value, and the k slider sets the refraction through the effective radius. There is no single standard value near the surface, which is the whole reason the experiment measures k rather than assuming it. Slide it and watch what refraction can do: ordinary positive values shrink the sphere's drop, a strong inversion near k equal to one erases it so the beam runs parallel to the surface, a hot-surface mirage at negative k exaggerates it, and a ducting layer above one flips it, looming the far water up above the level line. A measured field near minus four to plus sixteen, the range Hirt and colleagues recorded a metre or two above the ground, covers every one of these. The simulation shows what each model says the instruments should read. The night decides which one they do.</p>
@@ -1391,7 +1392,7 @@
     var R = 6371000, MI = 1609.344, FT = 0.3048;
     var $ = function(id){ return document.getElementById(id); };
     var elD=$('simD'), elH=$('simH'), elK=$('simK'), elS=$('simS');
-    var metric=false, showMid=false;
+    var metric=false, showMid=false, showFlatRef=false;
     var PAD_L=56, PAD_R=20;  // plot margins, shared with the canvas scrubber
 
     function lenH(m){ // a height, in the chosen units
@@ -1433,7 +1434,11 @@
       // Horizontal fills the plot (0..d). Vertical is fixed to the maximum-distance scene so the
       // beam stays put and the water visibly droops (or, under ducting, looms) as the drone moves.
       var waterFar=-m.maxDrop;                       // world-y of the far water: <0 fallen, >0 risen
-      var hi=Math.max(H, 0, waterFar), lo=Math.min(0, waterFar);
+      // Optional refraction on the flat line: the level beam itself sags by k*x^2/2R, so on flat
+      // water the gap changes. FK carries the refraction onto the flat line when the toggle is on.
+      var maxDw=parseFloat(elD.max)*MI, gmax=maxDw*maxDw/(2*R);
+      var FK = showFlatRef ? m.k : 0, flatFar = FK*gmax;
+      var hi=Math.max(H, 0, waterFar, flatFar), lo=Math.min(0, waterFar, flatFar);
       var pad=(hi-lo)*0.08 || 1;
       var yTop=hi+pad, yBot=lo-pad, ySpan=yTop-yBot;
       var X=function(x){ return L + (d>0 ? x/d : 0)*pw; };
@@ -1442,8 +1447,16 @@
 
       ctx.fillStyle='#f0f4fc'; ctx.fillRect(L,T,pw,ph);
 
-      // sphere water (fill + curve)
       var N=180, i, x, py;
+      var flatY=function(x){ return FK*x*x/(2*R); };   // 0 unless refraction is put on the flat line
+
+      // flat-plane prediction: shaded region below the flat line (drawn under the sphere water)
+      ctx.beginPath();
+      for(i=0;i<=N;i++){ x=d*i/N; py=Y(flatY(x)); i?ctx.lineTo(X(x),py):ctx.moveTo(X(x),py); }
+      ctx.lineTo(X(d),Y(yBot)); ctx.lineTo(X(0),Y(yBot)); ctx.closePath();
+      ctx.fillStyle='#dbe4f0'; ctx.fill();
+
+      // sphere water (fill + curve)
       ctx.beginPath(); ctx.moveTo(X(0),Y(0));
       for(i=0;i<=N;i++){ x=d*i/N; ctx.lineTo(X(x),Y(-drop(x))); }
       ctx.lineTo(X(d),Y(yBot)); ctx.lineTo(X(0),Y(yBot)); ctx.closePath();
@@ -1471,10 +1484,12 @@
       }
       ctx.restore();
 
-      // flat-plane water reference (dashed, at y=0)
-      ctx.save(); ctx.setLineDash([6,4]); ctx.strokeStyle='#9bb6cf'; ctx.lineWidth=1.2;
-      ctx.beginPath(); ctx.moveTo(X(0),Y(0)); ctx.lineTo(X(d),Y(0)); ctx.stroke(); ctx.restore();
-      txt(X(d)-3, Y(0)-4, 'flat-plane water', '#8aa6c0', 9, 'right', 'bottom');
+      // flat-plane water reference (dashed); bends with refraction when that toggle is on
+      ctx.save(); ctx.setLineDash([6,4]); ctx.strokeStyle='#8aa6c0'; ctx.lineWidth=1.6;
+      ctx.beginPath();
+      for(i=0;i<=N;i++){ x=d*i/N; py=Y(flatY(x)); i?ctx.lineTo(X(x),py):ctx.moveTo(X(x),py); }
+      ctx.stroke(); ctx.restore();
+      txt(X(d)-3, Y(flatY(d))-4, showFlatRef?'flat plane + refraction':'flat-plane water', '#6b8aa6', 9, 'right', 'bottom');
 
       // M3 depression lines from the mount to the far water: flat (dashed) and sphere (solid)
       ctx.save(); ctx.setLineDash([4,3]); ctx.strokeStyle='#c2ad79'; ctx.lineWidth=1;
@@ -1524,8 +1539,9 @@
       // readouts
       $('simDVal').textContent=lenD(d); $('simHVal').textContent=lenH(H); $('simKVal').textContent=m.k.toFixed(2);
       $('simSVal').textContent=lenH(sensorMax);
-      $('simM2f').textContent=lenH(H);          $('simM2s').textContent=lenH(H+dD);
-      $('simClimbf').textContent='0';           $('simClimbs').textContent=lenH(dD);
+      var gflat=d*d/(2*R);
+      $('simM2f').textContent=lenH(H - FK*gflat);          $('simM2s').textContent=lenH(H+dD);
+      $('simClimbf').textContent=FK?lenH(-FK*gflat):'0';   $('simClimbs').textContent=lenH(dD);
       $('simM3f').textContent=ang(Math.atan(H/d)); $('simM3s').textContent=ang(Math.atan((H+dD)/d));
       $('simMidRow').style.display=showMid?'':'none';
       if (showMid){ $('simM4f').textContent='0'; $('simM4s').textContent=lenH(d*d/(8*m.Reff)); }
@@ -1613,8 +1629,9 @@
     }
 
     // ---------- toggle buttons + reset ----------
-    var midBtn=$('simMidBtn'), unitBtn=$('simUnitBtn');
+    var midBtn=$('simMidBtn'), unitBtn=$('simUnitBtn'), flatRefBtn=$('simFlatRefBtn');
     midBtn.addEventListener('click', function(){ showMid=!showMid; midBtn.setAttribute('aria-pressed', showMid); draw(); });
+    flatRefBtn.addEventListener('click', function(){ showFlatRef=!showFlatRef; flatRefBtn.setAttribute('aria-pressed', showFlatRef); draw(); });
     unitBtn.addEventListener('click', function(){
       metric=!metric; unitBtn.setAttribute('aria-pressed', metric);
       unitBtn.querySelector('.sub').textContent = metric ? ': kilometres / metres' : ': miles / feet';
@@ -1623,6 +1640,7 @@
     $('simReset').addEventListener('click', function(){
       elD.value=3; elH.value=50; elK.value=0.17; elS.value=100;
       showMid=false; midBtn.setAttribute('aria-pressed','false');
+      showFlatRef=false; flatRefBtn.setAttribute('aria-pressed','false');
       metric=false; unitBtn.setAttribute('aria-pressed','false'); unitBtn.querySelector('.sub').textContent=': miles / feet';
       rebuildScaleChips(); draw();
     });
