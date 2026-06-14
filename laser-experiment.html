@@ -79,6 +79,13 @@
     border-top: 1px solid var(--rule); padding-top: 14px;
     font-size: 12px; color: var(--ink-lll); letter-spacing: 0.08em;
   }
+  .summary {
+    font-family: 'IBM Plex Serif', Georgia, serif;
+    font-size: 15px; line-height: 1.75; color: var(--ink-l);
+    margin: 20px 0 2px;
+  }
+  .summary p { margin: 0 0 12px; }
+  .summary p:last-child { margin: 0; }
 
   .section-header {
     font-family: 'Jura', sans-serif; font-weight: 500;
@@ -277,6 +284,11 @@
   </div>
   <div class="tagline">NO MAP  ·  NO COMPASS  ·  NO PROGRAMMED DIRECTION  ·  THE BEAM IS THE ONLY GUIDE</div>
 
+  <div class="summary">
+    <p>A laser is levelled on a height above open water, locked, and left alone. A drone flies out along the beam and logs its height above the water the whole way. At the far end the operator reads the angle down to it, and the angle to Polaris at both ends checks that the run held its heading. Where a marker can be anchored at the midpoint, three equal-height marks in a single photograph add the oldest and strongest reading of all. On flat water those readings stay flat. On curved water they bend in the direction a sphere would produce, by amounts this page works out for every distance.</p>
+    <p>It costs a few hundred dollars and a stretch of open water, so anyone can check it. The protocol does not assume an answer. It builds the apparatus that can tell flat from curved, names the assumptions it makes, and reports what the instruments return. Flat is a result. Curved is a result. Neither is the goal.</p>
+  </div>
+
   <div class="section-header">
     <span>ABOUT THIS EXPERIMENT</span>
     <button class="expand-trigger" onclick="toggleDetail('about')">EXPAND ▾</button>
@@ -296,6 +308,27 @@
 
       <div class="subhead">WHY A DRONE, NOT A PERSON</div>
       <p>A person walking makes a thousand small choices a second. Where to step. How fast. Whether that faint smear of green is the beam or just a tired eye. Every choice is a place where expectation can steer the outcome. The drone makes one choice and makes it again: keep the beam centered. The flight controller does it mechanically, with no stake in the answer. It cannot hope for one. That is the reason it holds the instrument and not a person.</p>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span>DESIGN IT WITH THE OTHER SIDE</span>
+    <button class="expand-trigger" onclick="toggleDetail('codesign')">EXPAND ▾</button>
+  </div>
+  <div class="detail" id="codesign">
+    <div class="detail-inner">
+      <p>A measurement is only as strong as the agreement on what it would show. The surest way to make this one hard to wave away is to build it together with the people who expect the opposite result, while no one yet knows the answer. Everything below raises the internal validity of the run. Each step closes a gap where a result could later be explained away.</p>
+
+      <div class="subhead">SETTLE THE RULES FIRST</div>
+      <p>Before the first run, write the whole plan down and have both sides agree to it: the site, the distance, the instruments, the controls, and the conditions that make a run count as clean. Write down, in the same breath, what a flat reading and a curved reading would each be taken to mean. Only then are the numbers taken. Agreeing on the rules before anyone knows the outcome is what stops the line from moving once the outcome is in.</p>
+
+      <div class="subhead">LET THE CRITICS ADD THE CONTROLS</div>
+      <p>The sharpest objection is a gift, because it is a control the design did not have yet. Ask the people who expect the water to read flat what would convince them the run was clean, and ask the people who expect it to read curved the same question. Each names the failure it worries about most, refraction, a beam off level, a drone off its line, a float that has settled, and the protocol grows a check for it. A design that has already survived its harshest critic is one that critic cannot disown afterward.</p>
+
+      <div class="subhead">BOTH HANDS ON THE DIALS</div>
+      <p>Run it with witnesses from both sides standing at the instruments. Both read the starting angle to Polaris, both watch the altitude log come off the drone, both see the depression angle and the midpoint frame, and both sign the record. A measurement read and signed by people who wanted different things from it is no longer one camp's claim. It is a shared fact, whatever it says.</p>
+
+      <p>None of this touches the result. It touches whether the result is believed, which is the harder half. Flat is a result. Curved is a result. Designing it together is how either one comes back as something neither side can take apart after the fact.</p>
     </div>
   </div>
 
@@ -1034,7 +1067,7 @@
       <p>Refraction depends on color. Red light bends less than blue through the same air (Young, n.d.). Fly a red beam and a green beam to the same drone at once. If refraction is present, the two will not agree, in their tilt or in where they fall, and the size of the disagreement is the size of the refraction. If they sit on top of each other, refraction is negligible. Either way, two colors measure the effect instead of assuming it.</p>
 
       <div class="subhead">CHOOSE THE NIGHT CAREFULLY</div>
-      <p>Refraction is worst in the thin layer just above the surface, where the temperature gradient is steepest (Young, n.d.). Over water that gradient is driven by the gap between the water and the air, so the nights to want are the ones where the two sit close together, often overcast and settled, rather than a clear night that lets the air cool far below the water and stand up a strong gradient. Firing from the height lifts the beam up out of the worst of that layer. And sunrise and sunset are the hours to avoid, when the surface is heating or cooling fastest.</p>
+      <p>Refraction is worst in the thin layer just above the surface, where the temperature gradient is steepest (Young, n.d.). How bad is worth stating with a number. A controlled survey that measured the bending coefficient directly, a metre or two above the ground, watched it swing between minus four and plus sixteen on sunny summer days, and still minus two to plus five under cloud, with sawtooth jumps of one to one and a half over ten to thirty minutes (Hirt et al., 2010). The textbook value of plus 0.13 does not describe that layer at all. The authors say as much. So the near-surface air is the enemy, and two things answer it. Over water the gradient is driven by the gap between the water and the air, so the nights to want are the ones where the two sit close together, often overcast and settled, rather than a clear night that lets the air cool far below the water and stand up a strong gradient. And firing from the height lifts the beam up out of the worst of that layer. Sunrise and sunset are the hours to avoid, when the surface is heating or cooling fastest.</p>
 
       <div class="subhead">REVERSE THE EXPERIMENT</div>
       <p>Run it backward too. Fire from the far point back to the origin, with a second drone going the other way. If both directions show the same altitude pattern, the refraction is symmetric and mostly cancels. If the two directions disagree, you have either an instrument fault or air that is not the same coming and going, and either one is worth chasing down before you draw a line under the result.</p>
@@ -1057,7 +1090,7 @@
       <p>Credit where it is due. They wrote their methodology down, in detail, and put it where others could read it. They reported all seven measurements rather than keeping only the ones they liked. They worked over open water, which is the right surface for the reasons given earlier. They recorded temperature, humidity, and pressure at the endpoints, and on the later runs they aimed the laser by GPS. For a volunteer effort with no institution behind it, the record is thorough, and thorough is what lets anyone learn from it.</p>
 
       <div class="subhead">WHERE IT WAS CRITIQUED</div>
-      <p>The critiques converge on four points. First, refraction was inferred, not measured. FECORE compared the refractive index figured from temperature and humidity at the two ends, found the end values close, and reasoned that the bending along the path was small. The geometry does not work that way. Horizontal refraction is set by the vertical temperature gradient through the air the beam crosses, not by the spot readings at the ends. The two ends can read the same while the layer between them holds a strong inversion that bends the beam. The Balaton runs were taken at night in cold winter weather, warmer air sitting over a near-freezing lake, which is exactly the setup for a surface inversion. The vertical profile that would have shown it was never taken.</p>
+      <p>The critiques converge on four points. First, refraction was inferred, not measured. FECORE compared the refractive index figured from temperature and humidity at the two ends, found the end values close, and reasoned that the bending along the path was small. The geometry does not work that way. Horizontal refraction is set by the vertical temperature gradient through the air the beam crosses, not by the spot readings at the ends. The two ends can read the same while the layer between them holds a strong inversion that bends the beam. Direct measurement near the ground has clocked the bending coefficient anywhere from minus four to plus sixteen on a sunny day, with the textbook plus 0.13 not describing the surface layer at all (Hirt et al., 2010), so an endpoint calculation that lands on a small number is not evidence the path was clean. The Balaton runs were taken at night in cold winter weather, warmer air sitting over a near-freezing lake, which is exactly the setup for a surface inversion. The vertical profile that would have shown it was never taken.</p>
       <p>Second, the laser was aimed at the target instead of levelled on its own. To say anything about the surface with a laser, the beam has to be set parallel to the surface first, by independent levelling, and only then does where it lands at distance carry meaning. FECORE pointed the laser until it hit the target, recorded the hit, and read that as flat. The same hit is just as consistent with a curved surface and a beam aimed slightly upward. The setup could not tell the two apart.</p>
       <p>Third, the beam spread too far to support the precision claimed. A green beam that leaves the mount as a point is feet wide within a few kilometres and tens of feet wide by forty. A reported beam height of a few metres is the centre of a wide cone, not a hard line, and the optics do not support reading it as finely as the document does.</p>
       <p>Fourth, nothing was placed between the ends. The whole measurement rested on two points, laser at one end and camera at the other. The three-point figure, the one Wallace used on the Bedford Level in 1870 and the standard ever since, was suggested to the team more than once and set aside each time.</p>
