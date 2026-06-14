@@ -308,6 +308,9 @@
   .sim-summary { margin-top: 16px; font-size: 13.5px; line-height: 1.6; color: var(--ink); }
   .sim-summary b { color: var(--green); font-weight: 600; }
   .sim-summary .fe { color: var(--cold); font-weight: 600; }
+  .sim-status { margin-top: 10px; font-family: ui-monospace, monospace; font-size: 11.5px; line-height: 1.5; letter-spacing: 0.01em; padding: 7px 11px; border-radius: 3px; border: 1px solid; }
+  .sim-status.ok { color: #1e6e44; background: #eef6f0; border-color: #bfe0cc; }
+  .sim-status.warn { color: #9a3412; background: #fbeee6; border-color: #e8c4ad; }
   .sim-reset { background: none; border: none; color: var(--ink-lll); font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: 0.06em; cursor: pointer; padding: 3px 4px; text-decoration: underline; }
   .sim-reset:hover { color: var(--gold); }
   .sim canvas:focus-visible, .sim-chip:focus-visible, .sim-toggle:focus-visible, .sim input:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
@@ -588,14 +591,19 @@
         <div class="sim-chips" id="simDChips" role="group" aria-label="Distance presets"><span class="lbl">JUMP TO</span></div>
       </div>
       <div class="sim-ctrl">
-        <label>Mount height <span class="val" id="simHVal">100 m</span></label>
-        <input type="range" id="simH" min="1" max="300" step="1" value="100" aria-label="Mount height above water">
+        <label>Mount height <span class="val" id="simHVal">50 m</span></label>
+        <input type="range" id="simH" min="1" max="300" step="1" value="50" aria-label="Mount height above water">
         <div class="sim-chips" id="simHChips" role="group" aria-label="Mount height presets"><span class="lbl">JUMP TO</span></div>
       </div>
       <div class="sim-ctrl">
         <label>Refraction k <span class="val" id="simKVal">0.17</span></label>
         <input type="range" id="simK" min="-1" max="2" step="0.01" value="0.17" aria-label="Refraction coefficient k">
         <div class="sim-chips" id="simKChips" role="group" aria-label="Refraction presets"><span class="lbl">PRESET</span></div>
+      </div>
+      <div class="sim-ctrl">
+        <label>Altimeter range <span class="val" id="simSVal">100 m</span></label>
+        <input type="range" id="simS" min="20" max="250" step="5" value="100" aria-label="Downward altimeter measurable range">
+        <div class="sim-chips" id="simSChips" role="group" aria-label="Altimeter range presets"><span class="lbl">JUMP TO</span></div>
       </div>
       <div class="sim-ctrl sim-toggles">
         <label>Display <button class="sim-reset" id="simReset" type="button">RESET</button></label>
@@ -604,6 +612,7 @@
       </div>
     </div>
     <p class="sim-summary" id="simSummary"></p>
+    <div class="sim-status" id="simStatus"></div>
     <div class="sim-readout">
       <table>
         <tr class="hd"><td>At this distance</td><td class="num">FLAT PLANE</td><td class="num">SPHERE  R=6,371 km</td></tr>
@@ -619,6 +628,7 @@
     <div class="detail-inner">
       <p>This is the protocol drawn live, and it decides nothing. The mount sits on the left at the height you set, the beam runs level to the right, and the water is drawn two ways at once: a dashed line for the flat-plane prediction, where the water stays parallel to the beam, and a curve for the sphere, where it falls away as the square of the distance. Neither is asserted. The run is what would tell them apart.</p>
       <p>Drag the drone out and watch the gap between the beam and the curved water open up. That gap is the height the lidar would log, Measurement 2, and the table reads it for both models at the distance you set. The faint line dropping to the far water is Measurement 3, the depression angle read back at the mount: on the flat plane it is just the mount height over the distance, and on the sphere the far water has sunk below the level line, so the angle comes out steeper. Turn on the midpoint marker for the three-point figure, three equal-height marks and the chord between the outer two, with the middle one riding above the chord by an amount that grows as the square of the run.</p>
+      <p>The green band hugging the water is the altimeter's reach, the range the downward lidar can actually read, set by the altimeter slider. That gap, Measurement 2, only gets logged while the drone stays inside the band. It is the height above the water, the mount height plus whatever the surface has dropped, that the sensor must cover, so two things can push the drone out of range: a mount taller than the altimeter can see at all, or a run long enough that the surface falls away by more than the headroom left above the mount. When the drone leaves the band the reading is lost and the figure turns red, which sets a real ceiling on how high to mount and how far to fly with a given sensor. It is also the height-against-refraction trade in plain sight: a taller mount lifts the beam out of the worst near-surface bending but demands a longer-range altimeter to keep logging.</p>
       <p>The vertical scale is exaggerated, because at true scale the climb is a few feet across miles of water and the line would look flat. The exaggeration is only in the drawing. Every figure in the table is the real predicted value, and the k slider sets the refraction through the effective radius. There is no single standard value near the surface, which is the whole reason the experiment measures k rather than assuming it. Slide it and watch what refraction can do: ordinary positive values shrink the sphere's drop, a strong inversion near k equal to one erases it so the beam runs parallel to the surface, a hot-surface mirage at negative k exaggerates it, and a ducting layer above one flips it, looming the far water up above the level line. A measured field near minus four to plus sixteen, the range Hirt and colleagues recorded a metre or two above the ground, covers every one of these. The simulation shows what each model says the instruments should read. The night decides which one they do.</p>
     </div>
   </div>
@@ -1296,7 +1306,7 @@
     var ctx = cv.getContext('2d');
     var R = 6371000, MI = 1609.344, FT = 0.3048;
     var $ = function(id){ return document.getElementById(id); };
-    var elD=$('simD'), elH=$('simH'), elK=$('simK');
+    var elD=$('simD'), elH=$('simH'), elK=$('simK'), elS=$('simS');
     var metric=false, showMid=false;
     var PAD_L=56, PAD_R=20;  // plot margins, shared with the canvas scrubber
 
@@ -1327,6 +1337,15 @@
       ctx.clearRect(0,0,W,Hc);
       var L=PAD_L, Rm=PAD_R, T=22, B=42, pw=W-L-Rm, ph=Hc-T-B;
       var d=m.d, H=m.H, drop=m.drop, dD=m.dD;
+      // Downward altimeter reach: the drone's height above water (H near the mount, H+drop far out)
+      // must stay within the sensor's range, or Measurement 2 cannot be logged.
+      var sensorMax=parseFloat(elS.value);
+      var mountTooHigh = H > sensorMax + 1e-6;
+      var xLimit;                                    // distance where sphere height-above-water exceeds the range
+      if (mountTooHigh) xLimit=0;
+      else if (m.Reff>0) xLimit=Math.sqrt(2*m.Reff*(sensorMax-H));
+      else xLimit=Infinity;                          // ducting: the drone descends, never exceeds H
+      var inRangeAtD = !mountTooHigh && d <= xLimit;
       // Horizontal fills the plot (0..d). Vertical is fixed to the maximum-distance scene so the
       // beam stays put and the water visibly droops (or, under ducting, looms) as the drone moves.
       var waterFar=-m.maxDrop;                       // world-y of the far water: <0 fallen, >0 risen
@@ -1349,6 +1368,24 @@
       for(i=0;i<=N;i++){ x=d*i/N; py=Y(-drop(x)); i?ctx.lineTo(X(x),py):ctx.moveTo(X(x),py); }
       ctx.strokeStyle='#5d83a0'; ctx.lineWidth=2; ctx.stroke();
       txt(X(d*0.5), Y(-drop(d*0.5))+13, 'sphere water', '#5d83a0', 9, 'center', 'top');
+
+      // measurable altimeter band: from the water surface up to the sensor's range above it
+      ctx.save(); ctx.beginPath(); ctx.rect(L,T,pw,ph); ctx.clip();
+      ctx.beginPath();
+      for(i=0;i<=N;i++){ x=d*i/N; py=Y(-drop(x)+sensorMax); i?ctx.lineTo(X(x),py):ctx.moveTo(X(x),py); }
+      for(i=N;i>=0;i--){ x=d*i/N; ctx.lineTo(X(x),Y(-drop(x))); }
+      ctx.closePath(); ctx.fillStyle='rgba(38,140,94,0.10)'; ctx.fill();
+      ctx.beginPath();
+      for(i=0;i<=N;i++){ x=d*i/N; py=Y(-drop(x)+sensorMax); i?ctx.lineTo(X(x),py):ctx.moveTo(X(x),py); }
+      ctx.setLineDash([5,4]); ctx.strokeStyle='rgba(38,140,94,0.55)'; ctx.lineWidth=1; ctx.stroke(); ctx.setLineDash([]);
+      txt(X(d*0.02), Y(-drop(d*0.02)+sensorMax)-4, 'altimeter range '+lenH(sensorMax), '#1e6e44', 9, 'left', 'bottom');
+      // reach limit: where the climbing drone leaves the measurable band
+      if (isFinite(xLimit) && xLimit>0 && xLimit<d){
+        ctx.setLineDash([4,3]); ctx.strokeStyle='#9a3412'; ctx.lineWidth=1.2;
+        ctx.beginPath(); ctx.moveTo(X(xLimit),T); ctx.lineTo(X(xLimit),T+ph); ctx.stroke(); ctx.setLineDash([]);
+        txt(X(xLimit)+4, T+12, 'altimeter limit', '#9a3412', 9, 'left', 'top');
+      }
+      ctx.restore();
 
       // flat-plane water reference (dashed, at y=0)
       ctx.save(); ctx.setLineDash([6,4]); ctx.strokeStyle='#9bb6cf'; ctx.lineWidth=1.2;
@@ -1385,14 +1422,15 @@
       ctx.fillStyle='#c3bcac'; ctx.beginPath(); ctx.moveTo(X(0)-11,Y(0)); ctx.lineTo(X(0),Y(H*0.16)); ctx.lineTo(X(0)+11,Y(0)); ctx.closePath(); ctx.fill();
       ctx.strokeStyle='#3c3c38'; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(X(0),Y(0)); ctx.lineTo(X(0),Y(H)); ctx.stroke();
 
-      // drone on the beam + dashed M2 gap to the water
+      // drone on the beam + dashed M2 gap to the water (warning-red when out of altimeter range)
       var dx=X(d), dy=Y(H);
-      ctx.save(); ctx.setLineDash([3,3]); ctx.strokeStyle='#a03c6e'; ctx.lineWidth=1.2;
+      var droneCol = inRangeAtD ? '#3c3c38' : '#9a3412', gapCol = inRangeAtD ? '#a03c6e' : '#9a3412';
+      ctx.save(); ctx.setLineDash([3,3]); ctx.strokeStyle=gapCol; ctx.lineWidth=1.2;
       ctx.beginPath(); ctx.moveTo(dx,dy); ctx.lineTo(dx,Y(-dD)); ctx.stroke(); ctx.restore();
-      ctx.fillStyle='#3c3c38'; ctx.fillRect(dx-7,dy-2,14,4);
-      ctx.strokeStyle='#3c3c38'; ctx.lineWidth=1.4;
+      ctx.fillStyle=droneCol; ctx.fillRect(dx-7,dy-2,14,4);
+      ctx.strokeStyle=droneCol; ctx.lineWidth=1.4;
       ctx.beginPath(); ctx.moveTo(dx-9,dy-5); ctx.lineTo(dx-5,dy-5); ctx.moveTo(dx+5,dy-5); ctx.lineTo(dx+9,dy-5); ctx.stroke();
-      txt(dx-11, dy-8, 'DRONE', '#3c3c38', 9, 'right', 'bottom');
+      txt(dx-11, dy-8, 'DRONE', droneCol, 9, 'right', 'bottom');
 
       // axis labels
       txt(L, Hc-B+13, '0', '#969692', 9, 'left', 'top');
@@ -1401,6 +1439,7 @@
 
       // readouts
       $('simDVal').textContent=lenD(d); $('simHVal').textContent=lenH(H); $('simKVal').textContent=m.k.toFixed(2);
+      $('simSVal').textContent=lenH(sensorMax);
       $('simM2f').textContent=lenH(H);          $('simM2s').textContent=lenH(H+dD);
       $('simClimbf').textContent='0';           $('simClimbs').textContent=lenH(dD);
       $('simM3f').textContent=ang(Math.atan(H/d)); $('simM3s').textContent=ang(Math.atan((H+dD)/d));
@@ -1431,6 +1470,20 @@
       elD.setAttribute('aria-valuetext', lenD(d));
       elH.setAttribute('aria-valuetext', lenH(H));
       elK.setAttribute('aria-valuetext', m.k.toFixed(2));
+      elS.setAttribute('aria-valuetext', lenH(sensorMax));
+
+      // altimeter-range status: can the downward sensor log Measurement 2 across this run?
+      var stEl=$('simStatus'), stCls, stMsg, runMax=parseFloat(elD.max)*MI;
+      if (mountTooHigh){
+        stCls='warn'; stMsg='A '+lenH(sensorMax)+' altimeter cannot reach a '+lenH(H)+' mount: the drone sits above its range from the very start. Lower the mount, or fit a longer-range altimeter.';
+      } else if (!isFinite(xLimit) || xLimit>=runMax){
+        stCls='ok'; stMsg='Within the '+lenH(sensorMax)+' altimeter’s range for the whole run.';
+      } else if (d<=xLimit){
+        stCls='ok'; stMsg='Within range. The '+lenH(sensorMax)+' altimeter reaches to about '+lenD(xLimit)+' before the climbing drone leaves the band.';
+      } else {
+        stCls='warn'; stMsg='Beyond the '+lenH(sensorMax)+' altimeter’s range. At '+lenD(d)+' the drone rides '+lenH(H+dD)+' above the water, so Measurement 2 stops being loggable past about '+lenD(xLimit)+'. Lower the mount, shorten the run, or fit a longer-range altimeter.';
+      }
+      stEl.className='sim-status '+stCls; stEl.textContent=stMsg;
       markChips();
     }
 
@@ -1446,14 +1499,17 @@
         container.appendChild(b);
       });
     }
-    var DIST_MI=[3,5,10,20,30], DIST_KM=[5,10,20,30,50], HGT_M=[25,50,100,150,200];
+    var DIST_MI=[3,5,10,20,30], DIST_KM=[5,10,20,30,50], HGT_M=[25,50,100,150,200], ALT_M=[40,100,200];
     function clearChips(c){ [].slice.call(c.querySelectorAll('.sim-chip')).forEach(function(n){ n.parentNode.removeChild(n); }); }
+    function mlabel(v){ return metric ? (v+' m') : (Math.round(v/0.3048)+' ft'); }
     function rebuildScaleChips(){
       var dc=$('simDChips'); clearChips(dc);
       var arr = metric?DIST_KM:DIST_MI, du = metric?' km':' mi';
       buildChips(dc, arr.map(function(v){ return { label:v+du, v: metric ? (v*1000/MI) : v }; }), function(v){ setSlider(elD, v); });
       var hc=$('simHChips'); clearChips(hc);
-      buildChips(hc, HGT_M.map(function(v){ return { label: metric ? (v+' m') : (Math.round(v/0.3048)+' ft'), v:v }; }), function(v){ setSlider(elH, v); });
+      buildChips(hc, HGT_M.map(function(v){ return { label: mlabel(v), v:v }; }), function(v){ setSlider(elH, v); });
+      var sc=$('simSChips'); clearChips(sc);
+      buildChips(sc, ALT_M.map(function(v){ return { label: mlabel(v), v:v }; }), function(v){ setSlider(elS, v); });
     }
     buildChips($('simKChips'), [
       {label:'Mirage -0.5', v:-0.5}, {label:'None 0', v:0}, {label:'0.17', v:0.17},
@@ -1469,6 +1525,7 @@
       mark($('simDChips'), parseFloat(elD.value), 0.06);
       mark($('simHChips'), parseFloat(elH.value), 0.5);
       mark($('simKChips'), parseFloat(elK.value), 0.005);
+      mark($('simSChips'), parseFloat(elS.value), 0.5);
     }
 
     // ---------- toggle buttons + reset ----------
@@ -1480,14 +1537,14 @@
       rebuildScaleChips(); draw();
     });
     $('simReset').addEventListener('click', function(){
-      elD.value=3; elH.value=100; elK.value=0.17;
+      elD.value=3; elH.value=50; elK.value=0.17; elS.value=100;
       showMid=false; midBtn.setAttribute('aria-pressed','false');
       metric=false; unitBtn.setAttribute('aria-pressed','false'); unitBtn.querySelector('.sub').textContent=': miles / feet';
       rebuildScaleChips(); draw();
     });
 
     // ---------- sliders ----------
-    [elD,elH,elK].forEach(function(e){ e.addEventListener('input',draw); e.addEventListener('change',draw); });
+    [elD,elH,elK,elS].forEach(function(e){ e.addEventListener('input',draw); e.addEventListener('change',draw); });
 
     // ---------- canvas scrubber: drag horizontally to set the distance ----------
     var dragging=false;
