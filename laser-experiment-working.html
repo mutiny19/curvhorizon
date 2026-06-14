@@ -593,8 +593,8 @@
         <div class="sim-chips" id="simHChips" role="group" aria-label="Mount height presets"><span class="lbl">JUMP TO</span></div>
       </div>
       <div class="sim-ctrl">
-        <label>Refraction k <span class="val" id="simKVal">0.13</span></label>
-        <input type="range" id="simK" min="0" max="0.9" step="0.01" value="0.13" aria-label="Refraction coefficient k">
+        <label>Refraction k <span class="val" id="simKVal">0.17</span></label>
+        <input type="range" id="simK" min="0" max="0.9" step="0.01" value="0.17" aria-label="Refraction coefficient k">
         <div class="sim-chips" id="simKChips" role="group" aria-label="Refraction presets"><span class="lbl">PRESET</span></div>
       </div>
       <div class="sim-ctrl sim-toggles">
@@ -1462,7 +1462,7 @@
       rebuildScaleChips(); draw();
     });
     $('simReset').addEventListener('click', function(){
-      elD.value=3; elH.value=100; elK.value=0.13;
+      elD.value=3; elH.value=100; elK.value=0.17;
       showMid=false; midBtn.setAttribute('aria-pressed','false');
       metric=false; unitBtn.setAttribute('aria-pressed','false'); unitBtn.querySelector('.sub').textContent=': miles / feet';
       rebuildScaleChips(); draw();
