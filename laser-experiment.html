@@ -428,6 +428,7 @@
       <li><span class="item-text">Digital clinometer  0.1 degree resolution</span><span class="cost">$30 – $65</span></li>
       <li><span class="item-text">Weather sensors  temp + humidity + pressure  drone and origin</span><span class="cost">$20 – $60</span></li>
       <li><span class="item-text">Datalogger + microSD  origin weather and tilt log</span><span class="cost">$15 – $40</span></li>
+      <li><span class="item-text">Telemetry radio (LoRa / Meshtastic)  realtime link to origin  optional</span><span class="cost">$30 – $80</span></li>
       <li><span class="item-text">Midpoint reference marker (optional)  anchored float + retroreflector</span><span class="cost">$40 – $80</span></li>
       <li><span class="item-text">Range markers / buoys  backup distance over water</span><span class="cost">$20 – $50</span></li>
       <li><span class="item-text">Water-level + wave logger  anchored pressure gauge  both ends  no GNSS</span><span class="cost">$60 – $250</span></li>
@@ -436,14 +437,22 @@
     </ul>
 
     <div class="total">
-      <span class="lbl">DRONE PROFILE FLIGHT  ·  FULL KIT</span>
-      <span class="val">$630 – $1,785</span>
+      <span class="lbl">SHORT-RUN DRONE  ·  MODEST DRONE + LASER  ·  IN SIGHT</span>
+      <span class="val">$630 – $1,100</span>
     </div>
     <div class="total">
-      <span class="lbl">MARKERS ONLY  ·  NO DRONE  ·  BUDGET FALLBACK</span>
+      <span class="lbl">LONG-RUN DRONE  ·  CAPABLE DRONE + STRONG LASER  ·  BEYOND SIGHT</span>
+      <span class="val">$1,100 – $1,785</span>
+    </div>
+    <div class="total">
+      <span class="lbl">SURFACE MARKERS ONLY  ·  NO DRONE  ·  PHOTOGRAPHIC</span>
       <span class="val">$350 – $975</span>
     </div>
-    <div style="text-align:right;font-family:ui-monospace,monospace;font-size:10px;color:var(--ink-lll);letter-spacing:0.04em;margin-top:6px">EVERY PART IS PRICED ONCE ABOVE. THE MARKER-ONLY FALLBACK DROPS THE DRONE AND ITS SENSORS, AND THE PROFILE WITH THEM, KEEPING ONLY THE THREE-POINT PHOTOGRAPH.</div>
+    <div class="total">
+      <span class="lbl">MOST CAPABLE  ·  LONG RUN + ANCHORED MARKERS</span>
+      <span class="val">$1,200 – $1,915</span>
+    </div>
+    <div style="text-align:right;font-family:ui-monospace,monospace;font-size:10px;color:var(--ink-lll);letter-spacing:0.04em;margin-top:6px">EVERY PART IS PRICED ONCE ABOVE. THE TWO DRONE BUILDS SHARE A KIT AND DIFFER IN THE DRONE, THE LASER, AND THE REACH. SURFACE MARKERS ALONE IS THE CHEAPEST BUT THE WEAKEST EVIDENCE, A SINGLE THREE-POINT PHOTOGRAPH OF THE KIND ALREADY ARGUED OVER; THE DRONE PROFILE IS A PHYSICAL HEIGHT MEASURED AT EVERY POINT, AND THE MOST CAPABLE BUILD CARRIES BOTH.</div>
     </div>
   </div>
 
@@ -472,6 +481,9 @@
 
       <div class="subhead">OPTIONAL EXTRAS FOR THE REFRACTION CONTROLS</div>
       <p>The refraction section describes checks that ask for a little more gear. A second laser in another color, red at 635 nm, runs the two-color test for roughly $40 to $90. A second drone, about the price of the first, lets you fly the run in reverse at the same time. Neither is needed for a first run. Both turn a bounded estimate of the bending into a measured one, so budget for them if the early numbers come out close.</p>
+
+      <div class="subhead">REALTIME TELEMETRY (OPTIONAL)</div>
+      <p>A cheap LoRa radio, the kind Meshtastic runs on a thirty dollar board, can stream the readings back to the origin as they are taken: the height above the water, the distance, and the centering offset, a few small numbers a second, well inside what LoRa carries while the full-rate log still rides on the card aboard the drone. Over open water from a height the link reaches the miles this run needs, but pair the two radios directly, or in a mesh, rather than leaning on a public network like Helium, which has no gateways out over the water. It buys two things. The data arrives witnessed, both sides watching the profile build in real time so no one can be charged with editing it after the fact, and it survives the aircraft, a copy already on the ground if the drone goes down. It carries data only. The distance still comes from the odometer and the markers, not from any position the radio reports, so nothing in the measurement leans on a network.</p>
 
       <div class="subhead">PHOTOGRAPHIC RECORD</div>
       <p>The midpoint figure is something you see, so it has to be photographed, not only described. Frame all three markers, origin, midpoint, and far end, in one shot, with enough zoom to resolve the gap between the midpoint and the chord. A camera with a long lens does this, and on a short run a phone with a telephoto adapter is often enough, gear many people already own. The known heights of the markers are the scale in the frame, so no separate ruler is needed. Take a series across the run rather than a single frame, because the air changes minute to minute, and a series shows whether the figure holds or drifts.</p>
