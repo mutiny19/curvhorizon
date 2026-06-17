@@ -822,52 +822,60 @@
   </div>
 
   <div class="section-header">
-    <span>THE THREE-POINT GEOMETRY</span>
+    <span>TENS OF THOUSANDS OF POINTS</span>
     <button class="expand-trigger" onclick="toggleDetail('threepoint')">EXPAND ▾</button>
   </div>
 
   <div class="diagram">
     <svg viewBox="0 0 1000 400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="samples" width="9" height="22" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="0" x2="0" y2="18" stroke="#9bb6cf" stroke-width="1"/>
+        </pattern>
+      </defs>
       <rect x="0" y="0" width="1000" height="400" fill="#f0f4fc"/>
-      <path d="M0,312 Q500,180 1000,312 L1000,400 L0,400 Z" fill="#cdddec"/>
-      <path d="M0,312 Q500,180 1000,312" fill="none" stroke="#7fa6c4" stroke-width="2"/>
 
-      <line x1="140" y1="190" x2="860" y2="190" stroke="#969692" stroke-width="1" stroke-dasharray="6 4"/>
-      <text x="672" y="184" font-family="ui-monospace,monospace" font-size="9" fill="#7a7468" letter-spacing="0.04em">CHORD  (ORIGIN TOP TO FAR TOP)</text>
+      <text x="500" y="44" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" text-anchor="middle" letter-spacing="0.06em">THE RUN PLOTS THE HEIGHT AND LETS IT FALL WHERE IT FALLS</text>
 
-      <line x1="140" y1="280" x2="140" y2="190" stroke="#3c3c38" stroke-width="2.5"/>
-      <line x1="500" y1="246" x2="500" y2="156" stroke="#3c3c38" stroke-width="2.5"/>
-      <line x1="860" y1="280" x2="860" y2="190" stroke="#3c3c38" stroke-width="2.5"/>
-      <circle cx="140" cy="190" r="3.5" fill="#a06e14"/>
-      <circle cx="500" cy="156" r="3.5" fill="#a06e14"/>
-      <circle cx="860" cy="190" r="3.5" fill="#a06e14"/>
+      <line x1="130" y1="132" x2="892" y2="132" stroke="#1e8c50" stroke-width="2.2"/>
+      <polygon points="892,132 875,126 875,138" fill="#1e8c50"/>
+      <text x="150" y="124" font-family="ui-monospace,monospace" font-size="10" fill="#1e8c50" letter-spacing="0.05em">LEVEL BEAM · THE REFERENCE</text>
 
-      <line x1="116" y1="190" x2="116" y2="280" stroke="#969692" stroke-width="0.8"/>
-      <text x="108" y="240" font-family="ui-monospace,monospace" font-size="10" fill="#7a7468" text-anchor="end">H</text>
-      <line x1="884" y1="190" x2="884" y2="280" stroke="#969692" stroke-width="0.8"/>
-      <text x="892" y="240" font-family="ui-monospace,monospace" font-size="10" fill="#7a7468">H</text>
+      <line x1="130" y1="132" x2="130" y2="160" stroke="#3c3c38" stroke-width="2"/>
+      <polygon points="121,160 139,160 130,147" fill="#c3bcac" stroke="#969692" stroke-width="0.8"/>
 
-      <line x1="516" y1="156" x2="516" y2="190" stroke="#a06e14" stroke-width="1.4"/>
-      <polygon points="516,156 512,164 520,164" fill="#a06e14"/>
-      <polygon points="516,190 512,182 520,182" fill="#a06e14"/>
-      <text x="526" y="170" font-family="ui-monospace,monospace" font-size="10" fill="#a06e14" letter-spacing="0.03em">MIDPOINT RISE</text>
-      <text x="526" y="183" font-family="ui-monospace,monospace" font-size="9" fill="#a06e14">CURVATURE SIGNATURE</text>
+      <rect x="884" y="129" width="16" height="5" fill="#3c3c38"/>
+      <line x1="879" y1="126" x2="884" y2="126" stroke="#3c3c38" stroke-width="1.2"/>
+      <line x1="900" y1="126" x2="905" y2="126" stroke="#3c3c38" stroke-width="1.2"/>
+      <text x="892" y="119" font-family="ui-monospace,monospace" font-size="9" fill="#3c3c38" text-anchor="middle">DRONE</text>
 
-      <text x="500" y="58" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" text-anchor="middle" letter-spacing="0.06em">MARKERS AT EQUAL HEIGHT ABOVE THE WATER</text>
+      <rect x="150" y="132" width="722" height="18" fill="url(#samples)"/>
+      <text x="510" y="168" font-family="ui-monospace,monospace" font-size="10" fill="#5d83a0" text-anchor="middle" letter-spacing="0.04em">HEIGHT LOGGED AT EVERY POINT  ·  TENS OF THOUSANDS OF READINGS</text>
 
-      <text x="140" y="334" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" text-anchor="middle" letter-spacing="0.04em">ORIGIN REFERENCE</text>
-      <text x="500" y="334" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" text-anchor="middle" letter-spacing="0.04em">MIDPOINT MARKER</text>
-      <text x="860" y="334" font-family="ui-monospace,monospace" font-size="10" fill="#3c3c38" text-anchor="middle" letter-spacing="0.04em">FAR MARKER / DRONE</text>
+      <circle cx="130" cy="300" r="3" fill="#3c3c38"/>
+      <line x1="130" y1="300" x2="892" y2="300" stroke="#9bb6cf" stroke-width="1.4" stroke-dasharray="7 4"/>
+      <text x="694" y="294" font-family="ui-monospace,monospace" font-size="9.5" fill="#8aa6c0">FLAT PREDICTION · GAP HOLDS</text>
+      <path d="M130,300 Q520,302 892,352" fill="none" stroke="#5d83a0" stroke-width="1.6" stroke-dasharray="7 4"/>
+      <text x="690" y="368" font-family="ui-monospace,monospace" font-size="9.5" fill="#5d83a0">SPHERE PREDICTION · GAP GROWS</text>
+
+      <line x1="300" y1="138" x2="300" y2="294" stroke="#a06e14" stroke-width="1" stroke-dasharray="3 3"/>
+      <polygon points="300,138 296,146 304,146" fill="#a06e14"/>
+      <polygon points="300,294 296,286 304,286" fill="#a06e14"/>
+      <text x="309" y="214" font-family="ui-monospace,monospace" font-size="9.5" fill="#a06e14">THE GAP</text>
+      <text x="309" y="226" font-family="ui-monospace,monospace" font-size="8.5" fill="#a06e14">EACH READING</text>
     </svg>
-    <div class="dist-caption">SIDE VIEW  ·  VERTICAL SCALE EXAGGERATED  ·  FLAT KEEPS THE MIDPOINT ON THE CHORD, CURVED LIFTS IT ABOVE</div>
+    <div class="dist-caption">TENS OF THOUSANDS OF HEIGHT READINGS ALONG THE RUN  ·  THE SHAPE IS WHAT THEY MEASURE, NOT WHAT THE PICTURE ASSUMES</div>
   </div>
 
   <div class="detail" id="threepoint">
     <div class="detail-inner">
-      <p>This part is optional, and the reason is logistics, not weight. A marker has to be anchored at the midpoint of the run, at a set height, holding station against wind and current, and that is not possible at every site, least of all far out on open water. Where it can be done, it is the strongest single piece of evidence the protocol produces, so it is worth real effort to include. On a short run it is easy. On a long one it is a question to settle before the night, not on it.</p>
+      <p>The measurement this protocol leans on is not two points, and not three. It is the whole run. The drone's downward rangefinder logs its height above the water the entire way out, tens of readings a second across a flight of minutes, so a single pass is tens of thousands of points strung along the path. A leveling shot between two marks is two points. The classic figure, drawn above in older work and described below, is three. This is a dense curve, and that changes what can be said about it.</p>
 
-      <div class="subhead">WHY THREE POINTS BEAT TWO</div>
-      <p>The drone run on its own is a time series. One instrument, the rangefinder, logging height against a moving position. A time series can be argued with, because every point in it rests on the instrument behaving the same way from the first reading to the last. Three fixed points read at once are a different kind of evidence. Set a marker at the origin, a marker at the midpoint of the run, and a marker at the far end, each carrying a reflector at the same height above the water. Photograph all three in one frame from the origin. Their positions relative to each other are a single figure, captured in one instant, that does not depend on anything drifting over time. On a flat surface the three equal heights fall on one straight line, so the midpoint marker sits on the line joining the origin and the far marker. On a curved surface the water stands higher in the middle of the run than along the chord between the two ends, so the midpoint marker rides above that line. The figure is the reading. Flat is a result. Curved is a result.</p>
+      <div class="subhead">WHY A DENSE CURVE IS HARDER TO ARGUE WITH</div>
+      <p>A single reading can be a glitch, and a single photograph can be staged, but a curve through tens of thousands of points can be neither. Every drift and wobble shows in it. The shape is fit through all of it at once, and what comes out carries an error rather than a claim. Two points can be joined by any line, which is why a result resting on a laser at one end and a target at the other asks you to trust both ends and the single straight guess between them. Tens of thousands of points cannot be joined by just any line: they either hold a constant height above the level beam the whole way, which is the flat result, or they bend from it as the square of the distance, which is the curved result, and no third shape fits a clean run. There are far more readings than the handful of numbers either a flat line or a parabola needs, so the surface is forced to show its hand. That is the opposite of assuming it. The figure above draws both predictions as dashed lines because the run has not happened yet, and the readings are what land on one of them. Flat is a result. Curved is a result.</p>
+
+      <div class="subhead">THE THREE-POINT FIGURE, A ONE-INSTANT CHECK (OPTIONAL)</div>
+      <p>Where a marker can be anchored at the midpoint, the oldest version of this measurement can run alongside the profile, and it is worth doing because it is a different kind of evidence. The dense curve is a time series, built reading by reading as the drone flies, so it rests on the rangefinder behaving the same from the first sample to the last. Three fixed marks at equal height, photographed in one frame from the origin, are a single figure caught in one instant, immune to anything drifting over the run. On a flat surface the three equal heights fall on one straight line, so the middle mark sits on the chord between the outer two; on a curved surface the water stands higher in the middle than along that chord, so the middle mark rides above it. It is a corroboration, not the measurement. Where the geometry cannot be set, far out on open water most of all, the run stands on the profile without it.</p>
 
       <div class="subhead">THE HISTORICAL LINEAGE</div>
       <p>This is an old measurement. Alfred Russel Wallace set it up on the Old Bedford Canal in 1870, sighting between two marks at equal height six miles apart with a third at the midpoint, and recorded the midpoint mark standing above the line of the other two (Wallace, 1908). Henry Oldham repeated the demonstration for the British Association in 1901 and reported the same figure (Oldham, 1901). More recently the photographer known as Soundly has documented the same geometry across Lake Pontchartrain, where a line of equal-height transmission towers shows the middle towers riding above the chord, imagery examined in detail in a long public thread (West, 2017). The three-point figure is what each of these records in common. The protocol here is a way to produce it on demand, with markers you control and heights you set.</p>
@@ -1247,7 +1255,7 @@
       <p>The reading that does this most directly is the two-color run. Fired together through the same aperture, a green beam and a red beam bend by slightly different amounts, and the separation between where they land is a fixed fraction of the total bend, set only by the dispersion of air and not by the temperature profile along the path. Measured at the drone and scaled by that fixed factor, it returns the beam's own bending angle:</p>
       <div class="formula">α<sub>g</sub> = (s / d) × (n<sub>g</sub> − 1) / (n<sub>g</sub> − n<sub>r</sub>)</div>
       <p>There is no radius in that equation and no shape of the surface assumed anywhere in it. It hands back the bend itself, and the bend is then subtracted from the climb the rangefinder logged. The flat prediction remains zero drop. The measured bend sits beside it as a logged number with its own error. Nothing is flattened to match anything, because the geometry and the bending are measured separately and only then compared.</p>
-      <p>Two further checks close the door the rest of the way. The predicted numbers, the flat line and the sphere parabola both, are written down and signed by both sides before the run, so no value of k can be fit to the result after the result is known. And the midpoint figure does not use k at all. A uniform refraction gradient, which is the ordinary case, shifts three equally spaced markers in the same proportion and so leaves them on a straight line. It cannot lift the midpoint off the chord. Only the squared-distance curvature signature can, and the only refraction that imitates it is light bending upward off a hot surface, a mirage that shimmers and inverts in plain view. The strongest single piece of evidence the protocol produces is therefore immune to the very factor the objection is about.</p>
+      <p>Two further checks close the door the rest of the way. The predicted numbers, the flat line and the sphere parabola both, are written down and signed by both sides before the run, so no value of k can be fit to the result after the result is known. And the midpoint figure does not use k at all. A uniform refraction gradient, which is the ordinary case, shifts three equally spaced markers in the same proportion and so leaves them on a straight line. It cannot lift the midpoint off the chord. Only the squared-distance curvature signature can, and the only refraction that imitates it is light bending upward off a hot surface, a mirage that shimmers and inverts in plain view. So the midpoint figure, where one is set, is a check that owes nothing to k at all, immune to the very factor the objection is about.</p>
       <p>What must not be lost in answering the objection is that refraction is real. It is not a rhetorical device. Light does bend toward the denser air near the surface, the bending does reduce the apparent drop by roughly thirteen to seventeen percent at ordinary coefficients, and surveyors correct for it as routine on every long sight line they take. The existence of the effect is not in dispute among people who have measured it. What is in dispute is its use as an unexamined correction, applied by assertion when a result is inconvenient. On that, the protocol takes the skeptic's side. It does not assume the number. It measures it.</p>
       <p>One limit has to be stated plainly, because it is what keeps this honest. The answer above is only as strong as the refraction measurement actually made. A run that fires two colors, or sights reciprocally, or logs the vertical gradient has earned the right to say k was measured and not assumed. A run that plugs in a textbook value and proceeds has not, and for that run the objection partly stands and the result is weaker for it. State which was done. A measured k retires the accusation. An assumed k must be labeled as one.</p>
       <p>Flat is a result. Curved is a result. The coefficient is neither, and it is not allowed to decide between them. It is one more quantity the night reports, measured beside the others and subtracted before anything is concluded.</p>
