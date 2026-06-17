@@ -1270,8 +1270,14 @@
         <input type="range" id="simS" min="20" max="250" step="5" value="100" aria-label="Downward altimeter measurable range">
         <div class="sim-chips" id="simSChips" role="group" aria-label="Altimeter range presets"><span class="lbl">JUMP TO</span></div>
       </div>
+      <div class="sim-ctrl" id="simVCtrl" style="display:none">
+        <label>Drone speed <span class="val" id="simVVal">8.0 m/s</span></label>
+        <input type="range" id="simV" min="3" max="20" step="0.5" value="8" aria-label="Drone speed for the time view">
+        <div class="sim-chips" id="simVChips" role="group" aria-label="Drone speed presets"><span class="lbl">JUMP TO</span></div>
+      </div>
       <div class="sim-ctrl sim-toggles">
         <label>Display <button class="sim-reset" id="simReset" type="button">RESET</button></label>
+        <button class="sim-toggle" id="simTimeBtn" type="button" aria-pressed="false">Height vs time<span class="sub">: plot against the clock</span></button>
         <button class="sim-toggle" id="simMidBtn" type="button" aria-pressed="false">Midpoint three-point marker</button>
         <button class="sim-toggle" id="simFlatRefBtn" type="button" aria-pressed="false">Refraction on the flat line</button>
         <button class="sim-toggle" id="simUnitBtn" type="button" aria-pressed="false">Units<span class="sub">: miles / feet</span></button>
@@ -1293,6 +1299,7 @@
     <div class="detail-inner" style="margin-top:18px">
       <p>This is the protocol drawn live, and it decides nothing. The mount sits on the left at the height you set, the beam runs level to the right, and the water is drawn two ways at once: a dashed line for the flat-plane prediction, where the water stays parallel to the beam, and a curve for the sphere, where it falls away as the square of the distance. Neither is asserted. The run is what would tell them apart. The shaded band beneath the dashed line marks where the flat model puts the surface, and the refraction toggle lets that flat line carry the beam's own sag, so the flat-with-refraction baseline and the sphere curve can be read side by side, with the gap between them the curvature alone.</p>
       <p>Drag the drone out and watch the gap between the beam and the curved water open up. That gap is the height the lidar would log, Measurement 2, and the table reads it for both models at the distance you set. The faint line dropping to the far water is Measurement 3, the depression angle read back at the mount: on the flat plane it is just the mount height over the distance, and on the sphere the far water has sunk below the level line, so the angle comes out steeper. Turn on the midpoint marker for the three-point figure, three equal-height marks and the chord between the outer two, with the middle one riding above the chord by an amount that grows as the square of the run.</p>
+      <p>The <b>height vs time</b> toggle re-plots that same run against a clock instead of a distance, at the drone speed you set. Flat water draws a level trace; a curved surface draws a climb that grows as the square of the time, so the climb across the second half of the flight is far larger than across the first, and doubling the flight time quadruples it. It is the same squared law the profile carries, shown on the one axis nobody disputes, with only the speed needed to turn the minutes back into a distance, as the altitude section sets out.</p>
       <p>The green band hugging the water is the altimeter's reach, the range the downward lidar can actually read, set by the altimeter slider. That gap, Measurement 2, only gets logged while the drone stays inside the band. It is the height above the water, the mount height plus whatever the surface has dropped, that the sensor must cover, so two things can push the drone out of range: a mount taller than the altimeter can see at all, or a run long enough that the surface falls away by more than the headroom left above the mount. When the drone leaves the band the reading is lost and the figure turns red, which sets a real ceiling on how high to mount and how far to fly with a given sensor. It is also the height-against-refraction trade in plain sight: a taller mount lifts the beam out of the worst near-surface bending but demands a longer-range altimeter to keep logging.</p>
       <p>The vertical scale is exaggerated, because at true scale the climb is a few feet across miles of water and the line would look flat. The exaggeration is only in the drawing. Every figure in the table is the real predicted value, and the k slider sets the refraction through the effective radius. There is no single standard value near the surface, which is the whole reason the experiment measures k rather than assuming it. Slide it and watch what refraction can do: ordinary positive values shrink the sphere's drop, a strong inversion near k equal to one erases it so the beam runs parallel to the surface, a hot-surface mirage at negative k exaggerates it, and a ducting layer above one flips it, looming the far water up above the level line. A measured field near minus four to plus sixteen, the range Hirt and colleagues recorded a metre or two above the ground, covers every one of these. The simulation shows what each model says the instruments should read. The night decides which one they do.</p>
     </div>
@@ -1524,8 +1531,8 @@
     var ctx = cv.getContext('2d');
     var R = 6371000, MI = 1609.344, FT = 0.3048;
     var $ = function(id){ return document.getElementById(id); };
-    var elD=$('simD'), elH=$('simH'), elK=$('simK'), elS=$('simS');
-    var metric=false, showMid=false, showFlatRef=false;
+    var elD=$('simD'), elH=$('simH'), elK=$('simK'), elS=$('simS'), elV=$('simV');
+    var metric=false, showMid=false, showFlatRef=false, timeView=false;
     var PAD_L=56, PAD_R=20;  // plot margins, shared with the canvas scrubber
 
     function lenH(m){ // a height, in the chosen units
@@ -1534,6 +1541,7 @@
     }
     function lenD(m){ return metric ? (m/1000).toFixed(2)+' km' : (m/MI).toFixed(2)+' mi'; }
     function ang(r){ var d=r*180/Math.PI; return (d<1 ? d.toFixed(3) : d.toFixed(2))+'°'; }
+    function fmtT(s){ if (!isFinite(s)||s<=0) return '0 s'; if (s<60) return Math.round(s)+' s'; var mn=Math.floor(s/60), se=Math.round(s-mn*60); if(se===60){mn++;se=0;} return mn+':'+(se<10?'0':'')+se; }
     function txt(x,y,s,col,sz,al,bl){ ctx.fillStyle=col; ctx.font=(sz||10)+'px ui-monospace, monospace'; ctx.textAlign=al||'left'; ctx.textBaseline=bl||'alphabetic'; ctx.fillText(s,x,y); }
 
     function model(){
@@ -1564,19 +1572,23 @@
       else if (m.Reff>0) xLimit=Math.sqrt(2*m.Reff*(sensorMax-H));
       else xLimit=Infinity;                          // ducting: the drone descends, never exceeds H
       var inRangeAtD = !mountTooHigh && d <= xLimit;
+      var FK = showFlatRef ? m.k : 0;                // refraction carried onto the flat line (both views)
+      var exag = 0;
+      if (timeView){ drawTime(L,T,pw,ph,m,d,H,FK); }
+      else {
       // Horizontal fills the plot (0..d). Vertical is fixed to the maximum-distance scene so the
       // beam stays put and the water visibly droops (or, under ducting, looms) as the drone moves.
       var waterFar=-m.maxDrop;                       // world-y of the far water: <0 fallen, >0 risen
       // Optional refraction on the flat line: the level beam itself sags by k*x^2/2R, so on flat
       // water the gap changes. FK carries the refraction onto the flat line when the toggle is on.
       var maxDw=parseFloat(elD.max)*MI, gmax=maxDw*maxDw/(2*R);
-      var FK = showFlatRef ? m.k : 0, flatFar = FK*gmax;
+      var flatFar = FK*gmax;
       var hi=Math.max(H, 0, waterFar, flatFar), lo=Math.min(0, waterFar, flatFar);
       var pad=(hi-lo)*0.08 || 1;
       var yTop=hi+pad, yBot=lo-pad, ySpan=yTop-yBot;
       var X=function(x){ return L + (d>0 ? x/d : 0)*pw; };
       var Y=function(y){ return T + (yTop-y)/ySpan*ph; };
-      var exag=(ph/ySpan)/(pw/d);
+      exag=(ph/ySpan)/(pw/d);
 
       ctx.fillStyle='#f0f4fc'; ctx.fillRect(L,T,pw,ph);
 
@@ -1668,10 +1680,12 @@
       txt(L, Hc-B+13, '0', '#969692', 9, 'left', 'top');
       txt(X(d), Hc-B+13, lenD(d), '#969692', 9, 'right', 'top');
       txt(L, Hc-B+27, 'distance along the run   ·   vertical ×' + Math.round(exag) + ' exaggerated', '#969692', 9, 'left', 'top');
+      }
 
       // readouts
       $('simDVal').textContent=lenD(d); $('simHVal').textContent=lenH(H); $('simKVal').textContent=m.k.toFixed(2);
       $('simSVal').textContent=lenH(sensorMax);
+      $('simVVal').textContent=parseFloat(elV.value).toFixed(1)+' m/s';
       var gflat=d*d/(2*R);
       $('simM2f').textContent=lenH(H - FK*gflat);          $('simM2s').textContent=lenH(H+dD);
       $('simClimbf').textContent=FK?lenH(-FK*gflat):'0';   $('simClimbs').textContent=lenH(dD);
@@ -1679,7 +1693,9 @@
       $('simMidRow').style.display=showMid?'':'none';
       if (showMid){ $('simM4f').textContent='0'; $('simM4s').textContent=lenH(d*d/(8*m.Reff)); }
       var radTxt = Math.abs(1-m.k)<0.02 ? 'effective radius near infinite (beam follows the curve)' : 'effective radius '+Math.round(m.Reff/1000).toLocaleString()+' km';
-      $('simCap').textContent='SIDE VIEW · VERTICAL ×'+Math.round(exag)+' EXAGGERATED · THE NUMBERS BELOW ARE REAL · k='+m.k.toFixed(2)+' → '+radTxt;
+      $('simCap').textContent=(timeView
+        ? 'HEIGHT ABOVE WATER vs FLIGHT TIME · VERTICAL ZOOMED TO THE CLIMB · DOUBLE THE TIME → 4× THE CLIMB ON A SPHERE · k='+m.k.toFixed(2)+' → '+radTxt
+        : 'SIDE VIEW · VERTICAL ×'+Math.round(exag)+' EXAGGERATED · THE NUMBERS BELOW ARE REAL · k='+m.k.toFixed(2)+' → '+radTxt);
 
       // plain-language summary, adapting to the refraction regime
       var m3f=ang(Math.atan(H/d)), m3s=ang(Math.atan((H+dD)/d)), kNote=' (refraction at k='+m.k.toFixed(2)+' folded in)';
@@ -1698,8 +1714,11 @@
         +' depression to the far water. '+sphereClause+' The run is built to tell those apart.';
 
       // legend + accessibility reflect the current scene
+      $('simLegend').style.display = timeView ? 'none' : '';
       $('simLegend').classList.toggle('midon', showMid);
-      cv.setAttribute('aria-label','Side view at '+lenD(d)+' from a '+lenH(H)+' mount. Flat plane: the drone holds '+lenH(H)+' above the water. Sphere: '+ariaSphere+'.');
+      cv.setAttribute('aria-label', timeView
+        ? ('Height above water plotted against flight time at '+parseFloat(elV.value).toFixed(1)+' metres per second. Flat: a level trace. Sphere: '+ariaSphere+', a climb growing as the square of the time.')
+        : ('Side view at '+lenD(d)+' from a '+lenH(H)+' mount. Flat plane: the drone holds '+lenH(H)+' above the water. Sphere: '+ariaSphere+'.'));
       elD.setAttribute('aria-valuetext', lenD(d));
       elH.setAttribute('aria-valuetext', lenH(H));
       elK.setAttribute('aria-valuetext', m.k.toFixed(2));
@@ -1718,6 +1737,67 @@
       }
       stEl.className='sim-status '+stCls; stEl.textContent=stMsg;
       markChips();
+    }
+
+    // ---------- height-vs-time view: the same run plotted against the clock ----------
+    function drawTime(L,T,pw,ph,m,d,H,FK){
+      var v=parseFloat(elV.value);                          // drone speed, m/s
+      var Ttot = v>0 ? d/v : 0;                             // total flight time, s
+      var hS=function(t){ return H + m.drop(v*t); };        // sphere: height above water, climbs as time^2 when k<1
+      var hF=function(t){ return H - FK*(v*t)*(v*t)/(2*R); };// flat: level, or sagging under refraction
+      var pts=[H, hS(Ttot), hF(Ttot), hS(Ttot/2), hF(Ttot/2)];
+      var hi=Math.max.apply(null,pts), lo=Math.min.apply(null,pts);
+      var pad=(hi-lo)*0.16 || 1, yTop=hi+pad, yBot=lo-pad, ySpan=yTop-yBot;
+      var X=function(t){ return L + (Ttot>0 ? t/Ttot : 0)*pw; };
+      var Y=function(y){ return T + (yTop-y)/ySpan*ph; };
+      var N=180,i,t,py;
+
+      ctx.fillStyle='#f0f4fc'; ctx.fillRect(L,T,pw,ph);
+
+      // shaded curvature gap between the flat trace and the sphere trace
+      ctx.beginPath();
+      for(i=0;i<=N;i++){ t=Ttot*i/N; py=Y(hS(t)); i?ctx.lineTo(X(t),py):ctx.moveTo(X(t),py); }
+      for(i=N;i>=0;i--){ t=Ttot*i/N; ctx.lineTo(X(t),Y(hF(t))); }
+      ctx.closePath(); ctx.fillStyle='rgba(93,131,160,0.13)'; ctx.fill();
+
+      // doubling guides at half-time and full-time
+      ctx.save(); ctx.setLineDash([3,3]); ctx.strokeStyle='rgba(160,110,20,0.55)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(X(Ttot/2),T); ctx.lineTo(X(Ttot/2),T+ph); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(X(Ttot),T); ctx.lineTo(X(Ttot),T+ph); ctx.stroke(); ctx.restore();
+
+      // start-height reference at t=0
+      txt(L+4, Y(H)-3, 'start height '+lenH(H), '#6b8aa6', 8.5, 'left', 'bottom');
+
+      // flat trace (dashed)
+      ctx.save(); ctx.setLineDash([6,4]); ctx.strokeStyle='#8aa6c0'; ctx.lineWidth=1.8;
+      ctx.beginPath(); for(i=0;i<=N;i++){ t=Ttot*i/N; py=Y(hF(t)); i?ctx.lineTo(X(t),py):ctx.moveTo(X(t),py); } ctx.stroke(); ctx.restore();
+      txt(X(Ttot)-4, Y(hF(Ttot))+(FK?12:-5), FK?'flat + refraction':'flat: level trace', '#6b8aa6', 9, 'right', FK?'top':'bottom');
+
+      // sphere trace (solid)
+      ctx.strokeStyle='#5d83a0'; ctx.lineWidth=2.4;
+      ctx.beginPath(); for(i=0;i<=N;i++){ t=Ttot*i/N; py=Y(hS(t)); i?ctx.lineTo(X(t),py):ctx.moveTo(X(t),py); } ctx.stroke();
+      txt(X(Ttot*0.3), Y(hS(Ttot*0.3))-7, 'sphere: climbs as time²', '#5d83a0', 9, 'center', 'bottom');
+
+      // doubling rule: climb at half-time vs full-time (the sphere quadruples)
+      var cH=m.drop(v*Ttot/2), cF=m.drop(v*Ttot);
+      ctx.fillStyle='#a06e14';
+      ctx.beginPath(); ctx.arc(X(Ttot/2),Y(hS(Ttot/2)),3,0,7); ctx.fill();
+      ctx.beginPath(); ctx.arc(X(Ttot),Y(hS(Ttot)),3.4,0,7); ctx.fill();
+      if (Math.abs(cF)>0.02){
+        var w=cF>=0?'climb':'drop';
+        txt(X(Ttot/2)+5, Y(hS(Ttot/2))-4, w+' '+lenH(Math.abs(cH)), '#a06e14', 9, 'left','bottom');
+        txt(X(Ttot)-5, Y(hS(Ttot))-6, w+' '+lenH(Math.abs(cF))+'  ·  ×4 in 2× the time', '#a06e14', 9, 'right','bottom');
+      }
+
+      // drone marker at the end of the trace
+      var dx=X(Ttot), dy=Y(hS(Ttot));
+      ctx.fillStyle='#3c3c38'; ctx.fillRect(dx-7,dy-2,14,4);
+
+      // axis labels: time on x, height above water on y
+      txt(L, T+ph+13, '0', '#969692', 9, 'left', 'top');
+      txt(X(Ttot/2), T+ph+13, fmtT(Ttot/2), '#969692', 9, 'center', 'top');
+      txt(L+pw, T+ph+13, fmtT(Ttot), '#969692', 9, 'right', 'top');
+      txt(L, T+ph+27, 'flight time at '+v.toFixed(1)+' m/s ('+Math.round(v*2.237)+' mph)   ·   height above water on the vertical, zoomed to the climb', '#969692', 9, 'left', 'top');
     }
 
     // ---------- preset chips ----------
@@ -1748,6 +1828,9 @@
       {label:'Mirage -0.5', v:-0.5}, {label:'None 0', v:0}, {label:'0.17', v:0.17},
       {label:'Strong 0.25', v:0.25}, {label:'Inversion 0.6', v:0.6}, {label:'Ducting 1.2', v:1.2}
     ], function(v){ setSlider(elK, v); });
+    buildChips($('simVChips'), [
+      {label:'5 m/s', v:5}, {label:'8 m/s', v:8}, {label:'12 m/s', v:12}, {label:'16 m/s', v:16}
+    ], function(v){ setSlider(elV, v); });
     rebuildScaleChips();
     function markChips(){
       function mark(c, cur, tol){
@@ -1759,27 +1842,30 @@
       mark($('simHChips'), parseFloat(elH.value), 0.5);
       mark($('simKChips'), parseFloat(elK.value), 0.005);
       mark($('simSChips'), parseFloat(elS.value), 0.5);
+      mark($('simVChips'), parseFloat(elV.value), 0.25);
     }
 
     // ---------- toggle buttons + reset ----------
-    var midBtn=$('simMidBtn'), unitBtn=$('simUnitBtn'), flatRefBtn=$('simFlatRefBtn');
+    var midBtn=$('simMidBtn'), unitBtn=$('simUnitBtn'), flatRefBtn=$('simFlatRefBtn'), timeBtn=$('simTimeBtn'), vCtrl=$('simVCtrl');
     midBtn.addEventListener('click', function(){ showMid=!showMid; midBtn.setAttribute('aria-pressed', showMid); draw(); });
     flatRefBtn.addEventListener('click', function(){ showFlatRef=!showFlatRef; flatRefBtn.setAttribute('aria-pressed', showFlatRef); draw(); });
+    timeBtn.addEventListener('click', function(){ timeView=!timeView; timeBtn.setAttribute('aria-pressed', timeView); vCtrl.style.display = timeView?'':'none'; draw(); });
     unitBtn.addEventListener('click', function(){
       metric=!metric; unitBtn.setAttribute('aria-pressed', metric);
       unitBtn.querySelector('.sub').textContent = metric ? ': kilometres / metres' : ': miles / feet';
       rebuildScaleChips(); draw();
     });
     $('simReset').addEventListener('click', function(){
-      elD.value=3; elH.value=50; elK.value=0.17; elS.value=100;
+      elD.value=3; elH.value=50; elK.value=0.17; elS.value=100; elV.value=8;
       showMid=false; midBtn.setAttribute('aria-pressed','false');
       showFlatRef=false; flatRefBtn.setAttribute('aria-pressed','false');
+      timeView=false; timeBtn.setAttribute('aria-pressed','false'); vCtrl.style.display='none';
       metric=false; unitBtn.setAttribute('aria-pressed','false'); unitBtn.querySelector('.sub').textContent=': miles / feet';
       rebuildScaleChips(); draw();
     });
 
     // ---------- sliders ----------
-    [elD,elH,elK,elS].forEach(function(e){ e.addEventListener('input',draw); e.addEventListener('change',draw); });
+    [elD,elH,elK,elS,elV].forEach(function(e){ e.addEventListener('input',draw); e.addEventListener('change',draw); });
 
     // ---------- canvas scrubber: drag horizontally to set the distance ----------
     var dragging=false;
