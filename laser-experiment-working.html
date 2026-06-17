@@ -358,6 +358,46 @@
   </div>
   <div class="tagline">NO MAP  ·  NO COMPASS  ·  NO PROGRAMMED DIRECTION  ·  THE BEAM IS THE ONLY GUIDE</div>
 
+  <div class="diagram" style="margin-top:18px">
+    <svg viewBox="0 0 1000 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A laser levelled on a bluff above open water fires a level beam east; a drone flies along it logging its height above the water at tens of thousands of points, with Polaris and an end angle as cross-checks.">
+      <defs>
+        <linearGradient id="heroSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#edf2fb"/><stop offset="1" stop-color="#f4f7fc"/></linearGradient>
+        <linearGradient id="heroBeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#a06e14" stop-opacity="0"/><stop offset="50%" stop-color="#a06e14" stop-opacity="0.4"/><stop offset="100%" stop-color="#a06e14" stop-opacity="0"/></linearGradient>
+        <pattern id="heroSamples" width="10" height="20" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="15" stroke="#9bb6cf" stroke-width="1"/></pattern>
+      </defs>
+      <rect x="0" y="0" width="1000" height="250" fill="url(#heroSky)"/>
+      <rect x="0" y="200" width="1000" height="50" fill="#cdddec"/>
+      <line x1="0" y1="200" x2="1000" y2="200" stroke="#7fa6c4" stroke-width="1.5"/>
+      <text x="986" y="220" text-anchor="end" font-family="ui-monospace,monospace" font-size="9" fill="#5d83a0" letter-spacing="0.07em">OPEN WATER · SURFACE UNDER TEST</text>
+      <circle cx="92" cy="30" r="2.4" fill="#8a8478"/>
+      <line x1="92" y1="33" x2="156" y2="64" stroke="#bdb7aa" stroke-width="0.8" stroke-dasharray="3 3"/>
+      <text x="100" y="27" font-family="ui-monospace,monospace" font-size="8.5" fill="#8a8478" letter-spacing="0.06em">POLARIS</text>
+      <polygon points="0,200 0,150 55,156 95,108 205,108 250,156 295,200" fill="#c3bcac" stroke="#969692" stroke-width="0.8"/>
+      <g transform="translate(155,108)">
+        <line x1="-9" y1="0" x2="0" y2="-30" stroke="#3c3c38" stroke-width="1.4"/>
+        <line x1="0" y1="0" x2="0" y2="-30" stroke="#3c3c38" stroke-width="1.4"/>
+        <line x1="9" y1="0" x2="0" y2="-30" stroke="#3c3c38" stroke-width="1.4"/>
+        <rect x="-13" y="-36" width="26" height="6" fill="#dcdad0" stroke="#3c3c38" stroke-width="0.8"/>
+        <rect x="-7" y="-44" width="30" height="6" fill="#646460" stroke="#3c3c38" stroke-width="0.8"/>
+      </g>
+      <g stroke="#3c3c38" stroke-width="1.3" fill="none">
+        <g transform="translate(112,82)"><circle cx="0" cy="0" r="5"/><line x1="0" y1="5" x2="0" y2="21"/><line x1="0" y1="10" x2="-9" y2="6"/><line x1="0" y1="10" x2="8" y2="13"/><line x1="0" y1="21" x2="-6" y2="26"/><line x1="0" y1="21" x2="6" y2="26"/></g>
+        <g transform="translate(132,84)"><circle cx="0" cy="0" r="4.5"/><line x1="0" y1="4.5" x2="0" y2="19"/><line x1="0" y1="9" x2="9" y2="5"/><line x1="0" y1="9" x2="-8" y2="12"/><line x1="0" y1="19" x2="-6" y2="24"/><line x1="0" y1="19" x2="6" y2="24"/></g>
+      </g>
+      <line x1="182" y1="64" x2="928" y2="64" stroke="url(#heroBeam)" stroke-width="9"/>
+      <line x1="182" y1="64" x2="928" y2="64" stroke="#a06e14" stroke-width="1.8" stroke-dasharray="9 4"/>
+      <polygon points="928,64 910,58 910,70" fill="#a06e14"/>
+      <text x="206" y="56" font-family="ui-monospace,monospace" font-size="9.5" fill="#a06e14" letter-spacing="0.07em">LEVEL BEAM · EAST · NEVER AIMED AT A TARGET</text>
+      <rect x="250" y="64" width="600" height="13" fill="url(#heroSamples)"/>
+      <text x="540" y="100" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9" fill="#5d83a0" letter-spacing="0.05em">TENS OF THOUSANDS OF HEIGHT READINGS ALONG THE RUN</text>
+      <line x1="905" y1="67" x2="905" y2="198" stroke="#a03c6e" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <g transform="translate(905,64)"><rect x="-9" y="-3" width="18" height="6" fill="#3c3c38"/><line x1="-13" y1="-7" x2="-6" y2="-7" stroke="#3c3c38" stroke-width="1.4"/><line x1="6" y1="-7" x2="13" y2="-7" stroke="#3c3c38" stroke-width="1.4"/></g>
+      <text x="905" y="54" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9" fill="#3c3c38">DRONE</text>
+      <text x="898" y="150" text-anchor="end" font-family="ui-monospace,monospace" font-size="8.5" fill="#a03c6e">HEIGHT ABOVE WATER</text>
+    </svg>
+    <div class="dist-caption">ONE LEVEL BEAM  ·  ONE DRONE  ·  TENS OF THOUSANDS OF READINGS OVER OPEN WATER</div>
+  </div>
+
   <div class="summary">
     <p>A laser is levelled where it stands, on a height above open water, locked on both axes, and never aimed at anything downrange. A drone flies out along that level beam and logs its height above the water the whole way, tens of thousands of readings strung along the run. That dense profile is the measurement, and it is what lifts the test past the older ways: a leveling shot is two points, the classic three-marker figure is three, and this is a whole curve that no single glitch or staged frame can fake. On flat water the height holds the same the whole way out. On curved water it climbs, by amounts this page works out for every distance, with Polaris, the depression read at the end, and an optional midpoint photograph each checking that climb a different way.</p>
     <p>Refraction is the one thing that can imitate the signal, so the protocol measures it on the night rather than assuming it, firing two colors of light that bend by different amounts to hand back the bend as a number. The predicted figures are written down and signed by both sides before the run, the raw readings are published after, and the surface is left to say what it says. It costs a few hundred dollars and a stretch of open water, so anyone can check it. Flat is a result. Curved is a result. A run that does not resolve is a result. Neither is the goal.</p>
