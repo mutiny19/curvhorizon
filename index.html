@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   Earth Curvature & Horizon Simulator
-  Version 1.10.0  ·  Last revised 2026-06-17
+  Version 1.10.1  ·  Last revised 2026-06-17
   Spherical/WGS84 curvature & visibility model with observer/camera view.
 
   Copyright (c) 2026 mutiny19.
@@ -119,7 +119,7 @@
     <span class="sub">Spherical model &middot; R = 6,371 km</span>
   </div>
   <div style="display:flex;align-items:center;gap:14px">
-    <span class="hide-mobile" style="font-size:10px;color:#556" title="Last revised 2026-06-17">v1.10.0 &middot; 2026-06-17</span>
+    <span class="hide-mobile" style="font-size:10px;color:#556" title="Last revised 2026-06-17">v1.10.1 &middot; 2026-06-17</span>
     <button id="btnGuide">? How to use</button>
     <span class="hide-mobile" style="font-size:11px;color:#556">Scroll to zoom &middot; Drag to pan</span>
   </div>
@@ -373,7 +373,7 @@
         <p><strong style="color:var(--text)">Photo overlay (experimental):</strong> The Observer View can load a real photograph as a background. Because the view maps the horizontal field of view (2·arctan(sensor / 2·focal)) across the full frame, a photo shot at a known focal length and sensor size shares the same angular scale as the overlays. When a JPEG carries EXIF, the focal length and sensor width are read automatically (the sensor is derived from the 35mm-equivalent focal length, or from the focal-plane resolution tags); otherwise you enter them. After you register the photo's horizon against the orange horizon line, the predicted hidden/visible split lands on the real scene at the correct pixel height. The alignment nudges (move, roll, scale) only register the image; a roll control levels a tilted horizon, and fine scale absorbs lens distortion and EXIF rounding. None of these feed back into any calculation, so treat it as a comparison aid rather than a measurement.</p>
         <p><strong style="color:var(--text)">What this does <em>not</em> show:</strong> it predicts the <em>geometry</em> of what curvature hides. It cannot tell you whether a specific photo is genuine clear-air, a mirage, or intervening terrain; those depend on conditions on the day.</p>
         <p style="margin-top:6px"><strong style="color:var(--text)">Credit:</strong> The core curvature formulas follow and match the widely used <a href="https://dizzib.github.io/earth/curve-calc/" target="_blank" rel="noopener" style="color:var(--accent)">dizzib Earth curve calculator</a>; this tool adds scaled visualization, an observer/camera view, refraction bands, and visual range.</p>
-        <p style="margin-top:6px;color:#667">Version 1.10.0 &middot; last revised 2026-06-17</p>
+        <p style="margin-top:6px;color:#667">Version 1.10.1 &middot; last revised 2026-06-17</p>
         <p style="margin-top:8px"><strong style="color:var(--text)">Glossary</strong> <span style="color:#667">(terms link to neutral, scientific definitions)</span></p>
         <dl style="margin:2px 0 4px 0">
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon" target="_blank" rel="noopener" style="color:var(--accent)">Horizon</a></dt>
@@ -781,12 +781,12 @@ function exportPNG(){
   o.fillStyle='#0a0e17';o.fillRect(0,0,off.width,off.height);o.drawImage(src,0,0);
   o.fillStyle='#0c1320';o.fillRect(0,src.height,off.width,footH);
   o.fillStyle='#8aa0b8';o.font=(13*dpr)+"px 'SF Mono',monospace";o.textBaseline='middle';
-  o.fillText('Earth Curvature Simulator v1.10.0  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  mutiny19.github.io/curvhorizon',10*dpr,src.height+footH/2);
+  o.fillText('Earth Curvature Simulator v1.10.1  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  mutiny19.github.io/curvhorizon',10*dpr,src.height+footH/2);
   off.toBlob(function(b){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='curvature-'+S.view+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);});
 }
 function exportCSV(){
   const R=effR(S.k),gR=baseR(),h0=S.h0,hT=S.hT,fin=isFinite(R);
-  const lines=['# Earth Curvature & Horizon Simulator v1.10.0',
+  const lines=['# Earth Curvature & Horizon Simulator v1.10.1',
     '# eye_height_m='+h0+',target_height_m='+hT+',k='+S.k+',earth='+earthLabel(),
     '# permalink='+buildPermalink(),
     'distance_km,horizon_km,drop_below_tangent_m,bulge_m,hidden_m_kSel,visible_m,hidden_m_k0'];
@@ -1795,10 +1795,15 @@ function renderLaser(R,d0,hL,hLaser,hBul){
     }
   }
 
-  // Level mode: mark where the beam crosses the detector's distance, and the gap to the detector
+  // Level mode: mark where the beam crosses the detector's distance, and label the gap to the target
   if(levelMode&&!blocked){
     line(detTop,beamEnd,'#ff9b9b',1.4*lw*V.s,[4*lw*V.s,3*lw*V.s]);
     dot(beamEnd,4.5*lw,'#ff5b5b','#fff');
+    const dv=beamHeightAtDet-hDet;
+    callout(beamEnd,[
+      {text:'BEAM AT TARGET',color:'#ff5b5b'},
+      {text:Math.abs(dv)<0.005?'level with the target':fmtH(Math.abs(dv))+(dv>=0?' above':' below')+' the target',color:'#ff5b5b'},
+    ],52,8,9);
   }
   // Aim mode: show the level reference (where a level beam would pass) and the gap the aim swallowed
   if(aimMode&&!blocked&&levelEnd){
@@ -1963,7 +1968,9 @@ function renderLaserFlat(d0,hT,h0){
   ctx.save();ctx.strokeStyle='#ff3b3b';ctx.globalAlpha=0.25;ctx.lineWidth=Math.max(2.5*lw*V.s,2)*4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();ctx.restore();
   ctx.save();ctx.strokeStyle='#ff3b3b';ctx.lineWidth=Math.max(2.5*lw*V.s,2);ctx.lineCap='round';ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();ctx.restore();
   dot({x:0,y:0},3*lw,'#9fb3c8');dot({x:d0,y:0},3*lw,'#9fb3c8');
-  if(levelMode&&Math.abs(beamEnd.y-hDet)>1e-9){line(detTop,beamEnd,'#ff9b9b',1.4*lw*V.s,[4*lw*V.s,3*lw*V.s]);dot(beamEnd,4*lw,'#ff5b5b','#fff');}
+  if(levelMode){const dv=beamEnd.y-hDet;
+    if(Math.abs(dv)>1e-9){line(detTop,beamEnd,'#ff9b9b',1.4*lw*V.s,[4*lw*V.s,3*lw*V.s]);dot(beamEnd,4*lw,'#ff5b5b','#fff');}
+    callout(beamEnd,[{text:'BEAM AT TARGET',color:'#ff5b5b'},{text:Math.abs(dv)<0.005?'level with the target':fmtH(Math.abs(dv))+(dv>=0?' above':' below')+' the target',color:'#ff5b5b'}],52,8,9);}
   if(aimMode){
     const aimT=Math.atan2(hDet-hEm,d0)*180/Math.PI;
     const lvlEnd={x:d0,y:hEm};                                   // a level beam holds its height over flat ground
