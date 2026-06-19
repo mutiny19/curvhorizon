@@ -127,6 +127,13 @@
     border-radius: 3px; padding: 1px 6px; z-index: 5;
   }
 
+  .opt-table { width: 100%; border-collapse: collapse; font-family: ui-monospace, monospace; font-size: 12px; color: var(--ink-l); margin: 8px 0 2px; }
+  .opt-table th { text-align: left; color: var(--gold); font-weight: 600; font-size: 10px; letter-spacing: 0.06em; border-bottom: 1px solid var(--rule); padding: 5px 12px 5px 0; }
+  .opt-table td { border-bottom: 1px solid var(--rule-2); padding: 7px 12px 7px 0; vertical-align: top; line-height: 1.5; }
+  .opt-table td:first-child { color: var(--ink); font-weight: 600; }
+  .opt-table .cost { color: var(--gold); white-space: nowrap; }
+  .opt-what { font-size: 12px; color: var(--ink-ll); margin: 2px 0 0; }
+
   .detail {
     overflow: hidden;
     max-height: 0;
@@ -575,6 +582,75 @@
 
       <div class="subhead">PRICE SOURCES</div>
       <p>Laser prices were checked against the Zeus Lasers and Wicked Lasers consumer catalogs (June 2026). Drone parts were priced from common F450 kit suppliers. Sensor, mount, and weather-module prices came from AliExpress, eBay surveying listings, and Banggood industrial pages. The range runs from the cheapest gear that still does the job to mid-tier prosumer. Spending past that buys precision and reliability. It does not buy a different answer.</p>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span>COMPONENT OPTIONS</span>
+    <button class="expand-trigger" onclick="toggleDetail('components')">EXPAND ▾</button>
+  </div>
+  <div class="detail" id="components">
+    <div class="detail-inner">
+      <p>The parts list above is one reference build. None of it is sacred: the run needs each <em>spec</em> met, not each part bought new. What follows is a menu for every component, from "you may already own it" through "readily obtainable" to "best in class." Pick the row your budget and your shelf allow — a run that meets the spec on borrowed gear is worth exactly as much as one bought to order. Where a cheaper choice costs you something — reach, precision, a night of fiddling — the notes say so.</p>
+
+      <div class="subhead">THE LASER (AND A BEAM EXPANDER)</div>
+      <p class="opt-what">What matters: a true 532 nm green beam, enough power for your distance, and low divergence. The expander is the cheap lever — a bare pointer throws a metre-wide spot per kilometre, and an expander cuts that roughly tenfold.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>Green laser pointer, 5&ndash;50 mW</td><td class="cost">$15&ndash;40</td><td>You may already own one. Amazon / AliExpress. Confirm it is a true 532 nm DPSS, not a 520 nm diode. About 1&ndash;1.5 mrad bare, so short-run only, and only with an expander.</td></tr>
+        <tr><td>DPSS module, 50&ndash;200 mW, TEM00</td><td class="cost">$60&ndash;250</td><td>AliExpress, or lab suppliers (CNI, Lasever). Cleaner, lower-divergence beam; 200 mW carries a long or daytime run. The workhorse.</td></tr>
+        <tr><td>Lab-grade collimated 532, M&sup2; &lt; 1.2</td><td class="cost">$300&ndash;900</td><td>CNI MGL-III, Thorlabs. Best beam quality, for the long or expedition run; overkill at 3&ndash;5 miles.</td></tr>
+        <tr><td>10&ndash;20&times; Galilean beam expander</td><td class="cost">$30&ndash;90</td><td>AliExpress / Thorlabs. Roughly 10&times; lower divergence &mdash; effectively mandatory on any drone run, whichever laser you pick.</td></tr>
+        <tr><td>532 nm goggles, OD 4+</td><td class="cost">$20&ndash;50</td><td>One per person on the crew. Not optional above a few mW.</td></tr>
+      </table>
+
+      <div class="subhead">THE BEAM MOUNT (LEVEL IT, LOCK IT, READ THE END TILT)</div>
+      <p class="opt-what">What matters: hold the beam dead still on both axes through the run, and read the end-of-run tilt down to the drone to about 0.01&deg;.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>Surveyor tripod + leveling head + clamp + stick-on digital inclinometer</td><td class="cost">$50&ndash;180</td><td>You may already own a sturdy tripod. Level by bubble, lock by clamp, read the end tilt off a $25&ndash;65 inclinometer on the barrel. The cheap path.</td></tr>
+        <tr><td>Used geared photo head</td><td class="cost">$40&ndash;150</td><td>Likely on your shelf or in a camera-store used bin. Fine micrometer adjust; still add an inclinometer for the tilt reading.</td></tr>
+        <tr><td>Motorised pan/tilt with tilt encoder</td><td class="cost">$80&ndash;250</td><td>AliExpress / robotics. Repeatable, and logs the end tilt automatically; nicest for repeated runs.</td></tr>
+      </table>
+
+      <div class="subhead">THE DRONE (IT FOLLOWS THE BEAM, NOTHING ELSE)</div>
+      <p class="opt-what">What matters: it holds station and altitude, carries the beam sensor and the downward lidar, and reaches your run length on a charge. The firmware should be open so the flight loop can be read.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>A quad you already own (flashable flight controller)</td><td class="cost">$0</td><td>The biggest saving by far. If it runs ArduPilot, PX4, or Betaflight you can feed it the beam-sensor error and skip a purchase.</td></tr>
+        <tr><td>F450-class DIY kit</td><td class="cost">$150&ndash;300</td><td>The reference build &mdash; open firmware, roomy frame, easy to bolt sensors onto.</td></tr>
+        <tr><td>Capable long-range platform</td><td class="cost">$400&ndash;900</td><td>Bigger, efficient airframe for the long run; pairs with staged batteries and a chase boat.</td></tr>
+      </table>
+
+      <div class="subhead">THE BEAM SENSOR + RETROREFLECTOR (ON THE DRONE)</div>
+      <p class="opt-what">What matters: find the beam&rsquo;s centre on the drone to steer the flight controller, and bounce part of the beam back to the origin for the depression and reciprocal checks.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>DIY quadrant photodiode (4 photodiodes + op-amp)</td><td class="cost">$20&ndash;60</td><td>The reference. Four cells around an aperture; the difference between pairs is the steering error.</td></tr>
+        <tr><td>Camera + centroid on a small board (Pi / ESP32-CAM)</td><td class="cost">$15&ndash;50</td><td>You may already own the camera. Software finds the spot&rsquo;s centroid &mdash; handles a wide or lopsided spot gracefully, at the cost of a little code.</td></tr>
+        <tr><td>Commercial position-sensing detector (PSD)</td><td class="cost">$80&ndash;300</td><td>Thorlabs / Hamamatsu. Cleanest analogue centring signal; the precision option.</td></tr>
+        <tr><td>Corner-cube retroreflector</td><td class="cost">$10&ndash;40</td><td>AliExpress / Edmund Optics. Returns the beam for the end depression reading and the reciprocal check.</td></tr>
+      </table>
+
+      <div class="subhead">THE DOWNWARD ALTIMETER (HEIGHT ABOVE WATER &mdash; MEASUREMENT 2)</div>
+      <p class="opt-what">What matters: real reach, because the drone rides tens to hundreds of metres up, and a clean return off dark, low-reflectivity water.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>100 m-class single-point lidar (Benewake TF03, LightWare)</td><td class="cost">$60&ndash;350</td><td>The reference. Pick one rated for dark targets; calm water returns little straight down.</td></tr>
+        <tr><td>Radar altimeter (Ainstein US-D1)</td><td class="cost">$150&ndash;400</td><td>Works over water and at altitude, robust to haze; coarser resolution than lidar.</td></tr>
+        <tr><td>Hobby optical-flow lidar (1&ndash;2 m range)</td><td class="cost">&mdash;</td><td>Listed only to rule out: far too short-range for this job. Do not buy it for the altitude reading.</td></tr>
+      </table>
+
+      <div class="subhead">DISTANCE / ODOMETRY (THE RUN&rsquo;S X-AXIS)</div>
+      <p class="opt-what">What matters: distance enters as the square, so it has to be pinned &mdash; but the clock, a steady speed, and one short gate carry it without a satellite (see the altitude section).</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>Flight clock + held speed + one short surveyed speed-gate</td><td class="cost">~$0</td><td>The dispute-proof route: only one short baseline to tape-measure near shore, and the clock does the rest.</td></tr>
+        <tr><td>Optical-flow odometer (PMW3901 board)</td><td class="cost">$15&ndash;40</td><td>Counts surface texture sliding past; works over textured water, fails on glass.</td></tr>
+        <tr><td>Anchored marker buoys at measured ranges</td><td class="cost">$20&ndash;80</td><td>Hardware-store floats; carry the distance directly on glassy water. Range them by tape, rangefinder, or pre-survey &mdash; never GNSS.</td></tr>
+      </table>
+
+      <p style="margin-top:20px;font-size:12px;color:var(--ink-lll);font-style:italic">Still to add: the clinometer and Polaris kit, the weather sensors, the datalogger, telemetry, the two-colour refraction kit, the midpoint marker, the camera, and the optional inertial gyro.</p>
     </div>
   </div>
 
@@ -1461,7 +1537,7 @@
   </div>
   <div class="detail" id="fieldrecord">
     <div class="detail-inner">
-      <p>One run, one sheet. Print this page and fill it in on the night, because a result that cannot be compared against another run is a story, not a measurement. Every blank gets a value or the word none. The repeats section in About explains why: the only test a result has to pass is whether it survives being run again, and these sheets are what get compared.</p>
+      <p>One run, one sheet. Print this page and fill it in on the night, because a result that cannot be compared against another run is a story, not a measurement. Every blank gets a value or the word none. The repeats section in About explains why: the only test a result has to pass is whether it survives being run again, and these sheets are what get compared. The sheet also records the gear you used and where you posted the firmware and the raw logs, so the next person can rebuild the rig and re-fit your numbers rather than take them on faith.</p>
       <table style="width:100%;border-collapse:collapse;font-family:ui-monospace,monospace;font-size:12px;color:var(--ink-l)">
         <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px;width:46%">Date / site / observers</td><td style="padding:6px 4px">_______________________________</td></tr>
         <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Run distance / heading</td><td style="padding:6px 4px">______________ mi&nbsp;&nbsp;/&nbsp;&nbsp;______________</td></tr>
@@ -1479,7 +1555,20 @@
         <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Drone T / RH / P at far end (and two-height gradient if taken)</td><td style="padding:6px 4px">_______________________________</td></tr>
         <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Midpoint marker height: set / rechecked at end</td><td style="padding:6px 4px">__________&nbsp;&nbsp;/&nbsp;&nbsp;__________</td></tr>
         <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Photo series: frame numbers and times</td><td style="padding:6px 4px">_______________________________</td></tr>
-        <tr><td style="padding:6px 4px">Sky / water / wind conditions</td><td style="padding:6px 4px">_______________________________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Sky / water / wind conditions</td><td style="padding:6px 4px">_______________________________</td></tr>
+
+        <tr><td colspan="2" style="padding:14px 4px 4px;color:var(--gold);font-size:10.5px;letter-spacing:0.06em;font-weight:600;border-bottom:1px solid var(--rule)">EQUIPMENT USED &mdash; SO THE RUN CAN BE REBUILT</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px;width:46%">Laser: make / power / beam expander</td><td style="padding:6px 4px">_______________________________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Beam mount + tilt readout: type</td><td style="padding:6px 4px">_______________________________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Drone + flight-controller firmware: type</td><td style="padding:6px 4px">_______________________________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Beam sensor + retroreflector: type</td><td style="padding:6px 4px">_______________________________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Downward altimeter: make / range</td><td style="padding:6px 4px">_______________________________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Other gear / substitutions from the reference build</td><td style="padding:6px 4px">_______________________________</td></tr>
+
+        <tr><td colspan="2" style="padding:14px 4px 4px;color:var(--gold);font-size:10.5px;letter-spacing:0.06em;font-weight:600;border-bottom:1px solid var(--rule)">SOFTWARE &amp; DATA SHARED &mdash; SO EITHER SIDE CAN CHECK</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Flight-controller firmware &mdash; open and published at</td><td style="padding:6px 4px">_______________________________</td></tr>
+        <tr style="border-bottom:1px solid var(--rule-2)"><td style="padding:6px 4px">Raw logs (lidar / odometer / centering / weather) published at</td><td style="padding:6px 4px">_______________________________</td></tr>
+        <tr><td style="padding:6px 4px">Fit / analysis code published at</td><td style="padding:6px 4px">_______________________________</td></tr>
       </table>
     </div>
   </div>
