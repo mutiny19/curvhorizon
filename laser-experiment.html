@@ -112,6 +112,21 @@
   }
   .expand-trigger:hover { color: var(--gold); border-color: var(--gold); }
 
+  .sec-link {
+    font-family: ui-monospace, monospace; font-weight: 700; font-size: 0.8em;
+    color: var(--gold); opacity: 0.3; text-decoration: none;
+    margin-right: 9px; letter-spacing: 0; cursor: pointer;
+    transition: opacity 0.15s ease; position: relative;
+  }
+  .sec-link:hover, .sec-link:focus { opacity: 1; outline: none; }
+  .section-header:hover .sec-link, .results h2:hover .sec-link { opacity: 0.6; }
+  .sec-link.copied::after {
+    content: 'link copied'; position: absolute; left: 0; top: -22px;
+    white-space: nowrap; font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--gold); background: var(--bg); border: 1px solid var(--gold);
+    border-radius: 3px; padding: 1px 6px; z-index: 5;
+  }
+
   .detail {
     overflow: hidden;
     max-height: 0;
@@ -1524,6 +1539,53 @@
 
     btn.textContent = anyClosed ? 'COLLAPSE ALL' : 'EXPAND ALL';
   }
+
+  // ---- shareable section handles: deep links that auto-open and scroll to a section ----
+  (function(){
+    function openSection(id, scroll){
+      if(!id) return false;
+      const detail=document.getElementById(id);
+      const trigger=document.querySelector(`[onclick="toggleDetail('${id}')"]`);
+      if(detail && detail.classList.contains('detail') && !detail.classList.contains('open') && trigger){
+        trigger.click();                          // opens it (and fires any per-section hook, e.g. the sim redraw)
+      }
+      if(scroll){
+        const header = trigger ? (trigger.closest('.section-header, h2') || trigger.parentElement)
+                               : (detail || document.getElementById(id));
+        if(header) header.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+      return !!(detail || trigger || document.getElementById(id));
+    }
+    // give headers with no collapsible body (e.g. References) a stable id to link to
+    document.querySelectorAll('.section-header').forEach(function(h){
+      if(!h.querySelector('.expand-trigger') && !h.id){
+        var sp=h.querySelector('span'); var t=(sp?sp.textContent:'').toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+        if(t) h.id=t;
+      }
+    });
+    // inject a copyable "#" handle into every section title
+    document.querySelectorAll('.section-header, .results h2').forEach(function(h){
+      var trig=h.querySelector('.expand-trigger'), id=null;
+      if(trig){ var m=/toggleDetail\('([^']+)'\)/.exec(trig.getAttribute('onclick')||''); if(m) id=m[1]; }
+      if(!id) id=h.id;
+      var span=h.querySelector('span');
+      if(!id || !span) return;
+      var a=document.createElement('a');
+      a.className='sec-link'; a.href='#'+id; a.textContent='#';
+      a.setAttribute('aria-label','Copy a shareable link to this section');
+      a.addEventListener('click',function(e){
+        e.preventDefault();
+        var url=location.origin+location.pathname+'#'+id;
+        try{ if(navigator.clipboard) navigator.clipboard.writeText(url); }catch(_){}
+        history.replaceState(null,'','#'+id);
+        openSection(id,true);
+        a.classList.add('copied'); setTimeout(function(){ a.classList.remove('copied'); },1200);
+      });
+      span.insertBefore(a, span.firstChild);
+    });
+    window.addEventListener('hashchange',function(){ openSection(decodeURIComponent(location.hash.slice(1)), true); });
+    if(location.hash){ var hid=decodeURIComponent(location.hash.slice(1)); setTimeout(function(){ openSection(hid,true); },80); }
+  })();
 
   // ===================== EMBEDDED RUN SIMULATION =====================
   (function(){
