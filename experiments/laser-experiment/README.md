@@ -1,5 +1,7 @@
 # Laser Beam Follow Experiment
 
+![Animated schematic: a laser levelled on a bluff fires a level beam east over open water while a drone flies out along it logging its height above the water; both predictions are drawn — flat (the height holds) and curved (the water falls away, ≈ 8 in × mi²) — and the readings land on one. Illustration, not to scale.](laser-experiment.gif)
+
 > Level a laser over open water, never aim it at a target, and measure whether the
 > water holds a constant height under the beam (flat) or falls away from it
 > (curved) — with refraction measured on the night, not assumed.
