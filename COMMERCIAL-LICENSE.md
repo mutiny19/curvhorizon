@@ -38,7 +38,7 @@ in the future. Purchasing a commercial license does not affect the AGPL release.
 To request a commercial license or discuss terms, open an issue or use the
 contact options on the project's GitHub:
 
-- **https://github.com/mutiny19/curvhorizon**
+- **https://github.com/ReplicationBench/RB**
 
 ## Sponsorship
 

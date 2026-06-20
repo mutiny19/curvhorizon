@@ -4,11 +4,11 @@
   Version 1.8.0  ·  Last revised 2026-06-06
   Spherical/WGS84 curvature & visibility model with observer/camera view.
 
-  Copyright (c) 2026 mutiny19.
+  Copyright (c) 2026 ReplicationBench.
   SPDX-License-Identifier: AGPL-3.0-or-later
   Dual-licensed: AGPL-3.0 (see LICENSE) OR a commercial license
   (see COMMERCIAL-LICENSE.md). Commercial inquiries via the project's
-  GitHub: https://github.com/mutiny19/curvhorizon
+  GitHub: https://github.com/ReplicationBench/RB
 -->
 <html lang="en">
 <head>
@@ -22,7 +22,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Earth Curvature &amp; Horizon Simulator">
 <meta property="og:description" content="See the horizon and curvature at true 1:1 scale: hidden height, horizon distance and dip, atmospheric refraction, and famous long-distance observations.">
-<meta property="og:url" content="https://mutiny19.github.io/curvhorizon/">
+<meta property="og:url" content="https://replicationbench.github.io/RB/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Earth Curvature &amp; Horizon Simulator">
 <meta name="twitter:description" content="See the horizon and curvature at true 1:1 scale: hidden height, horizon distance and dip, atmospheric refraction, and famous long-distance observations.">
@@ -767,7 +767,7 @@ function exportPNG(){
   o.fillStyle='#0a0e17';o.fillRect(0,0,off.width,off.height);o.drawImage(src,0,0);
   o.fillStyle='#0c1320';o.fillRect(0,src.height,off.width,footH);
   o.fillStyle='#8aa0b8';o.font=(13*dpr)+"px 'SF Mono',monospace";o.textBaseline='middle';
-  o.fillText('Earth Curvature Simulator v1.8.0  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  mutiny19.github.io/curvhorizon',10*dpr,src.height+footH/2);
+  o.fillText('Earth Curvature Simulator v1.8.0  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  replicationbench.github.io/RB',10*dpr,src.height+footH/2);
   off.toBlob(function(b){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='curvature-'+S.view+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);});
 }
 function exportCSV(){

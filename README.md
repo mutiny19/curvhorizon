@@ -76,7 +76,7 @@ view models: a drone follows a horizontal laser beam while three independent
 instruments (Polaris angle, drone altitude above ground, and laser tilt)
 cross-check what the surface did beneath the beam.
 
-- **Interactive page:** [`laser-experiment.html`](laser-experiment.html) ([live](https://mutiny19.github.io/curvhorizon/laser-experiment.html)) — equipment, setup diagram, procedure, and how to handle refraction, with expandable detail on each section.
+- **Interactive page:** [`laser-experiment.html`](laser-experiment.html) ([live](https://replicationbench.github.io/RB/laser-experiment.html)) — equipment, setup diagram, procedure, and how to handle refraction, with expandable detail on each section.
 - **Poster version:**
 
 ![Laser Beam Follow Experiment field protocol](docs/laser-follow-experiment.png)
@@ -92,7 +92,7 @@ This project is **dual-licensed**:
   products, proprietary SaaS, resale, etc.), a separate commercial license is
   available. See [`COMMERCIAL-LICENSE.md`](COMMERCIAL-LICENSE.md).
 
-Copyright (c) 2026 mutiny19.
+Copyright (c) 2026 ReplicationBench.
 
 ## Acknowledgements
 
