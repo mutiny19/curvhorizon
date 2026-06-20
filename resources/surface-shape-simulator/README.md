@@ -1,4 +1,4 @@
-# Earth Curvature & Horizon Simulator
+# Surface Shape Simulator
 
 > A **member-generated resource**, not an experiment: a to-scale, interactive
 > model of curvature, horizon dip, hidden height, and atmospheric refraction.
@@ -6,7 +6,7 @@
 > anything, and it asserts nothing about the world. Only a measured run does that.
 
 ▶ **[Open the simulator](simulator.html)**
-&nbsp;·&nbsp; [live](https://replicationbench.github.io/RB/resources/earth-curvature-simulator/simulator.html)
+&nbsp;·&nbsp; [live](https://replicationbench.github.io/RB/resources/surface-shape-simulator/simulator.html)
 
 Supports the experiment it was built alongside:
 **[Water-Surface Shape by Laser](../../experiments/water-surface-shape-laser/)**.

@@ -119,7 +119,7 @@ and asserts nothing about the world; only a measured run does.** Each lives unde
 <!-- RESOURCES:START -->
 | Resource | What it is | Supports | Contributor |
 |---|---|---|---|
-| [Earth Curvature & Horizon Simulator](./resources/earth-curvature-simulator/) | To-scale interactive model of curvature, horizon dip, hidden height, and atmospheric refraction. A teaching and visualization tool, not a measurement. | [water-surface-shape-laser](./experiments/water-surface-shape-laser/) | ReplicationBench |
+| [Surface Shape Simulator](./resources/surface-shape-simulator/) | To-scale interactive model of curvature, horizon dip, hidden height, and atmospheric refraction. A teaching and visualization tool, not a measurement. | [water-surface-shape-laser](./experiments/water-surface-shape-laser/) | ReplicationBench |
 <!-- RESOURCES:END -->
 
 ---

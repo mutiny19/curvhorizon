@@ -4,7 +4,7 @@ Plots, photos, and the narrative read of each run live here. Raw runs live under
 [`../data/`](../data/), one subfolder per run named `YYYY-MM-DD_contributor/`.
 
 The interactive field protocol ([`../laser-experiment.html`](../laser-experiment.html))
-and the curvature simulator ([`../../../resources/earth-curvature-simulator/simulator.html`](../../../resources/earth-curvature-simulator/simulator.html)) are the
+and the curvature simulator ([`../../../resources/surface-shape-simulator/simulator.html`](../../../resources/surface-shape-simulator/simulator.html)) are the
 build-and-read references; this log is where measured runs are recorded.
 
 `status` in `metadata.yml` is **untested** until at least one clean run is logged

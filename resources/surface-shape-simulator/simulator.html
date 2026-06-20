@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  Earth Curvature & Horizon Simulator
+  Surface Shape Simulator
   Version 1.10.1  ·  Last revised 2026-06-17
   Spherical/WGS84 curvature & visibility model with observer/camera view.
 
@@ -14,17 +14,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Earth Curvature &amp; Horizon Simulator</title>
+<title>Surface Shape Simulator</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0e17'/%3E%3Ccircle cx='16' cy='23' r='15' fill='%230d1f12' stroke='%231a3d2a'/%3E%3Cpath d='M1 23 a15 15 0 0 1 30 0' fill='none' stroke='%2355efc4' stroke-width='2'/%3E%3Cline x1='6' y1='12' x2='23' y2='12' stroke='%23ffa502' stroke-width='2'/%3E%3Ccircle cx='23' cy='12' r='2' fill='%2300f2fe'/%3E%3C/svg%3E">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0b1220">
 <meta name="description" content="An accurate, to-scale simulator of the horizon and how distant targets are hidden by Earth's curvature. Side and observer views, selectable atmospheric refraction, hidden-height and horizon-dip math, and famous long-distance observations.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Earth Curvature &amp; Horizon Simulator">
+<meta property="og:title" content="Surface Shape Simulator">
 <meta property="og:description" content="See the horizon and curvature at true 1:1 scale: hidden height, horizon distance and dip, atmospheric refraction, and famous long-distance observations.">
-<meta property="og:url" content="https://replicationbench.github.io/RB/resources/earth-curvature-simulator/simulator.html">
+<meta property="og:url" content="https://replicationbench.github.io/RB/resources/surface-shape-simulator/simulator.html">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Earth Curvature &amp; Horizon Simulator">
+<meta name="twitter:title" content="Surface Shape Simulator">
 <meta name="twitter:description" content="See the horizon and curvature at true 1:1 scale: hidden height, horizon distance and dip, atmospheric refraction, and famous long-distance observations.">
 <style>
   :root {
@@ -115,7 +115,7 @@
 <body>
 <header>
   <div style="display:flex;align-items:baseline">
-    <h1>Earth Curvature &amp; Horizon Simulator</h1>
+    <h1>Surface Shape Simulator</h1>
     <span class="sub">Spherical model &middot; R = 6,371 km</span>
   </div>
   <div style="display:flex;align-items:center;gap:14px">
@@ -781,12 +781,12 @@ function exportPNG(){
   o.fillStyle='#0a0e17';o.fillRect(0,0,off.width,off.height);o.drawImage(src,0,0);
   o.fillStyle='#0c1320';o.fillRect(0,src.height,off.width,footH);
   o.fillStyle='#8aa0b8';o.font=(13*dpr)+"px 'SF Mono',monospace";o.textBaseline='middle';
-  o.fillText('Earth Curvature Simulator v1.10.1  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  replicationbench.github.io/RB',10*dpr,src.height+footH/2);
+  o.fillText('Surface Shape Simulator v1.10.1  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  replicationbench.github.io/RB',10*dpr,src.height+footH/2);
   off.toBlob(function(b){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='curvature-'+S.view+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);});
 }
 function exportCSV(){
   const R=effR(S.k),gR=baseR(),h0=S.h0,hT=S.hT,fin=isFinite(R);
-  const lines=['# Earth Curvature & Horizon Simulator v1.10.1',
+  const lines=['# Surface Shape Simulator v1.10.1',
     '# eye_height_m='+h0+',target_height_m='+hT+',k='+S.k+',earth='+earthLabel(),
     '# permalink='+buildPermalink(),
     'distance_km,horizon_km,drop_below_tangent_m,bulge_m,hidden_m_kSel,visible_m,hidden_m_k0'];
