@@ -32,12 +32,12 @@
     --green: #1e8c50;
     --red-d: #a03228;
     --pink: #a03c6e;
-    --teal: #197872;
-    --coral: #af4132;
-    --purple: #5f469b;
-    --teal-f: #ebf8f5;
-    --coral-f: #fceeeb;
-    --purple-f: #f2eefc;
+    --opt-a: #2f6690;
+    --opt-b: #6a5b96;
+    --warn: #b07d16;
+    --opt-a-f: #eaf1f7;
+    --opt-b-f: #efedf6;
+    --warn-f: #fbf3e2;
     --gold-f: #fcf6e4;
     --cold-f: #e8f2fc;
     --green-f: #e8f8ee;
@@ -267,12 +267,12 @@
   .meas .cell .l1 { font-size: 13px; color: var(--ink-l); }
   .meas .cell .l2 { font-size: 11px; color: var(--ink-ll); margin-top: 4px; }
 
-  .meas .cell.teal   { border-color: var(--teal);   background: var(--teal-f);   }
-  .meas .cell.teal   .eq { color: var(--teal);   }
-  .meas .cell.coral  { border-color: var(--coral);  background: var(--coral-f);  }
-  .meas .cell.coral  .eq { color: var(--coral);  }
-  .meas .cell.purple { border-color: var(--purple); background: var(--purple-f); }
-  .meas .cell.purple .eq { color: var(--purple); }
+  .meas .cell.opt-a   { border-color: var(--opt-a);   background: var(--opt-a-f);   }
+  .meas .cell.opt-a   .eq { color: var(--opt-a);   }
+  .meas .cell.opt-b  { border-color: var(--opt-b);  background: var(--opt-b-f);  }
+  .meas .cell.opt-b  .eq { color: var(--opt-b);  }
+  .meas .cell.warn { border-color: var(--warn); background: var(--warn-f); }
+  .meas .cell.warn .eq { color: var(--warn); }
 
   .closing-notes {
     border-top: 1px solid var(--rule); margin-top: 32px;
@@ -1191,21 +1191,21 @@
     <div class="meas">
       <div class="label">MEASUREMENT 1  —  POLARIS ANGLE  (a heading control)</div>
       <div class="row">
-        <div class="cell teal">
+        <div class="cell opt-a">
           <div class="letter">A</div>
           <div class="eq">BETA = ALPHA</div>
           <hr>
           <div class="l1">Polaris unchanged.</div>
           <div class="l2">Run held its line. As expected.</div>
         </div>
-        <div class="cell coral">
+        <div class="cell opt-b">
           <div class="letter">B</div>
           <div class="eq">BETA &lt; ALPHA</div>
           <hr>
           <div class="l1">Polaris lower.</div>
           <div class="l2">Drone drifted south. Heading slip, or curvature at long range.</div>
         </div>
-        <div class="cell purple">
+        <div class="cell warn">
           <div class="letter">C</div>
           <div class="eq">BETA &gt; ALPHA</div>
           <hr>
@@ -1218,21 +1218,21 @@
     <div class="meas">
       <div class="label">MEASUREMENT 2  —  DRONE ALTITUDE ABOVE WATER  (logged continuously)</div>
       <div class="row">
-        <div class="cell teal">
+        <div class="cell opt-a">
           <div class="letter">A</div>
           <div class="eq">ALTITUDE FLAT</div>
           <hr>
           <div class="l1">Drone stayed level.</div>
           <div class="l2">Flat reading, or a duct hiding a curve. Check the gradient.</div>
         </div>
-        <div class="cell coral">
+        <div class="cell opt-b">
           <div class="letter">B</div>
           <div class="eq">ALTITUDE RISES</div>
           <hr>
           <div class="l1">Drone climbed steadily.</div>
           <div class="l2">Curved reading, or a mirage bending the beam up. Check the gradient.</div>
         </div>
-        <div class="cell purple">
+        <div class="cell warn">
           <div class="letter">C</div>
           <div class="eq">ALTITUDE FALLS</div>
           <hr>
@@ -1245,21 +1245,21 @@
     <div class="meas">
       <div class="label">MEASUREMENT 3  —  END DEPRESSION ANGLE  (one reading, down to the drone at the far water)</div>
       <div class="row">
-        <div class="cell teal">
+        <div class="cell opt-a">
           <div class="letter">A</div>
           <div class="eq">MATCHES FLAT</div>
           <hr>
           <div class="l1">Height over distance only.</div>
           <div class="l2">Flat reading across the run.</div>
         </div>
-        <div class="cell coral">
+        <div class="cell opt-b">
           <div class="letter">B</div>
           <div class="eq">STEEPER THAN FLAT</div>
           <hr>
           <div class="l1">Extra depression beyond it.</div>
           <div class="l2">Far water sits below the level line. Curved reading.</div>
         </div>
-        <div class="cell purple">
+        <div class="cell warn">
           <div class="letter">C</div>
           <div class="eq">SHALLOWER THAN FLAT</div>
           <hr>
@@ -1272,21 +1272,21 @@
     <div class="meas">
       <div class="label">MEASUREMENT 4  —  MIDPOINT AGAINST THE CHORD  (optional, one framed image)</div>
       <div class="row">
-        <div class="cell teal">
+        <div class="cell opt-a">
           <div class="letter">A</div>
           <div class="eq">ON THE CHORD</div>
           <hr>
           <div class="l1">Midpoint on the line.</div>
           <div class="l2">Flat reading across the run.</div>
         </div>
-        <div class="cell coral">
+        <div class="cell opt-b">
           <div class="letter">B</div>
           <div class="eq">ABOVE THE CHORD</div>
           <hr>
           <div class="l1">Midpoint rides high.</div>
           <div class="l2">Curved reading.</div>
         </div>
-        <div class="cell purple">
+        <div class="cell warn">
           <div class="letter">C</div>
           <div class="eq">BELOW THE CHORD</div>
           <hr>
