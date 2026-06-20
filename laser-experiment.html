@@ -138,6 +138,8 @@
   .spec-table th:first-child { text-align: left; }
   .spec-table td { text-align: right; border-bottom: 1px solid var(--rule-2); padding: 6px 9px 6px 0; white-space: nowrap; }
   .spec-table td:first-child { text-align: left; color: var(--ink); font-weight: 600; white-space: normal; }
+  .opt-table a, .spec-table a { color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .opt-table a:hover, .spec-table a:hover { border-bottom-color: var(--gold); }
 
   .detail {
     overflow: hidden;
@@ -602,11 +604,11 @@
       <p class="opt-what">What matters: a true 532 nm green beam, enough power for your distance, and low divergence. The expander is the cheap lever — a bare pointer throws a metre-wide spot per kilometre, and an expander cuts that roughly tenfold.</p>
       <table class="opt-table">
         <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
-        <tr><td>Green laser pointer, 5&ndash;50 mW</td><td class="cost">$15&ndash;40</td><td>You may already own one. Amazon / AliExpress. Confirm it is a true 532 nm DPSS, not a 520 nm diode. About 1&ndash;1.5 mrad bare, so short-run only, and only with an expander.</td></tr>
-        <tr><td>DPSS module, 50&ndash;200 mW, TEM00</td><td class="cost">$60&ndash;250</td><td>AliExpress, or lab suppliers (CNI, Lasever). Cleaner, lower-divergence beam; 200 mW carries a long or daytime run. The workhorse.</td></tr>
-        <tr><td>Lab-grade collimated 532, M&sup2; &lt; 1.2</td><td class="cost">$300&ndash;900</td><td>CNI MGL-III, Thorlabs. Best beam quality, for the long or expedition run; overkill at 3&ndash;5 miles.</td></tr>
-        <tr><td>10&ndash;20&times; Galilean beam expander</td><td class="cost">$30&ndash;90</td><td>AliExpress / Thorlabs. Roughly 10&times; lower divergence &mdash; effectively mandatory on any drone run, whichever laser you pick.</td></tr>
-        <tr><td>532 nm goggles, OD 4+</td><td class="cost">$20&ndash;50</td><td>One per person on the crew. Not optional above a few mW.</td></tr>
+        <tr><td>Green laser pointer, 5&ndash;50 mW</td><td class="cost">$15&ndash;40</td><td>You may already own one (<a href="https://www.aliexpress.com/w/wholesale-532nm-laser-pointer.html" target="_blank" rel="noopener">AliExpress</a> / Amazon). Confirm it is a true 532 nm DPSS, not a 520 nm diode. About 1&ndash;1.5 mrad bare, so short-run only, and only with an expander.</td></tr>
+        <tr><td>DPSS module, 50&ndash;200 mW, TEM00</td><td class="cost">$60&ndash;250</td><td>Lab suppliers such as <a href="http://www.cnilaser.com/MGL-III-532.htm" target="_blank" rel="noopener">CNI (MGL-III-532)</a> or Lasever. Cleaner, lower-divergence beam; 200 mW carries a long or daytime run. The workhorse.</td></tr>
+        <tr><td>Lab-grade collimated 532, M&sup2; &lt; 1.2</td><td class="cost">$300&ndash;900</td><td><a href="http://www.cnilaser.com/MGL-III-532.htm" target="_blank" rel="noopener">CNI MGL-III</a> or Thorlabs. Best beam quality, for the long or expedition run; overkill at 3&ndash;5 miles.</td></tr>
+        <tr><td>10&ndash;20&times; Galilean beam expander</td><td class="cost">$30&ndash;90</td><td><a href="https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=1580" target="_blank" rel="noopener">Thorlabs</a> (GBE&ndash;A covers 532 nm) or AliExpress. Roughly 10&times; lower divergence &mdash; effectively mandatory on any drone run, whichever laser you pick.</td></tr>
+        <tr><td>532 nm goggles, OD 4+</td><td class="cost">$20&ndash;50</td><td>One per person on the crew, e.g. <a href="https://www.thorlabs.com/item/LG3" target="_blank" rel="noopener">Thorlabs LG3</a>. Not optional above a few mW.</td></tr>
       </table>
       <p class="opt-what" style="margin-top:14px">Divergence &mdash; the full-angle spread of the beam &mdash; is what sets the spot size at range, and it follows the diffraction limit, so a bigger, cleaner output aperture, or a beam expander, throws a tighter beam. Spot diameter is roughly the divergence (in radians) times the distance:</p>
       <div style="overflow-x:auto">
@@ -645,15 +647,15 @@
         <tr><td>DIY quadrant photodiode (4 photodiodes + op-amp)</td><td class="cost">$20&ndash;60</td><td>The reference. Four cells around an aperture; the difference between pairs is the steering error.</td></tr>
         <tr><td>Camera + centroid on a small board (Pi / ESP32-CAM)</td><td class="cost">$15&ndash;50</td><td>You may already own the camera. Software finds the spot&rsquo;s centroid &mdash; handles a wide or lopsided spot gracefully, at the cost of a little code.</td></tr>
         <tr><td>Commercial position-sensing detector (PSD)</td><td class="cost">$80&ndash;300</td><td>Thorlabs / Hamamatsu. Cleanest analogue centring signal; the precision option.</td></tr>
-        <tr><td>Corner-cube retroreflector</td><td class="cost">$10&ndash;40</td><td>AliExpress / Edmund Optics. Returns the beam for the end depression reading and the reciprocal check.</td></tr>
+        <tr><td>Corner-cube retroreflector</td><td class="cost">$10&ndash;40</td><td><a href="https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=12625" target="_blank" rel="noopener">Thorlabs</a> / Edmund / AliExpress. Returns the beam for the end depression reading and the reciprocal check.</td></tr>
       </table>
 
       <div class="subhead">THE DOWNWARD ALTIMETER (HEIGHT ABOVE WATER &mdash; MEASUREMENT 2)</div>
       <p class="opt-what">What matters: real reach, because the drone rides tens to hundreds of metres up, and a clean return off dark, low-reflectivity water.</p>
       <table class="opt-table">
         <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
-        <tr><td>100 m-class single-point lidar (Benewake TF03, LightWare)</td><td class="cost">$60&ndash;350</td><td>The reference. Pick one rated for dark targets; calm water returns little straight down.</td></tr>
-        <tr><td>Radar altimeter (Ainstein US-D1)</td><td class="cost">$150&ndash;400</td><td>Works over water and at altitude, robust to haze; coarser resolution than lidar.</td></tr>
+        <tr><td>100 m-class single-point lidar (<a href="https://www.robotshop.com/products/benewake-tf03-lidar-led-rangefinder-ip67-100-m" target="_blank" rel="noopener">Benewake TF03</a>, LightWare)</td><td class="cost">$60&ndash;350</td><td>The reference. Pick one rated for dark targets; calm water returns little straight down.</td></tr>
+        <tr><td>Radar altimeter (<a href="https://ainstein.ai/us-d1-all-weather-radar-altimeter/" target="_blank" rel="noopener">Ainstein US-D1</a>)</td><td class="cost">$150&ndash;400</td><td>Works over water and at altitude, robust to haze; coarser resolution than lidar.</td></tr>
         <tr><td>Hobby optical-flow lidar (1&ndash;2 m range)</td><td class="cost">&mdash;</td><td>Listed only to rule out: far too short-range for this job. Do not buy it for the altitude reading.</td></tr>
       </table>
 
@@ -662,11 +664,83 @@
       <table class="opt-table">
         <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
         <tr><td>Flight clock + held speed + one short surveyed speed-gate</td><td class="cost">~$0</td><td>The dispute-proof route: only one short baseline to tape-measure near shore, and the clock does the rest.</td></tr>
-        <tr><td>Optical-flow odometer (PMW3901 board)</td><td class="cost">$15&ndash;40</td><td>Counts surface texture sliding past; works over textured water, fails on glass.</td></tr>
+        <tr><td>Optical-flow odometer (<a href="https://shop.pimoroni.com/en-us/products/pmw3901-optical-flow-sensor-breakout" target="_blank" rel="noopener">PMW3901</a> board)</td><td class="cost">$15&ndash;40</td><td>Counts surface texture sliding past; works over textured water, fails on glass.</td></tr>
         <tr><td>Anchored marker buoys at measured ranges</td><td class="cost">$20&ndash;80</td><td>Hardware-store floats; carry the distance directly on glassy water. Range them by tape, rangefinder, or pre-survey &mdash; never GNSS.</td></tr>
       </table>
 
-      <p style="margin-top:20px;font-size:12px;color:var(--ink-lll);font-style:italic">Still to add: the clinometer and Polaris kit, the weather sensors, the datalogger, telemetry, the two-colour refraction kit, the midpoint marker, the camera, and the optional inertial gyro.</p>
+      <div class="subhead">THE CLINOMETER + POLARIS (MEASUREMENT 1, A HEADING CONTROL)</div>
+      <p class="opt-what">What matters: read the angle up to Polaris to about 0.1&deg; at the start and end. On an east run this confirms the line held, rather than being the curvature test, so modest resolution is enough.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>Digital inclinometer / angle gauge, 0.1&deg;</td><td class="cost">$25&ndash;65</td><td><a href="https://www.amazon.com/s?k=digital+inclinometer+0.1+degree" target="_blank" rel="noopener">Amazon</a> / AliExpress. Mount it on a sighting bar; the cheapest path to the Polaris angle.</td></tr>
+        <tr><td>Smartphone clinometer app + a steady jig</td><td class="cost">$0</td><td>You own the phone. Coarser, and it needs a rigid jig, but fine as a cross-check.</td></tr>
+        <tr><td>Marine sextant (Davis Mark 15)</td><td class="cost">$60&ndash;200</td><td><a href="https://www.amazon.com/s?k=davis+mark+15+sextant" target="_blank" rel="noopener">Davis Mark 15</a>. Arcminute resolution; asks more of the hands reading it.</td></tr>
+      </table>
+
+      <div class="subhead">THE WEATHER SENSORS (REFRACTIVITY ALONG THE PATH)</div>
+      <p class="opt-what">What matters: temperature, humidity, and pressure at the origin and on the drone to fix the refractivity of the air, plus a two-height pair for the vertical gradient that bends the beam.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>BME280 module &times;2 (origin + drone)</td><td class="cost">$5&ndash;20 ea</td><td><a href="https://www.adafruit.com/product/2652" target="_blank" rel="noopener">Adafruit</a>, or generic AliExpress. T / RH / P on one chip; the reference choice.</td></tr>
+        <tr><td>Phone sensors / handheld weather meter</td><td class="cost">$0&ndash;350</td><td>A phone may already log pressure; a Kestrel meter is the field-grade step up.</td></tr>
+        <tr><td>Thermistor column up the first few metres</td><td class="cost">$20&ndash;60</td><td>A row of cheap thermistors maps the near-surface gradient finely &mdash; the strongest refraction control short of two colours.</td></tr>
+      </table>
+
+      <div class="subhead">THE DATALOGGER (TIMESTAMPED ORIGIN RECORD)</div>
+      <p class="opt-what">What matters: timestamp the mount&rsquo;s weather and tilt to a clock the drone shares, so the two ends line up second for second &mdash; no satellite time needed.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>microSD serial logger (SparkFun OpenLog)</td><td class="cost">$15&ndash;40</td><td><a href="https://www.sparkfun.com/search/results?term=openlog" target="_blank" rel="noopener">SparkFun</a>. Drop-in serial-to-SD logging; the cheap reference.</td></tr>
+        <tr><td>Raspberry Pi / Arduino + SD card</td><td class="cost">$10&ndash;45</td><td>You may already own one. Logs several sensors and a sync pulse together.</td></tr>
+        <tr><td>A laptop at the origin</td><td class="cost">$0</td><td>Already on site; log to a file and set its clock by the same lift-off mark as the drone.</td></tr>
+      </table>
+
+      <div class="subhead">TELEMETRY (OPTIONAL &mdash; WATCH THE PROFILE BUILD LIVE)</div>
+      <p class="opt-what">What matters: stream a few small numbers &mdash; height, distance, centering &mdash; to the origin so both sides watch the run unedited. It carries data only, never a position.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>LoRa / Meshtastic board (RAK WisBlock, Heltec V3)</td><td class="cost">$25&ndash;60</td><td><a href="https://meshtastic.org/docs/hardware/devices/" target="_blank" rel="noopener">Meshtastic</a> / <a href="https://store.rakwireless.com/products/wisblock-meshtastic-starter-kit" target="_blank" rel="noopener">RAK</a>. Pre-flashed; reaches these miles over water. Pair direct or in a mesh, not through a public gateway.</td></tr>
+        <tr><td>SiK telemetry radio in the flight stack (433 / 915 MHz)</td><td class="cost">$20&ndash;40</td><td>If the drone already carries one, reuse it for the live numbers.</td></tr>
+        <tr><td>None &mdash; log on the card, recover after</td><td class="cost">$0</td><td>The full-rate log rides on the drone; live telemetry only buys witnessing and a ground copy.</td></tr>
+      </table>
+
+      <div class="subhead">THE TWO-COLOUR REFRACTION KIT (MEASURE THE BEND DIRECTLY)</div>
+      <p class="opt-what">What matters: a second beam in another colour, bore-sighted with the green, so the dispersion between where the two land returns the bend with no shape assumed (see the refraction section).</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>Red 635 nm DPSS / diode module, bore-sighted</td><td class="cost">$40&ndash;120</td><td><a href="https://www.cnilaser.com/red_laser.htm" target="_blank" rel="noopener">CNI red lasers</a>, or a good red pointer. The cheap second colour.</td></tr>
+        <tr><td>Blue 450 nm module (wider colour split)</td><td class="cost">$40&ndash;120</td><td>A wider gap from the green opens a larger, easier-to-read separation than red does &mdash; worth it if the dispersion comes out marginal.</td></tr>
+        <tr><td>Colour camera or two filtered detectors (drone)</td><td class="cost">$15&ndash;60</td><td>Finds each colour&rsquo;s centre on its own; a Pi / ESP32-CAM may already be aboard for the beam sensor.</td></tr>
+      </table>
+
+      <div class="subhead">THE MIDPOINT MARKER (OPTIONAL &mdash; THE ONE-INSTANT CROSS-CHECK)</div>
+      <p class="opt-what">What matters: a float anchored at the midpoint at exactly the laser&rsquo;s height, carrying a retroreflector, held against wind and current and rechecked at the end.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>Anchored float + mast + retroreflector</td><td class="cost">$40&ndash;100</td><td>A hardware-store buoy plus a corner-cube (<a href="https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=12625" target="_blank" rel="noopener">Thorlabs</a> / AliExpress). Set its height with the same tape as the laser.</td></tr>
+        <tr><td>Marker on a sandbar, piling, or breakwater</td><td class="cost">$10&ndash;40</td><td>Where a fixed structure sits midway, cheaper and steadier than a float.</td></tr>
+        <tr><td>None &mdash; far out on open water</td><td class="cost">$0</td><td>Where nothing can be anchored, the run stands on the dense profile alone.</td></tr>
+      </table>
+
+      <div class="subhead">THE CAMERA (RECORD OF THE MIDPOINT FIGURE)</div>
+      <p class="opt-what">What matters: resolve the gap between the midpoint marker and the chord in one frame; the known marker heights are the scale, so no separate ruler is needed.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>Phone + clip-on telephoto adapter</td><td class="cost">$0&ndash;40</td><td>You own the phone; an adapter often resolves the gap on a short run.</td></tr>
+        <tr><td>DSLR / mirrorless + long lens (200&ndash;600 mm)</td><td class="cost">$0&ndash;800</td><td>If a kit is already on hand, the cleanest framing of all three marks.</td></tr>
+        <tr><td>Spotting scope / digiscope</td><td class="cost">$80&ndash;400</td><td>Long reach for the far marker on a longer run.</td></tr>
+      </table>
+
+      <div class="subhead">THE INERTIAL GYRO (OPTIONAL &mdash; THE CHECK WITH NO LIGHT IN IT)</div>
+      <p class="opt-what">What matters: a navigation-grade gyro senses whether the local vertical turns over the run, with no beam to bend &mdash; the one reading refraction cannot reach. It is not needed; it is an upgrade in audience, not in measurement.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>Fibre-optic gyro (FOG) module</td><td class="cost">$1k&ndash;10k+</td><td><a href="https://www.advancednavigation.com/inertial-navigation-systems/fog-gnss-ins/" target="_blank" rel="noopener">Advanced Navigation</a>, <a href="https://emcore.com/product-category/navigation-inertial-sensing/closed-loop-fiber-optic-gyroscope/" target="_blank" rel="noopener">EMCORE</a> (ex-KVH). Navigation grade; the drone&rsquo;s own flight gyros drift far too much to see the signal.</td></tr>
+        <tr><td>Ring-laser gyro (RLG)</td><td class="cost">$5k&ndash;20k+</td><td>Highest stability; surplus units sometimes surface. The most-capable run only.</td></tr>
+        <tr><td>Borrow, or partner with a lab</td><td class="cost">varies</td><td>The realistic route to this tier for most builders.</td></tr>
+      </table>
+
+      <p style="margin-top:20px;font-size:12px;color:var(--ink-lll)">Prices are ballpark &mdash; cheapest gear that meets the spec, up to mid-tier. Each link points to one representative supplier, not an endorsement; substitute freely, and record what you actually used on the field sheet.</p>
     </div>
   </div>
 
