@@ -11,9 +11,12 @@ check the result yourself instead of taking anyone's word for it.
 **Not a GitHub user?** The [landing page](https://replicationbench.github.io/RB/)
 links straight to each experiment's interactive pages.
 
-This repo is one half of a hybrid setup. The org profile, contribution guide,
-issue/PR templates, and the [scope & safety policy](https://github.com/ReplicationBench/.github/blob/main/SCOPE.md)
-live in the companion `.github` repo. The experiments live here.
+**Want to contribute?** How to report a run, propose a design change, and the
+`data/` → `results/` layout are in [CONTRIBUTING.md](CONTRIBUTING.md). File a
+[run report](https://github.com/ReplicationBench/RB/issues/new?template=submit-run.yml)
+or a [design proposal](https://github.com/ReplicationBench/RB/issues/new?template=propose-change.yml),
+and take open-ended methodology debate to
+[Discussions](https://github.com/ReplicationBench/RB/discussions).
 
 ---
 
