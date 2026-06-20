@@ -164,5 +164,7 @@ for (let i=0;i<N;i++){
 }
 console.log('wrote', N, 'frames', `${W*SCALE}x${H*SCALE} → ${W}x${H}`, '=', (N/FPS).toFixed(1)+'s')
 const OUT = 'experiments/laser-experiment/laser-experiment.gif'
-execSync(`ffmpeg -y -framerate ${FPS} -i ${join(FR,'f%04d.png')} -filter_complex "[0:v] scale=${W}:${H}:flags=lanczos,split [a][b];[a] palettegen=max_colors=96:stats_mode=diff [p];[b][p] paletteuse=dither=none" ${OUT}`, {stdio:'inherit'})
+// Output at 960px wide to match the page content column (.poster max-width 1100 − 140 padding),
+// lanczos-downscaled from the 2× render so the text stays crisp.
+execSync(`ffmpeg -y -framerate ${FPS} -i ${join(FR,'f%04d.png')} -filter_complex "[0:v] scale=960:-1:flags=lanczos,split [a][b];[a] palettegen=max_colors=64:stats_mode=diff [p];[b][p] paletteuse=dither=none" ${OUT}`, {stdio:'inherit'})
 console.log('wrote', OUT)
