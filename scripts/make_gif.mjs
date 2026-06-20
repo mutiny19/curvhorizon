@@ -119,16 +119,19 @@ function frame(ctx,i){
   const yd = yBeam + (p>0 ? bob : 0)
 
   if (p > 0){
-    // reading ticks "tick in" with a fade as the drone passes
-    ctx.strokeStyle=C.ink
+    // height readings: each sample drops from the beam down to the curved
+    // surface, ticking in with a fade as the drone passes
+    ctx.strokeStyle=C.curved
     for (let tx=dS; tx<=xd; tx+=13){
       const age = xd - tx
       const a = clamp(age/24, 0, 1)
-      ctx.globalAlpha = 0.30*a
-      const h = 7 + 5*(1-a)
-      ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(tx,yBeam+2); ctx.lineTo(tx,yBeam+2+h); ctx.stroke()
+      ctx.globalAlpha = 0.20*a
+      ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(tx,yBeam); ctx.lineTo(tx,curveY(tx)); ctx.stroke()
     }
     ctx.globalAlpha=1
+    // keep the flat prediction crisp on top — the reference the readings are compared against
+    ctx.strokeStyle=C.flat; ctx.lineWidth=1.8; ctx.setLineDash([7,4])
+    ctx.beginPath(); ctx.moveTo(x0,yW); ctx.lineTo(xR,yW); ctx.stroke(); ctx.setLineDash([])
     // height bars to each prediction
     ctx.lineWidth=2; ctx.strokeStyle=C.flat
     ctx.beginPath(); ctx.moveTo(xd,yd); ctx.lineTo(xd,yW); ctx.stroke()
