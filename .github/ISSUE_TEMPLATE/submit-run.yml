@@ -1,0 +1,113 @@
+name: Report a run
+description: Submit results from a run of the Laser Beam Follow Experiment — flat, curved, or inconclusive.
+title: "[run] <site> — <YYYY-MM-DD>"
+labels: ["result"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for running it. **Every outcome is a result** — flat, curved, and "did not
+        resolve" are logged the same way and none is the goal. The one firm requirement is
+        that the **raw readings are published** so anyone can re-check them; a summary
+        without data can't be added to the replication log.
+  - type: input
+    id: contributor
+    attributes:
+      label: Contributor / handle
+      description: How you want to be credited in the replication log.
+    validations:
+      required: true
+  - type: input
+    id: site
+    attributes:
+      label: Site & water body
+      placeholder: e.g. bluff above Lake Pontchartrain, LA
+    validations:
+      required: true
+  - type: input
+    id: date
+    attributes:
+      label: Date of run (YYYY-MM-DD)
+    validations:
+      required: true
+  - type: input
+    id: distance
+    attributes:
+      label: Run distance & beam height
+      placeholder: e.g. 8.2 km (5.1 mi), beam levelled 60 m above water
+    validations:
+      required: true
+  - type: dropdown
+    id: build
+    attributes:
+      label: Build used
+      options:
+        - Surface markers only (photographic)
+        - Short-run drone (in sight)
+        - Long-run drone (beyond sight)
+        - Most capable (long run + anchored markers)
+        - Other / custom
+    validations:
+      required: true
+  - type: textarea
+    id: instruments
+    attributes:
+      label: Instruments
+      description: Laser + expander, beam sensor, altimeter, clinometer, water-level loggers, weather sensors, camera…
+    validations:
+      required: true
+  - type: textarea
+    id: conditions
+    attributes:
+      label: Conditions
+      description: Time of night, air & water temperature, wind, tide / seiche — anything that bears on the run.
+    validations:
+      required: true
+  - type: dropdown
+    id: refraction
+    attributes:
+      label: How was refraction measured?
+      description: Measured on the night, not assumed — this is what separates the signal from a mirage.
+      options:
+        - Two-colour dispersion
+        - Vertical temperature profile
+        - Both
+        - Not measured (exploratory / likely inconclusive)
+    validations:
+      required: true
+  - type: dropdown
+    id: outcome
+    attributes:
+      label: Outcome
+      description: What the readings landed on after removing the measured refraction. None is the "right" answer.
+      options:
+        - Flat — beam-to-water height held constant
+        - Curved — returned a finite radius R
+        - Inconclusive — did not resolve
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Result summary
+      description: The numbers — drop vs distance, implied R = d²/(2·drop), end depression, midpoint-vs-chord, with error.
+    validations:
+      required: true
+  - type: input
+    id: data
+    attributes:
+      label: Link to the raw data
+      description: A PR to `data/`, a Zenodo/OSF archive, or attach the files in a comment after opening this.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: The raw readings are published (or attached/linked here), not just the summary.
+          required: true
+        - label: Where possible, predictions for a flat vs a curved reading were written down before the run.
+          required: false
+        - label: I'm OK with this run being recorded under the repo's licenses (docs & data CC BY-SA; see CONTRIBUTING).
+          required: true

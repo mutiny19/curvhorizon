@@ -45,6 +45,7 @@
   a.btn.ghost{border-color:var(--rule);color:var(--ink-l)}
   a.btn.ghost:hover{background:#fff;color:var(--ink);border-color:var(--ink-ll)}
   .more{color:var(--ink-ll);font-style:italic;margin:18px 0 0}
+  .more a{color:var(--gold);text-decoration:underline}
   footer{margin:56px 0 40px;padding-top:20px;border-top:1px solid var(--rule);font-family:ui-monospace,monospace;font-size:12px;color:var(--ink-ll);line-height:1.9}
   footer a{color:var(--gold);text-decoration:none}
   .status-untested{color:var(--ink-ll)}
@@ -87,8 +88,9 @@
 <!-- EXPERIMENT-CARDS:END -->
 
   <p class="more">More experiments are in the works — Earth's rotation, the gravitational
-  constant, cosmic-ray muons, and blinded tests of popular claims. Have one to propose,
-  or a run to report? Open an issue on the repo.</p>
+  constant, cosmic-ray muons, and blinded tests of popular claims. Have one to
+  <a href="https://github.com/ReplicationBench/RB/discussions">propose</a>, or a
+  <a href="https://github.com/ReplicationBench/RB/issues/new?template=submit-run.yml">run to report</a>?</p>
 
   <h2>Member-generated resources</h2>
   <p class="sub">Tools that help you reason about an experiment — not measurements themselves.</p>
@@ -108,10 +110,18 @@
   </div>
 <!-- RESOURCE-CARDS:END -->
 
+  <h2>Take part</h2>
+  <p class="sub">Every outcome counts — flat, curved, and inconclusive are logged the same way, with the raw data attached.</p>
+  <div class="btns" style="margin-top:14px">
+    <a class="btn solid" href="https://github.com/ReplicationBench/RB/issues/new?template=submit-run.yml">Report a run &rarr;</a>
+    <a class="btn ghost" href="https://github.com/ReplicationBench/RB/issues/new?template=propose-change.yml">Propose a change</a>
+    <a class="btn ghost" href="https://github.com/ReplicationBench/RB/discussions">Discuss the design</a>
+  </div>
+
   <footer>
     Open source on <a href="https://github.com/ReplicationBench/RB">github.com/ReplicationBench/RB</a><br>
     Dual-licensed: GNU AGPL-3.0 (see LICENSE) or a commercial license (see COMMERCIAL-LICENSE.md)<br>
-    Scope &amp; safety policy and contribution guide live in the companion <a href="https://github.com/ReplicationBench/.github">.github</a> repo.
+    Take part: <a href="https://github.com/ReplicationBench/RB/blob/master/CONTRIBUTING.md">how to contribute</a> &middot; <a href="https://github.com/ReplicationBench/RB/discussions">discussions</a> &middot; <a href="https://github.com/ReplicationBench/RB/issues/new?template=submit-run.yml">report a run</a>
   </footer>
 </div>
 </body>

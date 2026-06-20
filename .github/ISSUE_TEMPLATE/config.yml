@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discuss the design (open-ended)
+    url: https://github.com/ReplicationBench/RB/discussions
+    about: Methodology debate, questions, site reports, and suggestions that aren't a concrete change yet.
+  - name: 📄 Read the field protocol first
+    url: https://replicationbench.github.io/RB/experiments/laser-experiment/laser-experiment.html
+    about: The full experiment — read this before reporting a run or proposing a change.
+  - name: 🤝 Contribution guide
+    url: https://github.com/ReplicationBench/RB/blob/master/CONTRIBUTING.md
+    about: How runs land in data/ and results/, and how design changes get reviewed.

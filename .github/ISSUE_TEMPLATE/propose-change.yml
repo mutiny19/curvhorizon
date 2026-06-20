@@ -1,0 +1,69 @@
+name: Propose a design change or control
+description: Suggest a control, correction, or clarification to the experiment design.
+title: "[design] <short summary>"
+labels: ["design"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The sharpest objection is a gift — it's a control the design didn't have yet. Use this
+        for a **concrete** change. For open-ended debate or a question, use
+        [Discussions](https://github.com/ReplicationBench/RB/discussions) instead.
+  - type: dropdown
+    id: section
+    attributes:
+      label: Which part of the protocol?
+      options:
+        - About / what it measures
+        - Design it with the other side
+        - Setup diagram & geometry
+        - Laser station layout
+        - Drone sensor layout
+        - Tens of thousands of points
+        - Procedure
+        - Controls
+        - Equipment / BOM
+        - Handling refraction
+        - Is this circular? (geometry & math)
+        - Independent measurements / reading the result
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type of change
+      options:
+        - New control (closes a way the result could be explained away)
+        - Correction (something is wrong)
+        - Clarification (something is unclear)
+        - Equipment option (cheaper / more available alternative)
+    validations:
+      required: true
+  - type: textarea
+    id: gap
+    attributes:
+      label: The gap or objection
+      description: What could a flat-, curved-, or undecided reader use to wave the result away?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change or control
+    validations:
+      required: true
+  - type: textarea
+    id: effect
+    attributes:
+      label: Expected effect / which side it satisfies
+      description: How this tightens the run, and for whom.
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Acknowledgement
+      options:
+        - label: This keeps the experiment neutral — it doesn't presuppose a flat or a curved result.
+          required: true
