@@ -82,7 +82,7 @@ def esc(s):
 def exp_row(slug, m):
     cost = money(m.get("cost_usd_low"), m.get("cost_usd_high"))
     status = STATUS_EMOJI.get((m.get("status") or "untested").strip(), m.get("status") or "")
-    return (f"| [{m.get('title') or slug}](./experiments/{slug}/) | {m.get('claim') or ''} "
+    return (f"| [{m.get('title') or slug}](./experiments/{slug}/) | {m.get('question') or ''} "
             f"| {cost} | {m.get('difficulty') or ''} | {m.get('safety_level') or ''} | {status} |")
 
 
@@ -111,7 +111,7 @@ def exp_card(slug, m):
     return (
         '  <div class="card">\n'
         f'    <h3>{esc(m.get("title") or slug)}</h3>\n'
-        f'    <p class="claim">Claim tested: <em>&ldquo;{esc(m.get("claim") or "")}&rdquo;</em></p>\n'
+        f'    <p class="claim">Question: <em>&ldquo;{esc(m.get("question") or "")}&rdquo;</em></p>\n'
         '    <div class="badges">\n'
         f'      <span class="badge"><b>{esc(money(m.get("cost_usd_low"), m.get("cost_usd_high")))}</b></span>\n'
         f'      <span class="badge">difficulty: <b>{esc(m.get("difficulty") or "")}</b></span>\n'
@@ -158,7 +158,7 @@ def main():
     exp_titles = {slug: (m.get("title") or slug) for slug, m in exps}
 
     # ---- README tables ----
-    exp_header = ("| Experiment | Claim tested | Cost | Difficulty | Safety | Status |\n"
+    exp_header = ("| Experiment | Question tested | Cost | Difficulty | Safety | Status |\n"
                   "|---|---|---|---|---|---|")
     res_header = "| Resource | What it is | Supports | Contributor |\n|---|---|---|---|"
     exp_table = "\n".join([exp_header] + [exp_row(s, m) for s, m in exps]) if exps else exp_header

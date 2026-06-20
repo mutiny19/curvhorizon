@@ -15,13 +15,21 @@
 
 ---
 
-## 1. The claim
+## 1. The question
 
-In its strongest form, the flat position is that **a gravity-levelled line of
-sight stays a constant height above open water out to the horizon and beyond** —
-that over miles of calm water the surface does not fall away, so a level laser
-should keep the same clearance the whole way. The experiment is built to test
-that neutrally; it presupposes neither outcome.
+Over miles of calm open water, does a gravity-levelled line of sight keep a
+**constant** height above the surface, or does the surface **fall away** beneath
+it? The two positions make opposite, quantitative predictions:
+
+- **Flat:** the clearance stays constant out to the horizon and beyond — a level
+  laser keeps the same gap above the water the whole way; implied curvature zero.
+- **Curved (sphere of radius R):** the water drops below the level line as
+  **R(1 − cos θ)**, θ = d/R — growing with the square of the distance — and the
+  run returns a finite radius R = d²/(2·drop).
+
+The experiment presupposes neither. It measures which one the water does, with
+refraction measured on the night rather than assumed, and reports whichever the
+readings land on — including *inconclusive*.
 
 ## 2. Hypothesis & decision rule
 

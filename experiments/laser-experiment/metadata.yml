@@ -1,7 +1,20 @@
 slug: "laser-experiment"
 page: "laser-experiment.html"
 title: "Laser Beam Follow Experiment"
-claim: "The Earth's surface is flat over long line-of-sight distances."
+
+# What is being tested — stated neutrally. Neither shape is presupposed; the
+# competing predictions, the null, and the decision rule are written down and
+# signed by both sides before any reading is taken.
+question: "Over a long line of sight across open water, does a levelled laser beam hold a constant height above the surface, or does the surface fall away beneath it?"
+null_hypothesis: "1/R = 0 (flat). Beam-to-water height is independent of distance; the end depression equals height/distance with nothing left over; the implied radius is undefined (infinite)."
+alt_hypothesis: "1/R > 0 (curved). Beam-to-water height grows with distance and the run returns a finite, repeatable radius R = d²/(2·drop) from R(1 − cos θ), θ = d/R."
+prediction_flat: "Drone altitude holds constant; end depression = height/distance exactly; an optional midpoint marker stays on the chord; R undefined."
+prediction_curved: "Drone altitude rises as ≈ d²/2R; end depression is steeper than height/distance; the midpoint rides above the chord; the run returns a finite R near 6,371 km."
+discriminator: "Beam-to-water height vs. distance, logged at tens of thousands of points, cross-checked by the end depression angle and an optional midpoint-against-chord photo."
+controls: "Refraction measured on the night (two-colour dispersion + vertical temperature profile, not assumed); heading drift caught by the Polaris angle on an east run; water level watched by anchored bottom-pressure loggers at both ends; perspective excluded because the downward range is a physical distance, not a sightline."
+decision_rule: "Pre-registered with both sides. Fit height vs. distance after removing the measured beam sag. A slope consistent with zero supports flat; a profile matching d²/2R for a single R, stable across runs and refraction conditions, supports curved; a profile that neither fits nor separates from the noise is inconclusive."
+outcomes: "flat | curved | inconclusive. None is the goal; a run that does not resolve is reported as such, not forced to a verdict."
+
 cost_usd_low: 50
 cost_usd_high: 1915
 difficulty: "medium"

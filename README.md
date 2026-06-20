@@ -84,9 +84,9 @@ The table below is produced from each experiment's `metadata.yml` by
 table by hand — edit the metadata and re-run the script.
 
 <!-- CATALOG:START -->
-| Experiment | Claim tested | Cost | Difficulty | Safety | Status |
+| Experiment | Question tested | Cost | Difficulty | Safety | Status |
 |---|---|---|---|---|---|
-| [Laser Beam Follow Experiment](./experiments/laser-experiment/) | The Earth's surface is flat over long line-of-sight distances. | $50-$1,915 | medium | low | ⬜ untested |
+| [Laser Beam Follow Experiment](./experiments/laser-experiment/) | Over a long line of sight across open water, does a levelled laser beam hold a constant height above the surface, or does the surface fall away beneath it? | $50-$1,915 | medium | low | ⬜ untested |
 <!-- CATALOG:END -->
 
 `status` is one of `replicated` · `refuted` · `inconclusive` · `untested`, and it
