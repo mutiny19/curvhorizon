@@ -11,7 +11,7 @@
 - ▶ **[Curvature & horizon simulator](../../resources/surface-shape-simulator/simulator.html)** — to-scale model of curvature, horizon dip, hidden height, and refraction.
 
 *(Browsing on GitHub? Those are HTML pages — open them via the
-[live site](https://replicationbench.github.io/RB/experiments/water-surface-shape-laser/laser-experiment.html).)*
+[live site](https://replicationbench.github.io/RB/experiments/laser-experiment/laser-experiment.html).)*
 
 ---
 

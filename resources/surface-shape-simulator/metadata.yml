@@ -2,6 +2,6 @@ slug: "surface-shape-simulator"
 title: "Surface Shape Simulator"
 type: resource
 description: "To-scale interactive model of curvature, horizon dip, hidden height, and atmospheric refraction. A teaching and visualization tool, not a measurement."
-related_experiment: "water-surface-shape-laser"
+related_experiment: "laser-experiment"
 contributor: "ReplicationBench"
 tags: [geodesy, optics, visualization]
