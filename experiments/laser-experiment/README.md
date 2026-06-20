@@ -1,4 +1,4 @@
-# Water-Surface Shape by Laser
+# Laser Beam Follow Experiment
 
 > Level a laser over open water, never aim it at a target, and measure whether the
 > water holds a constant height under the beam (flat) or falls away from it

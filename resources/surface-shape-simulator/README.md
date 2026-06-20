@@ -9,7 +9,7 @@
 &nbsp;·&nbsp; [live](https://replicationbench.github.io/RB/resources/surface-shape-simulator/simulator.html)
 
 Supports the experiment it was built alongside:
-**[Water-Surface Shape by Laser](../../experiments/laser-experiment/)**.
+**[Laser Beam Follow Experiment](../../experiments/laser-experiment/)**.
 
 ## What it does
 

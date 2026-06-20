@@ -86,7 +86,7 @@ table by hand — edit the metadata and re-run the script.
 <!-- CATALOG:START -->
 | Experiment | Claim tested | Cost | Difficulty | Safety | Status |
 |---|---|---|---|---|---|
-| [Water-Surface Shape by Laser](./experiments/laser-experiment/) | The Earth's surface is flat over long line-of-sight distances. | $50-$1,915 | medium | low | ⬜ untested |
+| [Laser Beam Follow Experiment](./experiments/laser-experiment/) | The Earth's surface is flat over long line-of-sight distances. | $50-$1,915 | medium | low | ⬜ untested |
 <!-- CATALOG:END -->
 
 `status` is one of `replicated` · `refuted` · `inconclusive` · `untested`, and it
