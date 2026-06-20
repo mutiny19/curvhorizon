@@ -289,15 +289,17 @@
     position: sticky; top: 20px;
     text-align: right; margin-bottom: -32px; z-index: 10;
   }
-  .global-controls button {
+  .global-controls button, .global-controls a {
+    display: inline-block;
     background: var(--bg); border: 1px solid var(--rule);
     padding: 6px 14px;
     font-family: ui-monospace, monospace;
     font-size: 11px; letter-spacing: 0.08em;
-    color: var(--ink-ll); cursor: pointer; border-radius: 2px;
+    color: var(--ink-ll); cursor: pointer; border-radius: 2px; text-decoration: none;
     box-shadow: 0 2px 6px rgba(0,0,0,0.06);
   }
-  .global-controls button:hover { color: var(--gold); border-color: var(--gold); }
+  .global-controls a { margin-right: 8px; }
+  .global-controls button:hover, .global-controls a:hover { color: var(--gold); border-color: var(--gold); }
 
   @media (max-width: 768px) {
     .poster { padding: 30px 24px; }
@@ -383,6 +385,7 @@
 <article class="poster">
 
   <div class="global-controls">
+    <a href="https://github.com/ReplicationBench/RB/issues/new/choose" target="_blank" rel="noopener">REPORT AN ISSUE ↗</a>
     <button onclick="toggleAll()" id="toggleAllBtn">EXPAND ALL</button>
   </div>
 
