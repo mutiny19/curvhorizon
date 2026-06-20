@@ -1,101 +1,152 @@
-# Earth Curvature & Horizon Simulator
+# ReplicationBench — Experiments
 
-A single-file, dependency-free web app that renders the geometry of the horizon and
-how distant targets are progressively hidden by the curvature of the Earth — at true
-1:1 scale, with selectable atmospheric refraction.
+**We don't argue. We measure.**
 
-**Live:** open `index.html` in any modern browser (or enable GitHub Pages on this repo).
+This is the experiment catalog for ReplicationBench: a monorepo of accessible,
+amateur-completable kits for replicating contested, counterintuitive, or famous
+science experiments. Every experiment is built to one standard, costs almost
+always **under $2,000**, and ships with the raw data from real runs — so you can
+check the result yourself instead of taking anyone's word for it.
 
-## Features
+**Not a GitHub user?** The [landing page](https://replicationbench.github.io/RB/)
+links straight to each experiment's interactive pages.
 
-- **Side view & observer view** — switch between a true-to-scale cross-section and a
-  through-the-lens view of what an observer actually sees.
-- **True 1:1 scale** — no vertical exaggeration. Zoom and pan to inspect detail.
-- **Telescopic observer view** — set focal length and sensor size; the view behaves like
-  a real camera lens (FOV, magnification), with tilt up/down.
-- **Atmospheric refraction** — selectable coefficient *k* (geometric, standard, typical
-  visual, strong, inversion) or manual entry, modeled via the effective-radius method
-  R' = R / (1 − k).
-- **Ray-traced refraction** — optional alternative to the constant-*k* model: integrates the
-  real light path through a layered air profile (standard, inversion/ducting, or surface
-  mirage), draws the bent ray in the side view, and reports the ray-traced hidden height
-  beside the effective-radius value. The standard profile overlays the constant-*k* sight
-  line; the duct and mirage profiles reproduce looming, ducting, and inferior mirages.
-- **Hidden vs. visible** — the obstructed portion below the horizon is drawn in red; the
-  visible portion above in the target color, with callouts for distance, height, hidden
-  amount, horizon distance, bulge, and dip.
-- **Target types** — mountain, lighthouse, boat/ship, building, wind turbine, oil
-  platform, or custom, each drawn to scale.
-- **Multiple targets** — selected observations (e.g. the Lake Pontchartrain transmission
-  towers, the Black Swan oil rigs) render a receding line of identical targets, each
-  base sinking progressively below the horizon.
-- **Famous observations** — built-in presets for well-documented long-distance sightings
-  (Chicago skyline across Lake Michigan, Toronto across Lake Ontario, Turning Torso,
-  Canigou from Marseille, O'ahu from Kaua'i, Finestrelles → Pic Gaspard 443 km, Pyrenees
-  → Alps, Denali, and more).
-- **Earth model** — mean sphere (R = 6,371 km) or WGS84 oblate spheroid (geocentric
-  radius by latitude).
-- **Refraction bands** — overlay line-of-sight at multiple *k* values to show the range.
-- **Visibility / haze limit** — optional Koschmieder air-clarity cutoff.
-- **Photo overlay (experimental)** — load a real photo into the Observer View and it is drawn
-  at the matching field of view. Focal length and sensor width are read automatically from the
-  photo's EXIF (dependency-free parser) when present, or set manually. Opacity, move, roll (to
-  level a tilted horizon), and fine-scale controls register the image; once you line up its
-  horizon the predicted horizon and the hidden/visible split overlay the real scene to scale.
-  It is a visual comparison aid and does not change any calculation.
-- **Terrain & sea state** — optional intervening obstacle (a hill or ridge at a set
-  distance and height) and wave height. Whichever of the Earth horizon, the wave crests,
-  or the obstacle grazes the line of sight highest sets the hidden amount, and the result
-  panel reports which one is the limiter.
-- **Methodology** — collapsible section with the governing formulas, live worked
-  calculations for the current scene, citations, and a glossary.
+This repo is one half of a hybrid setup. The org profile, contribution guide,
+issue/PR templates, and the [scope & safety policy](https://github.com/ReplicationBench/.github/blob/main/SCOPE.md)
+live in the companion `.github` repo. The experiments live here.
 
-## Math
+---
 
-| Quantity | Formula |
-| --- | --- |
-| Effective radius | R' = R / (1 − k) |
-| Horizon distance | d₁ = √(h² + 2·R'·h) |
-| Hidden height | h₁ = √(d₂² + R'²) − R',  d₂ = d₀ − d₁ |
-| Bulge | B = R'·(1 − cos(d / 2R')) |
-| Horizon dip | dip = arccos( R' / (R' + h) ) |
-| Haze contrast (Koschmieder) | C = exp(−3.912·d / V) |
+## What belongs here
 
-## Usage
+- **Replications anyone can check** — Earth's curvature, Earth's rotation, the
+  gravitational constant, cosmic-ray muons, wave–particle duality.
+- **Adversarial tests of popular claims**, blinded where perception matters —
+  dowsing, homeopathy, "free energy" devices.
 
-No build step and no dependencies. Either:
+Each entry documents *method and data*, stated neutrally. The conclusion is left
+to the reader and the measurement, not asserted by the maintainers. What's
+explicitly **out of scope** (bio agents, energetic chemistry, radiation sources,
+unisolated lethal voltage) is defined in the scope policy and enforced at review.
 
-- Open `index.html` directly, or
-- Serve the folder: `npx serve .` and visit the printed URL.
+---
 
-## Field protocol
+## Repository layout
 
-A companion field protocol, the **Laser Beam Follow Experiment**, sketches a
-reproducible real-world drone-and-laser test of the same geometry the Laser Test
-view models: a drone follows a horizontal laser beam while three independent
-instruments (Polaris angle, drone altitude above ground, and laser tilt)
-cross-check what the surface did beneath the beam.
+```
+experiments/<slug>/      one experiment, following the standard template
+_template/               copy this to start a new experiment
+scripts/build_index.py   regenerates the catalog table in this README
+LICENSE                  GNU AGPL-3.0
+COMMERCIAL-LICENSE.md    commercial / dual-license terms
+.gitattributes           routes raw data + binaries through Git LFS
+```
 
-- **Interactive page:** [`laser-experiment.html`](laser-experiment.html) ([live](https://replicationbench.github.io/RB/laser-experiment.html)) — equipment, setup diagram, procedure, and how to handle refraction, with expandable detail on each section.
-- **Poster version:**
+Every `experiments/<slug>/` folder has the same shape:
 
-![Laser Beam Follow Experiment field protocol](docs/laser-follow-experiment.png)
+```
+<slug>/
+  README.md          the experiment, following the fixed schema
+  metadata.yml       machine-readable record that feeds the catalog
+  hardware/BOM.csv    priced bill of materials
+  code/              firmware / control / DSP (omit if unused)
+  analysis/          scripts that turn raw data into a result (optional)
+  data/              raw runs, one subfolder per run: YYYY-MM-DD_contributor/
+  results/           plots, photos, the narrative interpretation
+```
+
+---
+
+## The standard every experiment meets
+
+This consistency is the whole point — it's what makes the repo a catalog instead
+of a pile of folders. Each experiment README hits the same beats:
+
+1. **The claim**, stated neutrally, linked to its strongest version.
+2. **Hypothesis & decision rule** — what measurement, beyond what threshold,
+   decides it, *declared before building*. This is what separates a test from a vibe.
+3. **Bill of materials**, fully priced, with a "checked on" date.
+4. **Build** and **Procedure** — reproducible, blinded where human perception
+   is involved.
+5. **Reading the result** — the math, and a pointer to the analysis code.
+6. **Results & replication log** — the recorded run, plus a running table of
+   independent replications.
+7. **Safety** — mandatory, even when the honest answer is "no special hazards."
+8. **Sources** — cite, don't assert.
+
+---
+
+## The catalog is generated, not hand-written
+
+The table below is produced from each experiment's `metadata.yml` by
+`scripts/build_index.py` (pure standard library, no dependencies). Don't edit the
+table by hand — edit the metadata and re-run the script.
+
+<!-- CATALOG:START -->
+| Experiment | Claim tested | Cost | Difficulty | Safety | Status |
+|---|---|---|---|---|---|
+| [Earth Curvature by Laser Over Water](./experiments/earth-curvature-laser/) | The Earth's surface is flat over long line-of-sight distances. | $50-$300 | medium | low | ⬜ untested |
+<!-- CATALOG:END -->
+
+`status` is one of `replicated` · `refuted` · `inconclusive` · `untested`, and it
+must be supported by the data in `data/`, not by anyone's expectations.
+
+### Metadata schema (`metadata.yml`)
+
+```yaml
+slug: ""                 # folder name, hyphenated
+title: ""
+claim: ""                # neutral one-liner
+cost_usd_low: 0
+cost_usd_high: 0
+difficulty: ""           # easy | medium | hard
+time: ""                 # e.g. "one weekend"
+safety_level: ""         # none | low | medium | high
+status: untested         # replicated | refuted | inconclusive | untested
+tags: []                 # e.g. [astronomy, relativity, pseudoscience-test]
+```
+
+---
+
+## Adding an experiment
+
+```bash
+cp -r _template experiments/your-slug
+# fill in README.md, metadata.yml, hardware/BOM.csv
+# add code/, analysis/, and at least one raw run under data/
+python scripts/build_index.py    # refresh the catalog table
+```
+
+Open a **New Experiment Proposal** issue and get a 👍 before you build — it
+catches duplicates and scope problems early. Full workflow and the review bar are
+in the `.github` repo's `CONTRIBUTING.md`.
+
+### Reporting a replication
+
+The most valuable contribution here is running an existing experiment. Add your
+run under that experiment's `data/`, namespaced by contributor and date, note the
+outcome in its `results/README.md` log, and open a **Replication Report** issue. A
+refuted or inconclusive result is a successful contribution — that's the project
+working.
+
+---
+
+## Data & Git LFS
+
+Raw data is a first-class artifact, not an afterthought. Common data and binary
+formats (`.parquet`, `.h5`, `.wav`, `.mp4`, `.stl`, `.step`, and CSVs under
+`data/`) are routed through Git LFS via `.gitattributes` so repository history
+stays light. Run `git lfs install` once before your first push. If a single
+experiment's dataset grows large enough to strain the monorepo, it can be split
+into its own repo later — the structure here is designed to make that painless.
+
+---
 
 ## License
 
-This project is **dual-licensed**:
-
-- **Open source:** [GNU AGPL-3.0](LICENSE). Free to use, modify, and self-host,
-  provided that if you run a modified version as a network service you make your
-  source available under the same license.
-- **Commercial:** if the AGPL's terms do not suit your use (closed-source
-  products, proprietary SaaS, resale, etc.), a separate commercial license is
-  available. See [`COMMERCIAL-LICENSE.md`](COMMERCIAL-LICENSE.md).
-
-Copyright (c) 2026 ReplicationBench.
-
-## Acknowledgements
-
-Inspired by Andy Cook's (dizzib) MIT-licensed
-[earth curve calculator](https://github.com/dizzib/earthcalc). This is an
-independent implementation; no source from that project is included.
+Dual-licensed. By default this software is released under the **GNU Affero
+General Public License v3.0** (see [`LICENSE`](LICENSE)) — free to use, study,
+modify, and redistribute, with the AGPL's network-copyleft obligation (a hosted,
+modified version must publish its source). A separate **commercial license** is
+available for uses the AGPL does not permit; see
+[`COMMERCIAL-LICENSE.md`](COMMERCIAL-LICENSE.md).

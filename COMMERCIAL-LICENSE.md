@@ -1,6 +1,6 @@
 # Commercial Licensing
 
-The Earth Curvature & Horizon Simulator is **dual-licensed**.
+The ReplicationBench experiments repository is **dual-licensed**.
 
 ## 1. Open-source license (AGPL-3.0)
 

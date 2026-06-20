@@ -1,0 +1,8 @@
+item,qty,spec,unit_price_usd_low,unit_price_usd_high,source,checked_on,already_own,notes
+Green laser,1,532 nm DPSS 5-50 mW,15,40,AliExpress / Amazon,2026-06,maybe,True 532 nm DPSS not a 520 nm diode
+Beam expander,1,10-20x Galilean,30,90,Thorlabs (GBE) / AliExpress,2026-06,no,~10x lower divergence; near-mandatory at range
+Laser goggles,2,532 nm OD 4+,20,50,Thorlabs LG3 / generic,2026-06,no,One per person on the crew
+Equal-height targets,3,anchored floats/masts + retroreflector,30,90,hardware store + AliExpress,2026-06,no,Three-point (Wallace/FECORE) geometry; equal heights set by one tape
+Tripod + leveling head,1,surveyor or geared photo head,40,120,owned / used,2026-06,maybe,Level the beam then lock both axes
+Digital inclinometer,1,0.1 degree,25,65,Amazon,2026-06,maybe,End-tilt reading / level check
+Camera,1,phone + clip-on telephoto adapter,0,40,owned,2026-06,yes,Resolve the midpoint-vs-chord gap in one frame

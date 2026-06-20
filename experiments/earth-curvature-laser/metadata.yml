@@ -1,0 +1,10 @@
+slug: "earth-curvature-laser"
+title: "Earth Curvature by Laser Over Water"
+claim: "The Earth's surface is flat over long line-of-sight distances."
+cost_usd_low: 50
+cost_usd_high: 300
+difficulty: "medium"
+time: "one weekend"
+safety_level: "low"
+status: untested
+tags: [geodesy, optics, flat-earth-test]

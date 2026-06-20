@@ -1,0 +1,10 @@
+slug: ""                 # folder name, hyphenated
+title: ""
+claim: ""                # neutral one-liner
+cost_usd_low: 0
+cost_usd_high: 0
+difficulty: ""           # easy | medium | hard
+time: ""                 # e.g. "one weekend"
+safety_level: ""         # none | low | medium | high
+status: untested         # replicated | refuted | inconclusive | untested
+tags: []                 # e.g. [astronomy, relativity, pseudoscience-test]
