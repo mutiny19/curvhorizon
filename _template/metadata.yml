@@ -1,4 +1,5 @@
 slug: ""                 # folder name, hyphenated
+page: ""                 # primary interactive page in this folder, e.g. index.html (optional)
 title: ""
 claim: ""                # neutral one-liner
 cost_usd_low: 0

@@ -4,7 +4,7 @@
 > water holds a constant height under the beam (flat) or falls away from it
 > (curved) — with refraction measured on the night, not assumed.
 
-**Status:** ⬜ untested · **Cost:** $50–$300 · **Difficulty:** medium · **Time:** one weekend · **Safety:** low
+**Status:** ⬜ untested · **Cost:** $50–$1,915 · **Difficulty:** medium · **Time:** one weekend · **Safety:** low
 
 **Interactive references**
 - ▶ **[The field protocol](laser-experiment.html)** — full build, setup diagrams, procedure, refraction handling, equipment options, and a live run simulator embedded in it.

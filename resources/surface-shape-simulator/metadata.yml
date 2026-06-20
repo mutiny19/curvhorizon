@@ -1,4 +1,5 @@
 slug: "surface-shape-simulator"
+page: "simulator.html"
 title: "Surface Shape Simulator"
 type: resource
 description: "To-scale interactive model of curvature, horizon dip, hidden height, and atmospheric refraction. A teaching and visualization tool, not a measurement."

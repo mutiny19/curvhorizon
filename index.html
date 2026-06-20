@@ -49,6 +49,8 @@
   footer a{color:var(--gold);text-decoration:none}
   .status-untested{color:var(--ink-ll)}
   .status-replicated{color:var(--teal)}
+  .status-refuted{color:#a03228}
+  .status-inconclusive{color:var(--gold)}
 </style>
 </head>
 <body>
@@ -67,20 +69,22 @@
   <h2>The experiments</h2>
   <p class="sub">Each entry documents method and data, stated neutrally · status reflects the data, not anyone's expectations.</p>
 
+  <!-- EXPERIMENT-CARDS:START -->
   <div class="card">
     <h3>Water-Surface Shape by Laser</h3>
-    <p class="claim">Claim tested: <em>“The Earth's surface is flat over long line-of-sight distances.”</em></p>
+    <p class="claim">Claim tested: <em>&ldquo;The Earth's surface is flat over long line-of-sight distances.&rdquo;</em></p>
     <div class="badges">
-      <span class="badge"><b>$50–$300</b></span>
+      <span class="badge"><b>$50-$1,915</b></span>
       <span class="badge">difficulty: <b>medium</b></span>
       <span class="badge">safety: <b>low</b></span>
       <span class="badge status-untested">⬜ <b>untested</b></span>
     </div>
     <div class="btns">
-      <a class="btn solid" href="experiments/laser-experiment/laser-experiment.html">Field protocol →</a>
+      <a class="btn solid" href="experiments/laser-experiment/laser-experiment.html">Open the experiment &rarr;</a>
       <a class="btn ghost" href="https://github.com/ReplicationBench/RB/tree/master/experiments/laser-experiment">Details, data &amp; BOM</a>
     </div>
   </div>
+<!-- EXPERIMENT-CARDS:END -->
 
   <p class="more">More experiments are in the works — Earth's rotation, the gravitational
   constant, cosmic-ray muons, and blinded tests of popular claims. Have one to propose,
@@ -89,18 +93,20 @@
   <h2>Member-generated resources</h2>
   <p class="sub">Tools that help you reason about an experiment — not measurements themselves.</p>
 
+  <!-- RESOURCE-CARDS:START -->
   <div class="card">
     <h3>Surface Shape Simulator</h3>
-    <p class="claim">A to-scale, interactive model of curvature, horizon dip, hidden height, and atmospheric refraction. It makes the geometry visible and checkable; it does not measure anything.</p>
+    <p class="claim">To-scale interactive model of curvature, horizon dip, hidden height, and atmospheric refraction. A teaching and visualization tool, not a measurement.</p>
     <div class="badges">
       <span class="badge">type: <b>resource</b></span>
       <span class="badge">supports: <b>Water-Surface Shape by Laser</b></span>
     </div>
     <div class="btns">
-      <a class="btn solid" href="resources/surface-shape-simulator/simulator.html">Open simulator →</a>
+      <a class="btn solid" href="resources/surface-shape-simulator/simulator.html">Open &rarr;</a>
       <a class="btn ghost" href="https://github.com/ReplicationBench/RB/tree/master/resources/surface-shape-simulator">Source on GitHub</a>
     </div>
   </div>
+<!-- RESOURCE-CARDS:END -->
 
   <footer>
     Open source on <a href="https://github.com/ReplicationBench/RB">github.com/ReplicationBench/RB</a><br>

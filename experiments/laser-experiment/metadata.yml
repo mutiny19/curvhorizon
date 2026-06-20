@@ -1,8 +1,9 @@
 slug: "laser-experiment"
+page: "laser-experiment.html"
 title: "Water-Surface Shape by Laser"
 claim: "The Earth's surface is flat over long line-of-sight distances."
 cost_usd_low: 50
-cost_usd_high: 300
+cost_usd_high: 1915
 difficulty: "medium"
 time: "one weekend"
 safety_level: "low"
