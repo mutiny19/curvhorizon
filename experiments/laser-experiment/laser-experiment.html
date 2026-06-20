@@ -483,214 +483,6 @@
   </div>
 
   <div class="section-header">
-    <span>CONTROLS BEFORE YOU TRUST A NUMBER</span>
-    <button class="expand-trigger" onclick="toggleDetail('controls')">EXPAND ▾</button>
-  </div>
-  <div class="detail" id="controls">
-    <div class="detail-inner">
-      <p>An instrument you have not checked is an opinion. Before any reading over open water is allowed to mean anything, the rig has to earn it on ground where the answer is already known, and the parts that could be told to find a result have to be open to inspection. None of this decides flat or curved. It decides whether the number is trustworthy enough to be worth arguing about at all.</p>
-
-      <div class="subhead">A KNOWN-FLAT CONTROL FIRST</div>
-      <p>Fly the whole protocol over a surface already known to be flat and level, and confirm it reads flat. A surveyed dry lakebed, a frozen lake with benchmarks, a long airport apron, or a stretch of still water short enough that any drop sits below the noise will all serve. The kit should return a level altitude profile, a depression of exactly height over distance, and a midpoint on the chord. If it shows a climb where there is no curvature, something in the rig is manufacturing one, and that has to be found and fixed before a real run is worth flying. This is the null control, and it cuts both ways: a level advocate gets to watch the apparatus fail to invent a curve, and a curve advocate gets to watch it read true on known-flat ground. The positive control is the same idea inverted, a known drop set up on purpose, a target lowered by a measured amount, to confirm the rig sees a real one at the right size and does not swallow it.</p>
-
-      <div class="subhead">CALIBRATE EVERY INSTRUMENT, WITNESSED</div>
-      <p>The whole curved signal is the downward lidar, so its honesty is checked, not assumed. Before the flight and again after it, read it against a distance set by tape, both sides watching, and write down any offset. Do the same for the rest: the tilt encoder is zeroed against the levelled beam with both parties present, the clinometer is read against a known angle, and the two weather chips are compared side by side so their offset is known before one is moved between heights. Calibrating before and after, not just once, is what catches an instrument that drifted during the run, which is the failure no single mid-run reading can reveal on its own.</p>
-
-      <div class="subhead">OPEN THE CODE THAT FLIES IT</div>
-      <p>The strongest claim on this page is that the drone has no stake in the answer, that it only keeps four photodiodes equal and climbs because the light told it to. That claim is only as good as the code on the flight controller, and a black box asked to be trusted is exactly what this protocol refuses everywhere else. So the firmware is open and published, the control loop is the plain one described here with no altitude schedule and no waypoint buried in it, and either side can read it, build it, and load it themselves. A drone that climbed on a known-flat surface would be caught by the control above; open code is how anyone confirms <em>why</em> it climbed on the water, line by line, instead of taking the build on faith.</p>
-
-      <div class="subhead">PIN THE DISTANCE WITHOUT A NETWORK</div>
-      <p>The curvature signal grows as the square of the distance, so an error in distance costs as much as an error in height, and the distance cannot quietly come from the satellite system the run is meant to stand apart from. The optical-flow odometer counts the surface sliding past, and on glassy water, where it has little to track, anchored markers at ranges measured beforehand carry it instead. Those ranges are fixed by tape, by a laser rangefinder shot between the markers, or by a pre-survey both sides accept, and each sample's distance source, flow or marker, is logged beside it. State the distance error the way the height error is stated, because a profile is only as square as the axis it is plotted against. And give the two records a common clock, a sync pulse sent once over the telemetry link or a shared mark at lift-off, so the origin log and the drone log line up second for second without leaning on satellite time. The cleanest distance of all, though, is the one you do not have to agree on: hold a steady speed and plot height against that common clock, and a single short, tape-measured speed-gate near shore is all that scales the time into a distance, so the run's disputed length never becomes the thing the verdict rests on (see the altitude section).</p>
-    </div>
-  </div>
-
-  <div class="section-header">
-    <span>EQUIPMENT</span>
-    <button class="expand-trigger" onclick="toggleDetail('equipment')">EXPAND ▾</button>
-  </div>
-
-  <div class="detail" id="equipment">
-    <div class="detail-inner">
-      <p>This is the whole parts list, the reference build and the menu of alternatives in one place. None of it is sacred: the run needs each <em>spec</em> met, not each part bought new. Tap any part to open its options, from "you may already own it" through "readily obtainable" to "best in class." A run that meets the spec on borrowed gear is worth exactly as much as one bought to order; where a cheaper choice costs you something &mdash; reach, precision, a night of fiddling &mdash; the notes say so.</p>
-      <div class="eq-acc">
-      <div class="eq-item">
-        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE LASER (AND A BEAM EXPANDER)</span><span class="eq-price">$15&ndash;900</span><span class="eq-caret">&#9662;</span></button>
-        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: a true 532 nm green beam, enough power for your distance, and low divergence. The expander is the cheap lever — a bare pointer throws a metre-wide spot per kilometre, and an expander cuts that roughly tenfold.</p>
-      <table class="opt-table">
-        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
-        <tr><td>Green laser pointer, 5&ndash;50 mW</td><td class="cost">$15&ndash;40</td><td>You may already own one (<a href="https://www.aliexpress.com/w/wholesale-532nm-laser-pointer.html" target="_blank" rel="noopener">AliExpress</a> / Amazon). Confirm it is a true 532 nm DPSS, not a 520 nm diode. About 1&ndash;1.5 mrad bare, so short-run only, and only with an expander.</td></tr>
-        <tr><td>DPSS module, 50&ndash;200 mW, TEM00</td><td class="cost">$60&ndash;250</td><td>Lab suppliers such as <a href="http://www.cnilaser.com/MGL-III-532.htm" target="_blank" rel="noopener">CNI (MGL-III-532)</a> or Lasever. Cleaner, lower-divergence beam; 200 mW carries a long or daytime run. The workhorse.</td></tr>
-        <tr><td>Lab-grade collimated 532, M&sup2; &lt; 1.2</td><td class="cost">$300&ndash;900</td><td><a href="http://www.cnilaser.com/MGL-III-532.htm" target="_blank" rel="noopener">CNI MGL-III</a> or Thorlabs. Best beam quality, for the long or expedition run; overkill at 3&ndash;5 miles.</td></tr>
-        <tr><td>10&ndash;20&times; Galilean beam expander</td><td class="cost">$30&ndash;90</td><td><a href="https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=1580" target="_blank" rel="noopener">Thorlabs</a> (GBE&ndash;A covers 532 nm) or AliExpress. Roughly 10&times; lower divergence &mdash; effectively mandatory on any drone run, whichever laser you pick.</td></tr>
-        <tr><td>532 nm goggles, OD 4+</td><td class="cost">$20&ndash;50</td><td>One per person on the crew, e.g. <a href="https://www.thorlabs.com/item/LG3" target="_blank" rel="noopener">Thorlabs LG3</a>. Not optional above a few mW.</td></tr>
-      </table>
-      <p class="opt-what" style="margin-top:14px">Divergence &mdash; the full-angle spread of the beam &mdash; is what sets the spot size at range, and it follows the diffraction limit, so a bigger, cleaner output aperture, or a beam expander, throws a tighter beam. Spot diameter is roughly the divergence (in radians) times the distance:</p>
-      <div style="overflow-x:auto">
-      <table class="spec-table">
-        <tr><th>Setup (532 nm)</th><th>divergence</th><th>&Oslash; @1 km</th><th>@5 km</th><th>@10 km</th><th>@30 km</th></tr>
-        <tr><td>Bare cheap pointer</td><td>~1.2 mrad</td><td>~1.2 m</td><td>~6 m</td><td>~12 m</td><td>~36 m</td></tr>
-        <tr><td>Pointer + 10&times; expander</td><td>~0.12 mrad</td><td>~12 cm</td><td>~0.6 m</td><td>~1.2 m</td><td>~3.6 m</td></tr>
-        <tr><td>Good TEM00 module + 25&ndash;50 mm expander</td><td>~0.04&ndash;0.06 mrad</td><td>~4&ndash;6 cm</td><td>~0.2&ndash;0.3 m</td><td>~0.4&ndash;0.6 m</td><td>~1.2&ndash;1.8 m</td></tr>
-        <tr><td>Diffraction floor (50 mm aperture)</td><td>~0.013 mrad</td><td>~1.3 cm</td><td>~7 cm</td><td>~13 cm</td><td>~0.4 m</td></tr>
-      </table>
-      </div>
-      <p class="opt-what">The spot need not be small to be usable: the quadrant sensor finds its <em>centre</em>, so even a metre-wide spot is followed to a fraction of its width as long as it stays symmetric. What actually caps the run (about 5&ndash;10 miles here) is the light per area falling as the square of the distance, plus the shimmer of near-surface air &mdash; which is why the diffraction-floor row is a ceiling you will not reach over a long low path. Lower divergence still helps on both counts, so the expander earns its place on every build.</p></div></div>
-      </div>
-      <div class="eq-item">
-        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE BEAM MOUNT (LEVEL IT, LOCK IT, READ THE END TILT)</span><span class="eq-price">$40&ndash;250</span><span class="eq-caret">&#9662;</span></button>
-        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: hold the beam dead still on both axes through the run, and read the end-of-run tilt down to the drone to about 0.01&deg;.</p>
-      <table class="opt-table">
-        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
-        <tr><td>Surveyor tripod + leveling head + clamp + stick-on digital inclinometer</td><td class="cost">$50&ndash;180</td><td>You may already own a sturdy tripod. Level by bubble, lock by clamp, read the end tilt off a $25&ndash;65 inclinometer on the barrel. The cheap path.</td></tr>
-        <tr><td>Used geared photo head</td><td class="cost">$40&ndash;150</td><td>Likely on your shelf or in a camera-store used bin. Fine micrometer adjust; still add an inclinometer for the tilt reading.</td></tr>
-        <tr><td>Motorised pan/tilt with tilt encoder</td><td class="cost">$80&ndash;250</td><td>AliExpress / robotics. Repeatable, and logs the end tilt automatically; nicest for repeated runs.</td></tr>
-      </table></div></div>
-      </div>
-      <div class="eq-item">
-        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE DRONE (IT FOLLOWS THE BEAM, NOTHING ELSE)</span><span class="eq-price">$0&ndash;900</span><span class="eq-caret">&#9662;</span></button>
-        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: it holds station and altitude, carries the beam sensor and the downward lidar, and reaches your run length on a charge. The firmware should be open so the flight loop can be read.</p>
-      <table class="opt-table">
-        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
-        <tr><td>A quad you already own (flashable flight controller)</td><td class="cost">$0</td><td>The biggest saving by far. If it runs ArduPilot, PX4, or Betaflight you can feed it the beam-sensor error and skip a purchase.</td></tr>
-        <tr><td>F450-class DIY kit</td><td class="cost">$150&ndash;300</td><td>The reference build &mdash; open firmware, roomy frame, easy to bolt sensors onto.</td></tr>
-        <tr><td>Capable long-range platform</td><td class="cost">$400&ndash;900</td><td>Bigger, efficient airframe for the long run; pairs with staged batteries and a chase boat.</td></tr>
-      </table></div></div>
-      </div>
-      <div class="eq-item">
-        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE BEAM SENSOR + RETROREFLECTOR (ON THE DRONE)</span><span class="eq-price">$10&ndash;300</span><span class="eq-caret">&#9662;</span></button>
-        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: find the beam&rsquo;s centre on the drone to steer the flight controller, and bounce part of the beam back to the origin for the depression and reciprocal checks.</p>
-      <table class="opt-table">
-        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
-        <tr><td>DIY quadrant photodiode (4 photodiodes + op-amp)</td><td class="cost">$20&ndash;60</td><td>The reference. Four cells around an aperture; the difference between pairs is the steering error.</td></tr>
-        <tr><td>Camera + centroid on a small board (Pi / ESP32-CAM)</td><td class="cost">$15&ndash;50</td><td>You may already own the camera. Software finds the spot&rsquo;s centroid &mdash; handles a wide or lopsided spot gracefully, at the cost of a little code.</td></tr>
-        <tr><td>Commercial position-sensing detector (PSD)</td><td class="cost">$80&ndash;300</td><td>Thorlabs / Hamamatsu. Cleanest analogue centring signal; the precision option.</td></tr>
-        <tr><td>Corner-cube retroreflector</td><td class="cost">$10&ndash;40</td><td><a href="https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=12625" target="_blank" rel="noopener">Thorlabs</a> / Edmund / AliExpress. Returns the beam for the end depression reading and the reciprocal check.</td></tr>
-      </table></div></div>
-      </div>
-      <div class="eq-item">
-        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE DOWNWARD ALTIMETER (HEIGHT ABOVE WATER &mdash; MEASUREMENT 2)</span><span class="eq-price">$60&ndash;400</span><span class="eq-caret">&#9662;</span></button>
-        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: real reach, because the drone rides tens to hundreds of metres up, and a clean return off dark, low-reflectivity water.</p>
-      <table class="opt-table">
-        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
-        <tr><td>100 m-class single-point lidar (<a href="https://www.robotshop.com/products/benewake-tf03-lidar-led-rangefinder-ip67-100-m" target="_blank" rel="noopener">Benewake TF03</a>, LightWare)</td><td class="cost">$60&ndash;350</td><td>The reference. Pick one rated for dark targets; calm water returns little straight down.</td></tr>
-        <tr><td>Radar altimeter (<a href="https://ainstein.ai/us-d1-all-weather-radar-altimeter/" target="_blank" rel="noopener">Ainstein US-D1</a>)</td><td class="cost">$150&ndash;400</td><td>Works over water and at altitude, robust to haze; coarser resolution than lidar.</td></tr>
-        <tr><td>Hobby optical-flow lidar (1&ndash;2 m range)</td><td class="cost">&mdash;</td><td>Listed only to rule out: far too short-range for this job. Do not buy it for the altitude reading.</td></tr>
-      </table></div></div>
-      </div>
-      <div class="eq-item">
-        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">DISTANCE / ODOMETRY (THE RUN&rsquo;S X-AXIS)</span><span class="eq-price">$0&ndash;80</span><span class="eq-caret">&#9662;</span></button>
-        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: distance enters as the square, so it has to be pinned &mdash; but the clock, a steady speed, and one short gate carry it without a satellite (see the altitude section).</p>
-      <table class="opt-table">
-        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
-        <tr><td>Flight clock + held speed + one short surveyed speed-gate</td><td class="cost">~$0</td><td>The dispute-proof route: only one short baseline to tape-measure near shore, and the clock does the rest.</td></tr>
-        <tr><td>Optical-flow odometer (<a href="https://shop.pimoroni.com/en-us/products/pmw3901-optical-flow-sensor-breakout" target="_blank" rel="noopener">PMW3901</a> board)</td><td class="cost">$15&ndash;40</td><td>Counts surface texture sliding past; works over textured water, fails on glass.</td></tr>
-        <tr><td>Anchored marker buoys at measured ranges</td><td class="cost">$20&ndash;80</td><td>Hardware-store floats; carry the distance directly on glassy water. Range them by tape, rangefinder, or pre-survey &mdash; never GNSS.</td></tr>
-      </table></div></div>
-      </div>
-      <div class="eq-item">
-        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE WATER-LEVEL / WAVE LOGGER (CONFIRM THE SURFACE STAYED PUT)</span><span class="eq-price">$0&ndash;250</span><span class="eq-caret">&#9662;</span></button>
-        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: prove the water itself held calm and level across the run, since a tide, a wind setup, or a seiche would lean the surface and read straight into the drop. Measure depth over a fixed point, never a satellite height.</p>
-        <table class="opt-table">
-          <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
-          <tr><td>Anchored pressure gauge, both ends</td><td class="cost">$60&ndash;250</td><td>A bottom-resting depth sensor at the origin and the far end; the reference. Depth over a fixed point, not a GNSS height read in the very frame the run is testing.</td></tr>
-          <tr><td>DIY submersible pressure sensor + logger</td><td class="cost">$30&ndash;80</td><td>A cheap pressure transducer on a microcontroller does the same job for less.</td></tr>
-          <tr><td>Tide tables + a witnessed visual check</td><td class="cost">$0</td><td>On sheltered, known-still water a recorded visual check can stand in &mdash; weaker, so note it as such.</td></tr>
-        </table></div></div>
-      </div>
-      <div class="eq-item">
-        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE CLINOMETER + POLARIS (MEASUREMENT 1, A HEADING CONTROL)</span><span class="eq-price">$0&ndash;200</span><span class="eq-caret">&#9662;</span></button>
-        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: read the angle up to Polaris to about 0.1&deg; at the start and end. On an east run this confirms the line held, rather than being the curvature test, so modest resolution is enough.</p>
-      <table class="opt-table">
-        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
-        <tr><td>Digital inclinometer / angle gauge, 0.1&deg;</td><td class="cost">$25&ndash;65</td><td><a href="https://www.amazon.com/s?k=digital+inclinometer+0.1+degree" target="_blank" rel="noopener">Amazon</a> / AliExpress. Mount it on a sighting bar; the cheapest path to the Polaris angle.</td></tr>
-        <tr><td>Smartphone clinometer app + a steady jig</td><td class="cost">$0</td><td>You own the phone. Coarser, and it needs a rigid jig, but fine as a cross-check.</td></tr>
-        <tr><td>Marine sextant (Davis Mark 15)</td><td class="cost">$60&ndash;200</td><td><a href="https://www.amazon.com/s?k=davis+mark+15+sextant" target="_blank" rel="noopener">Davis Mark 15</a>. Arcminute resolution; asks more of the hands reading it.</td></tr>
-      </table></div></div>
-      </div>
-      <div class="eq-item">
-        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE WEATHER SENSORS (REFRACTIVITY ALONG THE PATH)</span><span class="eq-price">$5&ndash;350</span><span class="eq-caret">&#9662;</span></button>
-        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: temperature, humidity, and pressure at the origin and on the drone to fix the refractivity of the air, plus a two-height pair for the vertical gradient that bends the beam. The three numbers give the refractivity N = 77.6&middot;P/T + 3.73&times;10&#8309;&middot;e/T&sup2; (P in hPa, T in kelvin, e the water-vapour pressure from the humidity), which turns the refraction correction from an estimate into a measured quantity (Hirt et al., 2010).</p>
-      <table class="opt-table">
-        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
-        <tr><td>BME280 module &times;2 (origin + drone)</td><td class="cost">$5&ndash;20 ea</td><td><a href="https://www.adafruit.com/product/2652" target="_blank" rel="noopener">Adafruit</a>, or generic AliExpress. T / RH / P on one chip; the reference choice.</td></tr>
-        <tr><td>Phone sensors / handheld weather meter</td><td class="cost">$0&ndash;350</td><td>A phone may already log pressure; a Kestrel meter is the field-grade step up.</td></tr>
-        <tr><td>Thermistor column up the first few metres</td><td class="cost">$20&ndash;60</td><td>A row of cheap thermistors maps the near-surface gradient finely &mdash; the strongest refraction control short of two colours.</td></tr>
-      </table></div></div>
-      </div>
-      <div class="eq-item">
-        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE DATALOGGER (TIMESTAMPED ORIGIN RECORD)</span><span class="eq-price">$0&ndash;45</span><span class="eq-caret">&#9662;</span></button>
-        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: timestamp the mount&rsquo;s weather and tilt to a clock the drone shares, so the two ends line up second for second &mdash; no satellite time needed.</p>
-      <table class="opt-table">
-        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
-        <tr><td>microSD serial logger (SparkFun OpenLog)</td><td class="cost">$15&ndash;40</td><td><a href="https://www.sparkfun.com/search/results?term=openlog" target="_blank" rel="noopener">SparkFun</a>. Drop-in serial-to-SD logging; the cheap reference.</td></tr>
-        <tr><td>Raspberry Pi / Arduino + SD card</td><td class="cost">$10&ndash;45</td><td>You may already own one. Logs several sensors and a sync pulse together.</td></tr>
-        <tr><td>A laptop at the origin</td><td class="cost">$0</td><td>Already on site; log to a file and set its clock by the same lift-off mark as the drone.</td></tr>
-      </table></div></div>
-      </div>
-      <div class="eq-item">
-        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">TELEMETRY (OPTIONAL &mdash; WATCH THE PROFILE BUILD LIVE)</span><span class="eq-price">$0&ndash;60</span><span class="eq-caret">&#9662;</span></button>
-        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: stream a few small numbers &mdash; height, distance, centering &mdash; to the origin so both sides watch the run unedited. It carries data only, never a position.</p>
-      <table class="opt-table">
-        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
-        <tr><td>LoRa / Meshtastic board (RAK WisBlock, Heltec V3)</td><td class="cost">$25&ndash;60</td><td><a href="https://meshtastic.org/docs/hardware/devices/" target="_blank" rel="noopener">Meshtastic</a> / <a href="https://store.rakwireless.com/products/wisblock-meshtastic-starter-kit" target="_blank" rel="noopener">RAK</a>. Pre-flashed; reaches these miles over water. Pair direct or in a mesh, not through a public gateway.</td></tr>
-        <tr><td>SiK telemetry radio in the flight stack (433 / 915 MHz)</td><td class="cost">$20&ndash;40</td><td>If the drone already carries one, reuse it for the live numbers.</td></tr>
-        <tr><td>None &mdash; log on the card, recover after</td><td class="cost">$0</td><td>The full-rate log rides on the drone; live telemetry only buys witnessing and a ground copy.</td></tr>
-      </table></div></div>
-      </div>
-      <div class="eq-item">
-        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE TWO-COLOUR REFRACTION KIT (MEASURE THE BEND DIRECTLY)</span><span class="eq-price">$15&ndash;120</span><span class="eq-caret">&#9662;</span></button>
-        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: a second beam in another colour, bore-sighted with the green, so the dispersion between where the two land returns the bend with no shape assumed (see the refraction section).</p>
-      <table class="opt-table">
-        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
-        <tr><td>Red 635 nm DPSS / diode module, bore-sighted</td><td class="cost">$40&ndash;120</td><td><a href="https://www.cnilaser.com/red_laser.htm" target="_blank" rel="noopener">CNI red lasers</a>, or a good red pointer. The cheap second colour.</td></tr>
-        <tr><td>Blue 450 nm module (wider colour split)</td><td class="cost">$40&ndash;120</td><td>A wider gap from the green opens a larger, easier-to-read separation than red does &mdash; worth it if the dispersion comes out marginal.</td></tr>
-        <tr><td>Colour camera or two filtered detectors (drone)</td><td class="cost">$15&ndash;60</td><td>Finds each colour&rsquo;s centre on its own; a Pi / ESP32-CAM may already be aboard for the beam sensor.</td></tr>
-      </table></div></div>
-      </div>
-      <div class="eq-item">
-        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE MIDPOINT MARKER (OPTIONAL &mdash; THE ONE-INSTANT CROSS-CHECK)</span><span class="eq-price">$0&ndash;100</span><span class="eq-caret">&#9662;</span></button>
-        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: a float anchored at the midpoint at exactly the laser&rsquo;s height, carrying a retroreflector, held against wind and current and rechecked at the end.</p>
-      <table class="opt-table">
-        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
-        <tr><td>Anchored float + mast + retroreflector</td><td class="cost">$40&ndash;100</td><td>A hardware-store buoy plus a corner-cube (<a href="https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=12625" target="_blank" rel="noopener">Thorlabs</a> / AliExpress). Set its height with the same tape as the laser.</td></tr>
-        <tr><td>Marker on a sandbar, piling, or breakwater</td><td class="cost">$10&ndash;40</td><td>Where a fixed structure sits midway, cheaper and steadier than a float.</td></tr>
-        <tr><td>None &mdash; far out on open water</td><td class="cost">$0</td><td>Where nothing can be anchored, the run stands on the dense profile alone.</td></tr>
-      </table></div></div>
-      </div>
-      <div class="eq-item">
-        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE CAMERA (RECORD OF THE MIDPOINT FIGURE)</span><span class="eq-price">$0&ndash;800</span><span class="eq-caret">&#9662;</span></button>
-        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: resolve the gap between the midpoint marker and the chord in one frame; the known marker heights are the scale, so no separate ruler is needed.</p>
-      <table class="opt-table">
-        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
-        <tr><td>Phone + clip-on telephoto adapter</td><td class="cost">$0&ndash;40</td><td>You own the phone; an adapter often resolves the gap on a short run.</td></tr>
-        <tr><td>DSLR / mirrorless + long lens (200&ndash;600 mm)</td><td class="cost">$0&ndash;800</td><td>If a kit is already on hand, the cleanest framing of all three marks.</td></tr>
-        <tr><td>Spotting scope / digiscope</td><td class="cost">$80&ndash;400</td><td>Long reach for the far marker on a longer run.</td></tr>
-      </table></div></div>
-      </div>
-      <div class="eq-item">
-        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE INERTIAL GYRO (OPTIONAL &mdash; THE CHECK WITH NO LIGHT IN IT)</span><span class="eq-price">$1k&ndash;20k+</span><span class="eq-caret">&#9662;</span></button>
-        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: a navigation-grade gyro senses whether the local vertical turns over the run, with no beam to bend &mdash; the one reading refraction cannot reach. It is not needed; it is an upgrade in audience, not in measurement.</p>
-      <table class="opt-table">
-        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
-        <tr><td>Fibre-optic gyro (FOG) module</td><td class="cost">$1k&ndash;10k+</td><td><a href="https://www.advancednavigation.com/inertial-navigation-systems/fog-gnss-ins/" target="_blank" rel="noopener">Advanced Navigation</a>, <a href="https://emcore.com/product-category/navigation-inertial-sensing/closed-loop-fiber-optic-gyroscope/" target="_blank" rel="noopener">EMCORE</a> (ex-KVH). Navigation grade; the drone&rsquo;s own flight gyros drift far too much to see the signal.</td></tr>
-        <tr><td>Ring-laser gyro (RLG)</td><td class="cost">$5k&ndash;20k+</td><td>Highest stability; surplus units sometimes surface. The most-capable run only.</td></tr>
-        <tr><td>Borrow, or partner with a lab</td><td class="cost">varies</td><td>The realistic route to this tier for most builders.</td></tr>
-      </table></div></div>
-      </div>
-      </div>
-      <p class="opt-what" style="margin-top:4px">Plus the small stuff every field day needs: walkie-talkies for the crew, batteries, cable ties, and a notebook ($55&ndash;110 all in).</p>
-      <div class="subhead">FOUR BUILDS, FOUR BUDGETS</div>
-      <div class="total"><span class="lbl">SHORT-RUN DRONE  &middot;  MODEST DRONE + LASER  &middot;  IN SIGHT</span><span class="val">$630 &ndash; $1,100</span></div>
-      <div class="total"><span class="lbl">LONG-RUN DRONE  &middot;  CAPABLE DRONE + STRONG LASER  &middot;  BEYOND SIGHT</span><span class="val">$1,100 &ndash; $1,785</span></div>
-      <div class="total"><span class="lbl">SURFACE MARKERS ONLY  &middot;  NO DRONE  &middot;  PHOTOGRAPHIC</span><span class="val">$350 &ndash; $975</span></div>
-      <div class="total"><span class="lbl">MOST CAPABLE  &middot;  LONG RUN + ANCHORED MARKERS</span><span class="val">$1,200 &ndash; $1,915</span></div>
-      <div style="text-align:right;font-family:ui-monospace,monospace;font-size:10px;color:var(--ink-lll);letter-spacing:0.04em;margin-top:6px">THE TWO DRONE BUILDS SHARE A KIT AND DIFFER IN THE DRONE, THE LASER, AND THE REACH. SURFACE MARKERS ALONE IS THE CHEAPEST BUT THE WEAKEST EVIDENCE, A SINGLE THREE-POINT PHOTOGRAPH OF THE KIND ALREADY ARGUED OVER; THE DRONE PROFILE IS A PHYSICAL HEIGHT MEASURED AT EVERY POINT, AND THE MOST CAPABLE BUILD CARRIES BOTH.</div>
-      <div class="subhead">PRICE SOURCES</div>
-      <p>Laser prices were checked against the Zeus Lasers and Wicked Lasers consumer catalogs (June 2026). Drone parts were priced from common F450 kit suppliers. Sensor, mount, and weather-module prices came from AliExpress, eBay surveying listings, and Banggood industrial pages. Each link points to one representative supplier, not an endorsement. The range runs from the cheapest gear that still does the job to mid-tier prosumer; spending past that buys precision and reliability, not a different answer.</p>
-    </div>
-  </div>
-
-  <div class="section-header">
     <span>SETUP DIAGRAM</span>
     <button class="expand-trigger" onclick="toggleDetail('diagram')">EXPAND ▾</button>
   </div>
@@ -1091,22 +883,6 @@
   </div>
 
   <div class="section-header">
-    <span>THE SHORT RUN</span>
-    <button class="expand-trigger" onclick="toggleDetail('shortrun')">EXPAND ▾</button>
-  </div>
-  <div class="detail" id="shortrun">
-    <div class="detail-inner">
-      <p>The run does not have to be long. A long reach asks for a powerful laser, a wide body of water, and a flight that holds the beam for tens of miles, and not everyone can field that. The measurement does not need any of it. The drone logs its height above the water the whole way out, hundreds to thousands of readings across a three to five mile run, and the climb a curved surface would trace grows with the square of the distance, so even a short run leaves a signal a modest kit can resolve.</p>
-      <p>What separates a short run from a long one is not a distance fixed in advance but everything the reach asks of the kit. The short run asks the least of it: a small battery, a modest drone kept within sight, a weaker laser, and the simplest regulatory path, a recreational registration and the line-of-sight rule. The long run pushes every one of those up at once, a larger battery or legs staged along the way, a more efficient airframe to spend that battery reaching out rather than hovering, a stronger laser to stay readable at range, a chase boat, and the heavier paperwork that flying beyond sight demands. Reach is bought in battery, drone, laser, and permission together, which is why the three to five mile run is the protocol's primary form and the long one its expedition version. Naming the run by its flight time rather than by a mileage is also the honest way around the distance problem, because the clock is the one axis both sides read the same, and height plotted against it already shows the flat-or-curved shape, as the altitude section sets out.</p>
-      <p>At three miles the water falls about six feet below the level beam, and the drone climbs that much to stay on it; at five miles it is about seventeen. Those are not subtle amounts for a downward lidar reading to a tenth of a metre, logged at every point along the path rather than guessed from the two ends. A fifty to one hundred milliwatt green laser reaches these distances at night, which moves the laser from the most expensive line on the list to one of the cheapest.</p>
-      <p>A short run also keeps the whole path in more even air. The worst refraction lives in long, low, grazing sight lines that cross miles of changing boundary layer. A few miles of elevated beam over settled water is the easier case to control, not the harder one. The limit is at the short end. At two miles the climb is under three feet, and under a mile less than one, where it starts to contend with the wobble of the waves and the drift of the air across the run. Three to five miles is the range where the profile is both easy to read and easy to defend.</p>
-      <p>Where a marker can be anchored, a midpoint float adds an optional second kind of evidence on top of the profile: three equal heights photographed in one frame, the middle one standing above the chord by about a foot and a half at three miles and about four feet at five, a single instant that cannot drift the way a flown series can. It is a corroboration, not the measurement. The run stands on the profile without it, and a plain camera on a fixed marker is also the cheapest way in for anyone who cannot yet field a drone.</p>
-      <p>The aircraft and the airspace are where that scaling bites hardest, and both push the same way. Take the aircraft first: reach is battery, because flight time is distance, plus the efficiency to spend that battery going out rather than staying up, plus a control link that still holds at the far point, so a smaller, cheaper drone simply reaches less far. Then airspace. In the United States the recreational rules ask the aircraft to stay within visual line of sight, so a short run flown where the crew can watch it needs only an inexpensive drone, registration, and the recreational knowledge test. Carry the run out past easy sight and it wants a visual observer keeping eyes on the aircraft, one more job for the chase boat, or a Part 107 certificate with a line-of-sight waiver, on top of the more capable airframe the distance already demanded. The marker-only build flies nothing, so it never meets any of this, which is the other half of why it is the cheap way in.</p>
-      <p>The long run is the aspirational form, and it carries logistics the budget lines do not: a DIY quad flies fifteen to twenty five minutes on a battery, which is five to eight miles at beam-follow speed, so anything past that means battery legs staged at marker buoys and a chase boat to serve as the landing platform, the battery relay, the far-end reading station, and the eyes that keep the aircraft within sight. The lidar's ceiling binds too, since the drone rides higher above the water as the climb accumulates. None of that is a reason not to attempt it. It is a reason to treat the three to five mile run as the protocol's primary form and the long run as the expedition version, planned like one.</p>
-    </div>
-  </div>
-
-  <div class="section-header">
     <span>PROCEDURE</span>
     <button class="expand-trigger" onclick="toggleDetail('procedure')">EXPAND ▾</button>
   </div>
@@ -1179,6 +955,230 @@
       <div class="subhead">STEP 04 — THREE READINGS AT END POSITION</div>
       <p>The drone reaches the agreed distance and descends to hover just above the water, its lidar reading that hover height. The operator releases the vertical axis, tilts the laser down until the drone's retroreflector lights, and the encoder records the depression angle below the level line. That single angle is Measurement 3. The chase crew takes a fresh Polaris reading, same clinometer, same method as Step 01, with the clock time noted. Then the drone lands and the altitude log comes off it.</p>
       <p>Those three end values, set beside their three starting values, are the whole output. Everything after this is comparison.</p>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span>CONTROLS BEFORE YOU TRUST A NUMBER</span>
+    <button class="expand-trigger" onclick="toggleDetail('controls')">EXPAND ▾</button>
+  </div>
+  <div class="detail" id="controls">
+    <div class="detail-inner">
+      <p>An instrument you have not checked is an opinion. Before any reading over open water is allowed to mean anything, the rig has to earn it on ground where the answer is already known, and the parts that could be told to find a result have to be open to inspection. None of this decides flat or curved. It decides whether the number is trustworthy enough to be worth arguing about at all.</p>
+
+      <div class="subhead">A KNOWN-FLAT CONTROL FIRST</div>
+      <p>Fly the whole protocol over a surface already known to be flat and level, and confirm it reads flat. A surveyed dry lakebed, a frozen lake with benchmarks, a long airport apron, or a stretch of still water short enough that any drop sits below the noise will all serve. The kit should return a level altitude profile, a depression of exactly height over distance, and a midpoint on the chord. If it shows a climb where there is no curvature, something in the rig is manufacturing one, and that has to be found and fixed before a real run is worth flying. This is the null control, and it cuts both ways: a level advocate gets to watch the apparatus fail to invent a curve, and a curve advocate gets to watch it read true on known-flat ground. The positive control is the same idea inverted, a known drop set up on purpose, a target lowered by a measured amount, to confirm the rig sees a real one at the right size and does not swallow it.</p>
+
+      <div class="subhead">CALIBRATE EVERY INSTRUMENT, WITNESSED</div>
+      <p>The whole curved signal is the downward lidar, so its honesty is checked, not assumed. Before the flight and again after it, read it against a distance set by tape, both sides watching, and write down any offset. Do the same for the rest: the tilt encoder is zeroed against the levelled beam with both parties present, the clinometer is read against a known angle, and the two weather chips are compared side by side so their offset is known before one is moved between heights. Calibrating before and after, not just once, is what catches an instrument that drifted during the run, which is the failure no single mid-run reading can reveal on its own.</p>
+
+      <div class="subhead">OPEN THE CODE THAT FLIES IT</div>
+      <p>The strongest claim on this page is that the drone has no stake in the answer, that it only keeps four photodiodes equal and climbs because the light told it to. That claim is only as good as the code on the flight controller, and a black box asked to be trusted is exactly what this protocol refuses everywhere else. So the firmware is open and published, the control loop is the plain one described here with no altitude schedule and no waypoint buried in it, and either side can read it, build it, and load it themselves. A drone that climbed on a known-flat surface would be caught by the control above; open code is how anyone confirms <em>why</em> it climbed on the water, line by line, instead of taking the build on faith.</p>
+
+      <div class="subhead">PIN THE DISTANCE WITHOUT A NETWORK</div>
+      <p>The curvature signal grows as the square of the distance, so an error in distance costs as much as an error in height, and the distance cannot quietly come from the satellite system the run is meant to stand apart from. The optical-flow odometer counts the surface sliding past, and on glassy water, where it has little to track, anchored markers at ranges measured beforehand carry it instead. Those ranges are fixed by tape, by a laser rangefinder shot between the markers, or by a pre-survey both sides accept, and each sample's distance source, flow or marker, is logged beside it. State the distance error the way the height error is stated, because a profile is only as square as the axis it is plotted against. And give the two records a common clock, a sync pulse sent once over the telemetry link or a shared mark at lift-off, so the origin log and the drone log line up second for second without leaning on satellite time. The cleanest distance of all, though, is the one you do not have to agree on: hold a steady speed and plot height against that common clock, and a single short, tape-measured speed-gate near shore is all that scales the time into a distance, so the run's disputed length never becomes the thing the verdict rests on (see the altitude section).</p>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span>EQUIPMENT</span>
+    <button class="expand-trigger" onclick="toggleDetail('equipment')">EXPAND ▾</button>
+  </div>
+
+  <div class="detail" id="equipment">
+    <div class="detail-inner">
+      <p>This is the whole parts list, the reference build and the menu of alternatives in one place. None of it is sacred: the run needs each <em>spec</em> met, not each part bought new. Tap any part to open its options, from "you may already own it" through "readily obtainable" to "best in class." A run that meets the spec on borrowed gear is worth exactly as much as one bought to order; where a cheaper choice costs you something &mdash; reach, precision, a night of fiddling &mdash; the notes say so.</p>
+      <div class="eq-acc">
+      <div class="eq-item">
+        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE LASER (AND A BEAM EXPANDER)</span><span class="eq-price">$15&ndash;900</span><span class="eq-caret">&#9662;</span></button>
+        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: a true 532 nm green beam, enough power for your distance, and low divergence. The expander is the cheap lever — a bare pointer throws a metre-wide spot per kilometre, and an expander cuts that roughly tenfold.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>Green laser pointer, 5&ndash;50 mW</td><td class="cost">$15&ndash;40</td><td>You may already own one (<a href="https://www.aliexpress.com/w/wholesale-532nm-laser-pointer.html" target="_blank" rel="noopener">AliExpress</a> / Amazon). Confirm it is a true 532 nm DPSS, not a 520 nm diode. About 1&ndash;1.5 mrad bare, so short-run only, and only with an expander.</td></tr>
+        <tr><td>DPSS module, 50&ndash;200 mW, TEM00</td><td class="cost">$60&ndash;250</td><td>Lab suppliers such as <a href="http://www.cnilaser.com/MGL-III-532.htm" target="_blank" rel="noopener">CNI (MGL-III-532)</a> or Lasever. Cleaner, lower-divergence beam; 200 mW carries a long or daytime run. The workhorse.</td></tr>
+        <tr><td>Lab-grade collimated 532, M&sup2; &lt; 1.2</td><td class="cost">$300&ndash;900</td><td><a href="http://www.cnilaser.com/MGL-III-532.htm" target="_blank" rel="noopener">CNI MGL-III</a> or Thorlabs. Best beam quality, for the long or expedition run; overkill at 3&ndash;5 miles.</td></tr>
+        <tr><td>10&ndash;20&times; Galilean beam expander</td><td class="cost">$30&ndash;90</td><td><a href="https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=1580" target="_blank" rel="noopener">Thorlabs</a> (GBE&ndash;A covers 532 nm) or AliExpress. Roughly 10&times; lower divergence &mdash; effectively mandatory on any drone run, whichever laser you pick.</td></tr>
+        <tr><td>532 nm goggles, OD 4+</td><td class="cost">$20&ndash;50</td><td>One per person on the crew, e.g. <a href="https://www.thorlabs.com/item/LG3" target="_blank" rel="noopener">Thorlabs LG3</a>. Not optional above a few mW.</td></tr>
+      </table>
+      <p class="opt-what" style="margin-top:14px">Divergence &mdash; the full-angle spread of the beam &mdash; is what sets the spot size at range, and it follows the diffraction limit, so a bigger, cleaner output aperture, or a beam expander, throws a tighter beam. Spot diameter is roughly the divergence (in radians) times the distance:</p>
+      <div style="overflow-x:auto">
+      <table class="spec-table">
+        <tr><th>Setup (532 nm)</th><th>divergence</th><th>&Oslash; @1 km</th><th>@5 km</th><th>@10 km</th><th>@30 km</th></tr>
+        <tr><td>Bare cheap pointer</td><td>~1.2 mrad</td><td>~1.2 m</td><td>~6 m</td><td>~12 m</td><td>~36 m</td></tr>
+        <tr><td>Pointer + 10&times; expander</td><td>~0.12 mrad</td><td>~12 cm</td><td>~0.6 m</td><td>~1.2 m</td><td>~3.6 m</td></tr>
+        <tr><td>Good TEM00 module + 25&ndash;50 mm expander</td><td>~0.04&ndash;0.06 mrad</td><td>~4&ndash;6 cm</td><td>~0.2&ndash;0.3 m</td><td>~0.4&ndash;0.6 m</td><td>~1.2&ndash;1.8 m</td></tr>
+        <tr><td>Diffraction floor (50 mm aperture)</td><td>~0.013 mrad</td><td>~1.3 cm</td><td>~7 cm</td><td>~13 cm</td><td>~0.4 m</td></tr>
+      </table>
+      </div>
+      <p class="opt-what">The spot need not be small to be usable: the quadrant sensor finds its <em>centre</em>, so even a metre-wide spot is followed to a fraction of its width as long as it stays symmetric. What actually caps the run (about 5&ndash;10 miles here) is the light per area falling as the square of the distance, plus the shimmer of near-surface air &mdash; which is why the diffraction-floor row is a ceiling you will not reach over a long low path. Lower divergence still helps on both counts, so the expander earns its place on every build.</p></div></div>
+      </div>
+      <div class="eq-item">
+        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE BEAM MOUNT (LEVEL IT, LOCK IT, READ THE END TILT)</span><span class="eq-price">$40&ndash;250</span><span class="eq-caret">&#9662;</span></button>
+        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: hold the beam dead still on both axes through the run, and read the end-of-run tilt down to the drone to about 0.01&deg;.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>Surveyor tripod + leveling head + clamp + stick-on digital inclinometer</td><td class="cost">$50&ndash;180</td><td>You may already own a sturdy tripod. Level by bubble, lock by clamp, read the end tilt off a $25&ndash;65 inclinometer on the barrel. The cheap path.</td></tr>
+        <tr><td>Used geared photo head</td><td class="cost">$40&ndash;150</td><td>Likely on your shelf or in a camera-store used bin. Fine micrometer adjust; still add an inclinometer for the tilt reading.</td></tr>
+        <tr><td>Motorised pan/tilt with tilt encoder</td><td class="cost">$80&ndash;250</td><td>AliExpress / robotics. Repeatable, and logs the end tilt automatically; nicest for repeated runs.</td></tr>
+      </table></div></div>
+      </div>
+      <div class="eq-item">
+        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE DRONE (IT FOLLOWS THE BEAM, NOTHING ELSE)</span><span class="eq-price">$0&ndash;900</span><span class="eq-caret">&#9662;</span></button>
+        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: it holds station and altitude, carries the beam sensor and the downward lidar, and reaches your run length on a charge. The firmware should be open so the flight loop can be read.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>A quad you already own (flashable flight controller)</td><td class="cost">$0</td><td>The biggest saving by far. If it runs ArduPilot, PX4, or Betaflight you can feed it the beam-sensor error and skip a purchase.</td></tr>
+        <tr><td>F450-class DIY kit</td><td class="cost">$150&ndash;300</td><td>The reference build &mdash; open firmware, roomy frame, easy to bolt sensors onto.</td></tr>
+        <tr><td>Capable long-range platform</td><td class="cost">$400&ndash;900</td><td>Bigger, efficient airframe for the long run; pairs with staged batteries and a chase boat.</td></tr>
+      </table></div></div>
+      </div>
+      <div class="eq-item">
+        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE BEAM SENSOR + RETROREFLECTOR (ON THE DRONE)</span><span class="eq-price">$10&ndash;300</span><span class="eq-caret">&#9662;</span></button>
+        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: find the beam&rsquo;s centre on the drone to steer the flight controller, and bounce part of the beam back to the origin for the depression and reciprocal checks.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>DIY quadrant photodiode (4 photodiodes + op-amp)</td><td class="cost">$20&ndash;60</td><td>The reference. Four cells around an aperture; the difference between pairs is the steering error.</td></tr>
+        <tr><td>Camera + centroid on a small board (Pi / ESP32-CAM)</td><td class="cost">$15&ndash;50</td><td>You may already own the camera. Software finds the spot&rsquo;s centroid &mdash; handles a wide or lopsided spot gracefully, at the cost of a little code.</td></tr>
+        <tr><td>Commercial position-sensing detector (PSD)</td><td class="cost">$80&ndash;300</td><td>Thorlabs / Hamamatsu. Cleanest analogue centring signal; the precision option.</td></tr>
+        <tr><td>Corner-cube retroreflector</td><td class="cost">$10&ndash;40</td><td><a href="https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=12625" target="_blank" rel="noopener">Thorlabs</a> / Edmund / AliExpress. Returns the beam for the end depression reading and the reciprocal check.</td></tr>
+      </table></div></div>
+      </div>
+      <div class="eq-item">
+        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE DOWNWARD ALTIMETER (HEIGHT ABOVE WATER &mdash; MEASUREMENT 2)</span><span class="eq-price">$60&ndash;400</span><span class="eq-caret">&#9662;</span></button>
+        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: real reach, because the drone rides tens to hundreds of metres up, and a clean return off dark, low-reflectivity water.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>100 m-class single-point lidar (<a href="https://www.robotshop.com/products/benewake-tf03-lidar-led-rangefinder-ip67-100-m" target="_blank" rel="noopener">Benewake TF03</a>, LightWare)</td><td class="cost">$60&ndash;350</td><td>The reference. Pick one rated for dark targets; calm water returns little straight down.</td></tr>
+        <tr><td>Radar altimeter (<a href="https://ainstein.ai/us-d1-all-weather-radar-altimeter/" target="_blank" rel="noopener">Ainstein US-D1</a>)</td><td class="cost">$150&ndash;400</td><td>Works over water and at altitude, robust to haze; coarser resolution than lidar.</td></tr>
+        <tr><td>Hobby optical-flow lidar (1&ndash;2 m range)</td><td class="cost">&mdash;</td><td>Listed only to rule out: far too short-range for this job. Do not buy it for the altitude reading.</td></tr>
+      </table></div></div>
+      </div>
+      <div class="eq-item">
+        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">DISTANCE / ODOMETRY (THE RUN&rsquo;S X-AXIS)</span><span class="eq-price">$0&ndash;80</span><span class="eq-caret">&#9662;</span></button>
+        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: distance enters as the square, so it has to be pinned &mdash; but the clock, a steady speed, and one short gate carry it without a satellite (see the altitude section).</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>Flight clock + held speed + one short surveyed speed-gate</td><td class="cost">~$0</td><td>The dispute-proof route: only one short baseline to tape-measure near shore, and the clock does the rest.</td></tr>
+        <tr><td>Optical-flow odometer (<a href="https://shop.pimoroni.com/en-us/products/pmw3901-optical-flow-sensor-breakout" target="_blank" rel="noopener">PMW3901</a> board)</td><td class="cost">$15&ndash;40</td><td>Counts surface texture sliding past; works over textured water, fails on glass.</td></tr>
+        <tr><td>Anchored marker buoys at measured ranges</td><td class="cost">$20&ndash;80</td><td>Hardware-store floats; carry the distance directly on glassy water. Range them by tape, rangefinder, or pre-survey &mdash; never GNSS.</td></tr>
+      </table></div></div>
+      </div>
+      <div class="eq-item">
+        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE WATER-LEVEL / WAVE LOGGER (CONFIRM THE SURFACE STAYED PUT)</span><span class="eq-price">$0&ndash;250</span><span class="eq-caret">&#9662;</span></button>
+        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: prove the water itself held calm and level across the run, since a tide, a wind setup, or a seiche would lean the surface and read straight into the drop. Measure depth over a fixed point, never a satellite height.</p>
+        <table class="opt-table">
+          <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+          <tr><td>Anchored pressure gauge, both ends</td><td class="cost">$60&ndash;250</td><td>A bottom-resting depth sensor at the origin and the far end; the reference. Depth over a fixed point, not a GNSS height read in the very frame the run is testing.</td></tr>
+          <tr><td>DIY submersible pressure sensor + logger</td><td class="cost">$30&ndash;80</td><td>A cheap pressure transducer on a microcontroller does the same job for less.</td></tr>
+          <tr><td>Tide tables + a witnessed visual check</td><td class="cost">$0</td><td>On sheltered, known-still water a recorded visual check can stand in &mdash; weaker, so note it as such.</td></tr>
+        </table></div></div>
+      </div>
+      <div class="eq-item">
+        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE CLINOMETER + POLARIS (MEASUREMENT 1, A HEADING CONTROL)</span><span class="eq-price">$0&ndash;200</span><span class="eq-caret">&#9662;</span></button>
+        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: read the angle up to Polaris to about 0.1&deg; at the start and end. On an east run this confirms the line held, rather than being the curvature test, so modest resolution is enough.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>Digital inclinometer / angle gauge, 0.1&deg;</td><td class="cost">$25&ndash;65</td><td><a href="https://www.amazon.com/s?k=digital+inclinometer+0.1+degree" target="_blank" rel="noopener">Amazon</a> / AliExpress. Mount it on a sighting bar; the cheapest path to the Polaris angle.</td></tr>
+        <tr><td>Smartphone clinometer app + a steady jig</td><td class="cost">$0</td><td>You own the phone. Coarser, and it needs a rigid jig, but fine as a cross-check.</td></tr>
+        <tr><td>Marine sextant (Davis Mark 15)</td><td class="cost">$60&ndash;200</td><td><a href="https://www.amazon.com/s?k=davis+mark+15+sextant" target="_blank" rel="noopener">Davis Mark 15</a>. Arcminute resolution; asks more of the hands reading it.</td></tr>
+      </table></div></div>
+      </div>
+      <div class="eq-item">
+        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE WEATHER SENSORS (REFRACTIVITY ALONG THE PATH)</span><span class="eq-price">$5&ndash;350</span><span class="eq-caret">&#9662;</span></button>
+        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: temperature, humidity, and pressure at the origin and on the drone to fix the refractivity of the air, plus a two-height pair for the vertical gradient that bends the beam. The three numbers give the refractivity N = 77.6&middot;P/T + 3.73&times;10&#8309;&middot;e/T&sup2; (P in hPa, T in kelvin, e the water-vapour pressure from the humidity), which turns the refraction correction from an estimate into a measured quantity (Hirt et al., 2010).</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>BME280 module &times;2 (origin + drone)</td><td class="cost">$5&ndash;20 ea</td><td><a href="https://www.adafruit.com/product/2652" target="_blank" rel="noopener">Adafruit</a>, or generic AliExpress. T / RH / P on one chip; the reference choice.</td></tr>
+        <tr><td>Phone sensors / handheld weather meter</td><td class="cost">$0&ndash;350</td><td>A phone may already log pressure; a Kestrel meter is the field-grade step up.</td></tr>
+        <tr><td>Thermistor column up the first few metres</td><td class="cost">$20&ndash;60</td><td>A row of cheap thermistors maps the near-surface gradient finely &mdash; the strongest refraction control short of two colours.</td></tr>
+      </table></div></div>
+      </div>
+      <div class="eq-item">
+        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE DATALOGGER (TIMESTAMPED ORIGIN RECORD)</span><span class="eq-price">$0&ndash;45</span><span class="eq-caret">&#9662;</span></button>
+        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: timestamp the mount&rsquo;s weather and tilt to a clock the drone shares, so the two ends line up second for second &mdash; no satellite time needed.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>microSD serial logger (SparkFun OpenLog)</td><td class="cost">$15&ndash;40</td><td><a href="https://www.sparkfun.com/search/results?term=openlog" target="_blank" rel="noopener">SparkFun</a>. Drop-in serial-to-SD logging; the cheap reference.</td></tr>
+        <tr><td>Raspberry Pi / Arduino + SD card</td><td class="cost">$10&ndash;45</td><td>You may already own one. Logs several sensors and a sync pulse together.</td></tr>
+        <tr><td>A laptop at the origin</td><td class="cost">$0</td><td>Already on site; log to a file and set its clock by the same lift-off mark as the drone.</td></tr>
+      </table></div></div>
+      </div>
+      <div class="eq-item">
+        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">TELEMETRY (OPTIONAL &mdash; WATCH THE PROFILE BUILD LIVE)</span><span class="eq-price">$0&ndash;60</span><span class="eq-caret">&#9662;</span></button>
+        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: stream a few small numbers &mdash; height, distance, centering &mdash; to the origin so both sides watch the run unedited. It carries data only, never a position.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>LoRa / Meshtastic board (RAK WisBlock, Heltec V3)</td><td class="cost">$25&ndash;60</td><td><a href="https://meshtastic.org/docs/hardware/devices/" target="_blank" rel="noopener">Meshtastic</a> / <a href="https://store.rakwireless.com/products/wisblock-meshtastic-starter-kit" target="_blank" rel="noopener">RAK</a>. Pre-flashed; reaches these miles over water. Pair direct or in a mesh, not through a public gateway.</td></tr>
+        <tr><td>SiK telemetry radio in the flight stack (433 / 915 MHz)</td><td class="cost">$20&ndash;40</td><td>If the drone already carries one, reuse it for the live numbers.</td></tr>
+        <tr><td>None &mdash; log on the card, recover after</td><td class="cost">$0</td><td>The full-rate log rides on the drone; live telemetry only buys witnessing and a ground copy.</td></tr>
+      </table></div></div>
+      </div>
+      <div class="eq-item">
+        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE TWO-COLOUR REFRACTION KIT (MEASURE THE BEND DIRECTLY)</span><span class="eq-price">$15&ndash;120</span><span class="eq-caret">&#9662;</span></button>
+        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: a second beam in another colour, bore-sighted with the green, so the dispersion between where the two land returns the bend with no shape assumed (see the refraction section).</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>Red 635 nm DPSS / diode module, bore-sighted</td><td class="cost">$40&ndash;120</td><td><a href="https://www.cnilaser.com/red_laser.htm" target="_blank" rel="noopener">CNI red lasers</a>, or a good red pointer. The cheap second colour.</td></tr>
+        <tr><td>Blue 450 nm module (wider colour split)</td><td class="cost">$40&ndash;120</td><td>A wider gap from the green opens a larger, easier-to-read separation than red does &mdash; worth it if the dispersion comes out marginal.</td></tr>
+        <tr><td>Colour camera or two filtered detectors (drone)</td><td class="cost">$15&ndash;60</td><td>Finds each colour&rsquo;s centre on its own; a Pi / ESP32-CAM may already be aboard for the beam sensor.</td></tr>
+      </table></div></div>
+      </div>
+      <div class="eq-item">
+        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE MIDPOINT MARKER (OPTIONAL &mdash; THE ONE-INSTANT CROSS-CHECK)</span><span class="eq-price">$0&ndash;100</span><span class="eq-caret">&#9662;</span></button>
+        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: a float anchored at the midpoint at exactly the laser&rsquo;s height, carrying a retroreflector, held against wind and current and rechecked at the end.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>Anchored float + mast + retroreflector</td><td class="cost">$40&ndash;100</td><td>A hardware-store buoy plus a corner-cube (<a href="https://www.thorlabs.com/newgrouppage9.cfm?objectgroup_id=12625" target="_blank" rel="noopener">Thorlabs</a> / AliExpress). Set its height with the same tape as the laser.</td></tr>
+        <tr><td>Marker on a sandbar, piling, or breakwater</td><td class="cost">$10&ndash;40</td><td>Where a fixed structure sits midway, cheaper and steadier than a float.</td></tr>
+        <tr><td>None &mdash; far out on open water</td><td class="cost">$0</td><td>Where nothing can be anchored, the run stands on the dense profile alone.</td></tr>
+      </table></div></div>
+      </div>
+      <div class="eq-item">
+        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE CAMERA (RECORD OF THE MIDPOINT FIGURE)</span><span class="eq-price">$0&ndash;800</span><span class="eq-caret">&#9662;</span></button>
+        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: resolve the gap between the midpoint marker and the chord in one frame; the known marker heights are the scale, so no separate ruler is needed.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>Phone + clip-on telephoto adapter</td><td class="cost">$0&ndash;40</td><td>You own the phone; an adapter often resolves the gap on a short run.</td></tr>
+        <tr><td>DSLR / mirrorless + long lens (200&ndash;600 mm)</td><td class="cost">$0&ndash;800</td><td>If a kit is already on hand, the cleanest framing of all three marks.</td></tr>
+        <tr><td>Spotting scope / digiscope</td><td class="cost">$80&ndash;400</td><td>Long reach for the far marker on a longer run.</td></tr>
+      </table></div></div>
+      </div>
+      <div class="eq-item">
+        <button class="eq-head" type="button" aria-expanded="false"><span class="eq-name">THE INERTIAL GYRO (OPTIONAL &mdash; THE CHECK WITH NO LIGHT IN IT)</span><span class="eq-price">$1k&ndash;20k+</span><span class="eq-caret">&#9662;</span></button>
+        <div class="eq-body"><div class="eq-bodyinner"><p class="opt-what">What matters: a navigation-grade gyro senses whether the local vertical turns over the run, with no beam to bend &mdash; the one reading refraction cannot reach. It is not needed; it is an upgrade in audience, not in measurement.</p>
+      <table class="opt-table">
+        <tr><th>Option</th><th>~Cost</th><th>Notes</th></tr>
+        <tr><td>Fibre-optic gyro (FOG) module</td><td class="cost">$1k&ndash;10k+</td><td><a href="https://www.advancednavigation.com/inertial-navigation-systems/fog-gnss-ins/" target="_blank" rel="noopener">Advanced Navigation</a>, <a href="https://emcore.com/product-category/navigation-inertial-sensing/closed-loop-fiber-optic-gyroscope/" target="_blank" rel="noopener">EMCORE</a> (ex-KVH). Navigation grade; the drone&rsquo;s own flight gyros drift far too much to see the signal.</td></tr>
+        <tr><td>Ring-laser gyro (RLG)</td><td class="cost">$5k&ndash;20k+</td><td>Highest stability; surplus units sometimes surface. The most-capable run only.</td></tr>
+        <tr><td>Borrow, or partner with a lab</td><td class="cost">varies</td><td>The realistic route to this tier for most builders.</td></tr>
+      </table></div></div>
+      </div>
+      </div>
+      <p class="opt-what" style="margin-top:4px">Plus the small stuff every field day needs: walkie-talkies for the crew, batteries, cable ties, and a notebook ($55&ndash;110 all in).</p>
+      <div class="subhead">FOUR BUILDS, FOUR BUDGETS</div>
+      <div class="total"><span class="lbl">SHORT-RUN DRONE  &middot;  MODEST DRONE + LASER  &middot;  IN SIGHT</span><span class="val">$630 &ndash; $1,100</span></div>
+      <div class="total"><span class="lbl">LONG-RUN DRONE  &middot;  CAPABLE DRONE + STRONG LASER  &middot;  BEYOND SIGHT</span><span class="val">$1,100 &ndash; $1,785</span></div>
+      <div class="total"><span class="lbl">SURFACE MARKERS ONLY  &middot;  NO DRONE  &middot;  PHOTOGRAPHIC</span><span class="val">$350 &ndash; $975</span></div>
+      <div class="total"><span class="lbl">MOST CAPABLE  &middot;  LONG RUN + ANCHORED MARKERS</span><span class="val">$1,200 &ndash; $1,915</span></div>
+      <div style="text-align:right;font-family:ui-monospace,monospace;font-size:10px;color:var(--ink-lll);letter-spacing:0.04em;margin-top:6px">THE TWO DRONE BUILDS SHARE A KIT AND DIFFER IN THE DRONE, THE LASER, AND THE REACH. SURFACE MARKERS ALONE IS THE CHEAPEST BUT THE WEAKEST EVIDENCE, A SINGLE THREE-POINT PHOTOGRAPH OF THE KIND ALREADY ARGUED OVER; THE DRONE PROFILE IS A PHYSICAL HEIGHT MEASURED AT EVERY POINT, AND THE MOST CAPABLE BUILD CARRIES BOTH.</div>
+      <div class="subhead">PRICE SOURCES</div>
+      <p>Laser prices were checked against the Zeus Lasers and Wicked Lasers consumer catalogs (June 2026). Drone parts were priced from common F450 kit suppliers. Sensor, mount, and weather-module prices came from AliExpress, eBay surveying listings, and Banggood industrial pages. Each link points to one representative supplier, not an endorsement. The range runs from the cheapest gear that still does the job to mid-tier prosumer; spending past that buys precision and reliability, not a different answer.</p>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <span>THE SHORT RUN</span>
+    <button class="expand-trigger" onclick="toggleDetail('shortrun')">EXPAND ▾</button>
+  </div>
+  <div class="detail" id="shortrun">
+    <div class="detail-inner">
+      <p>The run does not have to be long. A long reach asks for a powerful laser, a wide body of water, and a flight that holds the beam for tens of miles, and not everyone can field that. The measurement does not need any of it. The drone logs its height above the water the whole way out, hundreds to thousands of readings across a three to five mile run, and the climb a curved surface would trace grows with the square of the distance, so even a short run leaves a signal a modest kit can resolve.</p>
+      <p>What separates a short run from a long one is not a distance fixed in advance but everything the reach asks of the kit. The short run asks the least of it: a small battery, a modest drone kept within sight, a weaker laser, and the simplest regulatory path, a recreational registration and the line-of-sight rule. The long run pushes every one of those up at once, a larger battery or legs staged along the way, a more efficient airframe to spend that battery reaching out rather than hovering, a stronger laser to stay readable at range, a chase boat, and the heavier paperwork that flying beyond sight demands. Reach is bought in battery, drone, laser, and permission together, which is why the three to five mile run is the protocol's primary form and the long one its expedition version. Naming the run by its flight time rather than by a mileage is also the honest way around the distance problem, because the clock is the one axis both sides read the same, and height plotted against it already shows the flat-or-curved shape, as the altitude section sets out.</p>
+      <p>At three miles the water falls about six feet below the level beam, and the drone climbs that much to stay on it; at five miles it is about seventeen. Those are not subtle amounts for a downward lidar reading to a tenth of a metre, logged at every point along the path rather than guessed from the two ends. A fifty to one hundred milliwatt green laser reaches these distances at night, which moves the laser from the most expensive line on the list to one of the cheapest.</p>
+      <p>A short run also keeps the whole path in more even air. The worst refraction lives in long, low, grazing sight lines that cross miles of changing boundary layer. A few miles of elevated beam over settled water is the easier case to control, not the harder one. The limit is at the short end. At two miles the climb is under three feet, and under a mile less than one, where it starts to contend with the wobble of the waves and the drift of the air across the run. Three to five miles is the range where the profile is both easy to read and easy to defend.</p>
+      <p>Where a marker can be anchored, a midpoint float adds an optional second kind of evidence on top of the profile: three equal heights photographed in one frame, the middle one standing above the chord by about a foot and a half at three miles and about four feet at five, a single instant that cannot drift the way a flown series can. It is a corroboration, not the measurement. The run stands on the profile without it, and a plain camera on a fixed marker is also the cheapest way in for anyone who cannot yet field a drone.</p>
+      <p>The aircraft and the airspace are where that scaling bites hardest, and both push the same way. Take the aircraft first: reach is battery, because flight time is distance, plus the efficiency to spend that battery going out rather than staying up, plus a control link that still holds at the far point, so a smaller, cheaper drone simply reaches less far. Then airspace. In the United States the recreational rules ask the aircraft to stay within visual line of sight, so a short run flown where the crew can watch it needs only an inexpensive drone, registration, and the recreational knowledge test. Carry the run out past easy sight and it wants a visual observer keeping eyes on the aircraft, one more job for the chase boat, or a Part 107 certificate with a line-of-sight waiver, on top of the more capable airframe the distance already demanded. The marker-only build flies nothing, so it never meets any of this, which is the other half of why it is the cheap way in.</p>
+      <p>The long run is the aspirational form, and it carries logistics the budget lines do not: a DIY quad flies fifteen to twenty five minutes on a battery, which is five to eight miles at beam-follow speed, so anything past that means battery legs staged at marker buoys and a chase boat to serve as the landing platform, the battery relay, the far-end reading station, and the eyes that keep the aircraft within sight. The lidar's ceiling binds too, since the drone rides higher above the water as the climb accumulates. None of that is a reason not to attempt it. It is a reason to treat the three to five mile run as the protocol's primary form and the long run as the expedition version, planned like one.</p>
     </div>
   </div>
 
