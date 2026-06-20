@@ -7,12 +7,13 @@
 // with no dither for crisp text.
 //
 // Requires: Node 18+, ffmpeg on PATH, and `npm i @napi-rs/canvas` (prebuilt,
-// no system deps). Run from the repo root:  node scripts/make_gif.mjs
+// no system deps) plus `npm i qrcode`. Run from the repo root:  node scripts/make_gif.mjs
 import { createCanvas } from '@napi-rs/canvas'
 import { writeFileSync, mkdirSync, rmSync } from 'fs'
 import { tmpdir } from 'os'
 import { join } from 'path'
 import { execSync } from 'child_process'
+import QRCode from 'qrcode'
 const FR = join(tmpdir(), 'rb_gif_frames')
 
 const W = 760, H = 400, FPS = 20
@@ -32,6 +33,25 @@ const mono = px => `${px}px Menlo`
 const clamp = (v,a,b) => Math.max(a, Math.min(b, v))
 const easeOut = t => 1 - Math.pow(1 - t, 3)
 const tracked = (ctx,s,x,y) => { let cx=x; for (const ch of s){ ctx.fillText(ch,cx,y); cx += ctx.measureText(ch).width + 1.5 } }
+
+// QR to the catalog front door — static every frame so it scans; drawn off the
+// 2× supersample with a 4-module white quiet zone so the modules stay crisp.
+const QR_URL = 'https://replicationbench.github.io/RB/'
+const _qr = QRCode.create(QR_URL, { errorCorrectionLevel: 'M' })
+const QN = _qr.modules.size, QD = _qr.modules.data
+function drawQR(ctx){
+  const x = 18, y = 14, box = 88
+  const m = box / QN
+  const pad = Math.ceil(4 * m) + 1            // ≥ 4-module quiet zone
+  const cw = box + pad * 2, ch = box + pad * 2 + 12
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(x, y, cw, ch)
+  ctx.strokeStyle = 'rgba(46,42,36,0.20)'; ctx.lineWidth = 1; ctx.strokeRect(x + 0.5, y + 0.5, cw - 1, ch - 1)
+  ctx.fillStyle = '#15120d'
+  for (let r = 0; r < QN; r++) for (let c = 0; c < QN; c++)
+    if (QD[r * QN + c]) ctx.fillRect(x + pad + c * m, y + pad + r * m, m + 0.5, m + 0.5)
+  ctx.fillStyle = C.mute; ctx.font = mono(7.5); ctx.textAlign = 'center'
+  ctx.fillText('SCAN · THE CATALOG', x + cw / 2, y + ch - 4); ctx.textAlign = 'left'
+}
 
 function drone(ctx,x,y){
   ctx.strokeStyle=C.ink; ctx.lineWidth=1.6
@@ -148,6 +168,8 @@ function frame(ctx,i){
   ctx.font=mono(11)
   ctx.fillStyle=C.flat;   ctx.fillRect(W-326,22,16,3); ctx.fillText('IF FLAT — height holds', W-304,27)
   ctx.fillStyle=C.curved; ctx.fillRect(W-326,40,16,3); ctx.fillText('IF CURVED — water falls (≈8 in×mi²)', W-304,45)
+
+  drawQR(ctx)
 
   // caption
   ctx.fillStyle=C.cream; ctx.fillRect(0,yCap,W,H-yCap)
