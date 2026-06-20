@@ -8,7 +8,7 @@
 
 **Interactive references**
 - ▶ **[The field protocol](laser-experiment.html)** — full build, setup diagrams, procedure, refraction handling, equipment options, and a live run simulator embedded in it.
-- ▶ **[Curvature & horizon simulator](simulator.html)** — to-scale model of curvature, horizon dip, hidden height, and refraction.
+- ▶ **[Curvature & horizon simulator](../../resources/earth-curvature-simulator/simulator.html)** — to-scale model of curvature, horizon dip, hidden height, and refraction.
 
 *(Browsing on GitHub? Those are HTML pages — open them via the
 [live site](https://replicationbench.github.io/RB/experiments/earth-curvature-laser/laser-experiment.html).)*
@@ -83,7 +83,7 @@ a *measured* bend (the two-colour dispersion returns it with no shape assumed),
 not an assumed coefficient. The math, the small-angle-vs-exact note, and the
 effective-radius treatment are in
 [Reading the results](laser-experiment.html#measurements) and the embedded
-[simulator](simulator.html); analysis scripts go in [`analysis/`](analysis/).
+[simulator](../../resources/earth-curvature-simulator/simulator.html); analysis scripts go in [`analysis/`](analysis/).
 
 ## 7. Results & replication log
 

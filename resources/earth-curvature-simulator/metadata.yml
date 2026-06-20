@@ -1,0 +1,7 @@
+slug: "earth-curvature-simulator"
+title: "Earth Curvature & Horizon Simulator"
+type: resource
+description: "To-scale interactive model of curvature, horizon dip, hidden height, and atmospheric refraction. A teaching and visualization tool, not a measurement."
+related_experiment: "earth-curvature-laser"
+contributor: "ReplicationBench"
+tags: [geodesy, optics, visualization]

@@ -35,8 +35,9 @@ unisolated lethal voltage) is defined in the scope policy and enforced at review
 
 ```
 experiments/<slug>/      one experiment, following the standard template
+resources/<slug>/        a member-generated resource (a tool/visualisation), NOT an experiment
 _template/               copy this to start a new experiment
-scripts/build_index.py   regenerates the catalog table in this README
+scripts/build_index.py   regenerates the catalog + resources tables in this README
 LICENSE                  GNU AGPL-3.0
 COMMERCIAL-LICENSE.md    commercial / dual-license terms
 .gitattributes           routes raw data + binaries through Git LFS
@@ -105,6 +106,21 @@ safety_level: ""         # none | low | medium | high
 status: untested         # replicated | refuted | inconclusive | untested
 tags: []                 # e.g. [astronomy, relativity, pseudoscience-test]
 ```
+
+---
+
+## Member-generated resources
+
+Resources are community-contributed tools — simulators, calculators, visualisers —
+that help readers reason about an experiment. **A resource is not an experiment
+and asserts nothing about the world; only a measured run does.** Each lives under
+`resources/<slug>/` with its own `metadata.yml` (`type: resource`):
+
+<!-- RESOURCES:START -->
+| Resource | What it is | Supports | Contributor |
+|---|---|---|---|
+| [Earth Curvature & Horizon Simulator](./resources/earth-curvature-simulator/) | To-scale interactive model of curvature, horizon dip, hidden height, and atmospheric refraction. A teaching and visualization tool, not a measurement. | [earth-curvature-laser](./experiments/earth-curvature-laser/) | ReplicationBench |
+<!-- RESOURCES:END -->
 
 ---
 

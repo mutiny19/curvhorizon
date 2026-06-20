@@ -61,35 +61,59 @@ def make_row(slug, m):
     return f"| [{title}](./experiments/{slug}/) | {claim} | {cost} | {diff} | {safety} | {status} |"
 
 
-def main():
+def make_resource_row(slug, m):
+    title = m.get("title") or slug
+    desc = m.get("description") or ""
+    rel = m.get("related_experiment") or ""
+    supports = f"[{rel}](./experiments/{rel}/)" if rel else "—"
+    contributor = m.get("contributor") or "—"
+    return f"| [{title}](./resources/{slug}/) | {desc} | {supports} | {contributor} |"
+
+
+def build_table(subdir, header, row_fn):
     rows = []
-    for meta in sorted(glob.glob(os.path.join(ROOT, "experiments", "*", "metadata.yml"))):
+    for meta in sorted(glob.glob(os.path.join(ROOT, subdir, "*", "metadata.yml"))):
         folder = os.path.basename(os.path.dirname(meta))
         m = parse_metadata(meta)
-        slug = m.get("slug") or folder
-        rows.append(((m.get("title") or folder).lower(), make_row(slug, m)))
+        rows.append(((m.get("title") or folder).lower(), row_fn(m.get("slug") or folder, m)))
     rows.sort()
+    return ("\n".join([header] + [r for _, r in rows]) if rows else header), len(rows)
 
-    header = (
-        "| Experiment | Claim tested | Cost | Difficulty | Safety | Status |\n"
-        "|---|---|---|---|---|---|"
-    )
-    table = "\n".join([header] + [r for _, r in rows]) if rows else header
 
-    with open(README, encoding="utf-8") as f:
-        text = f.read()
-    if "<!-- CATALOG:START -->" not in text or "<!-- CATALOG:END -->" not in text:
-        sys.exit("ERROR: CATALOG:START / CATALOG:END markers not found in README.md")
-
-    new = re.sub(
-        r"(<!-- CATALOG:START -->).*?(<!-- CATALOG:END -->)",
-        lambda mm: mm.group(1) + "\n" + table + "\n" + mm.group(2),
+def replace_block(text, start, end, block):
+    if start not in text or end not in text:
+        return text, False
+    out = re.sub(
+        re.escape(start) + r".*?" + re.escape(end),
+        lambda _: start + "\n" + block + "\n" + end,
         text,
         flags=re.S,
     )
+    return out, True
+
+
+def main():
+    exp_header = (
+        "| Experiment | Claim tested | Cost | Difficulty | Safety | Status |\n"
+        "|---|---|---|---|---|---|"
+    )
+    res_header = (
+        "| Resource | What it is | Supports | Contributor |\n"
+        "|---|---|---|---|"
+    )
+    exp_table, n_exp = build_table("experiments", exp_header, make_row)
+    res_table, n_res = build_table("resources", res_header, make_resource_row)
+
+    with open(README, encoding="utf-8") as f:
+        text = f.read()
+    text, ok = replace_block(text, "<!-- CATALOG:START -->", "<!-- CATALOG:END -->", exp_table)
+    if not ok:
+        sys.exit("ERROR: CATALOG:START / CATALOG:END markers not found in README.md")
+    text, _ = replace_block(text, "<!-- RESOURCES:START -->", "<!-- RESOURCES:END -->", res_table)
+
     with open(README, "w", encoding="utf-8") as f:
-        f.write(new)
-    print(f"Catalog updated: {len(rows)} experiment(s).")
+        f.write(text)
+    print(f"Catalog updated: {n_exp} experiment(s), {n_res} resource(s).")
 
 
 if __name__ == "__main__":
