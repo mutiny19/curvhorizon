@@ -1,8 +1,10 @@
 // Regenerates experiments/laser-experiment/laser-experiment.gif — a neutral,
-// schematic 8-second loop of the experiment: the water settles from choppy to
-// calm, the laser powers on and its level beam shimmers east over the water, a
-// drone flies out logging its height, and the reading-ticks tick in behind it.
-// Both predictions are drawn equally — flat holds, curved falls away. Not to scale.
+// schematic 8-second loop: the water settles from choppy to still, the laser
+// powers on and its level beam shimmers east over the water, a drone flies out
+// logging its height, and the reading-ticks tick in behind it. Both predictions
+// drawn equally — flat holds, curved falls away. Not to scale, no title band
+// (the page/README supply the heading). Rendered at 2x and lanczos-downscaled
+// with no dither for crisp text.
 //
 // Requires: Node 18+, ffmpeg on PATH, and `npm i @napi-rs/canvas` (prebuilt,
 // no system deps). Run from the repo root:  node scripts/make_gif.mjs
@@ -69,10 +71,10 @@ function frame(ctx,i){
   const beamA = clamp(i/9, 0, 1)                                  // beam powers on
 
   ctx.fillStyle=C.cream; ctx.fillRect(0,0,W,H)
-  ctx.fillStyle=C.sky;   ctx.fillRect(0,yTitle+6,W,yW-(yTitle+6))
+  ctx.fillStyle=C.sky;   ctx.fillRect(0,0,W,yW)
 
   // --- water: choppy at start, settles to a gentle living ripple ---
-  const amp = 1.3 + 8.0*(1-es)                                    // wave height
+  const amp = 7.6*(1-es)                                          // choppy at start, damps to still
   const ph = i*0.34
   const seaY = x => yW + amp*Math.sin(0.05*x + ph) + 0.45*amp*Math.sin(0.11*x - ph*1.25)
   ctx.beginPath(); ctx.moveTo(0, seaY(0))
@@ -139,29 +141,28 @@ function frame(ctx,i){
   }
   drone(ctx, xd, yd)
 
-  // legend
+  // legend (top-right)
   ctx.font=mono(11)
-  ctx.fillStyle=C.flat;   ctx.fillRect(W-326,46,16,3); ctx.fillText('IF FLAT — height holds', W-304,51)
-  ctx.fillStyle=C.curved; ctx.fillRect(W-326,64,16,3); ctx.fillText('IF CURVED — water falls (≈8 in×mi²)', W-304,69)
+  ctx.fillStyle=C.flat;   ctx.fillRect(W-326,22,16,3); ctx.fillText('IF FLAT — height holds', W-304,27)
+  ctx.fillStyle=C.curved; ctx.fillRect(W-326,40,16,3); ctx.fillText('IF CURVED — water falls (≈8 in×mi²)', W-304,45)
 
-  // title + caption
-  ctx.fillStyle=C.cream; ctx.fillRect(0,0,W,yTitle+6)
-  ctx.fillStyle=C.ink; ctx.font='bold 15px Menlo'; ctx.textAlign='center'
-  ctx.fillText('LASER  BEAM  FOLLOW  EXPERIMENT', W/2, 21); ctx.textAlign='left'
+  // caption
   ctx.fillStyle=C.cream; ctx.fillRect(0,yCap,W,H-yCap)
   ctx.font=mono(10); ctx.fillStyle=C.ink; ctx.textAlign='center'
   ctx.fillText('Both predictions are drawn before the run — the drone logs its height the whole way, and the readings land on one.', W/2, yCap+15)
   ctx.font=mono(8.5); ctx.fillStyle=C.mute
-  ctx.fillText('illustration — not to scale  ·  replicationbench.github.io/RB', W/2, yCap+27); ctx.textAlign='left'
+  ctx.fillText('Laser Beam Follow Experiment  ·  illustration, not to scale  ·  replicationbench.github.io/RB', W/2, yCap+27); ctx.textAlign='left'
 }
 
+const SCALE = 2   // supersample, then ffmpeg lanczos-downscales to W×H for crisp text
 rmSync(FR, {recursive:true, force:true}); mkdirSync(FR, {recursive:true})
 for (let i=0;i<N;i++){
-  const canvas=createCanvas(W,H)
-  frame(canvas.getContext('2d'), i)
+  const canvas=createCanvas(W*SCALE,H*SCALE)
+  const ctx=canvas.getContext('2d'); ctx.scale(SCALE,SCALE)
+  frame(ctx, i)
   writeFileSync(join(FR, `f${String(i).padStart(4,'0')}.png`), canvas.toBuffer('image/png'))
 }
-console.log('wrote', N, 'frames', `${W}x${H}`, '=', (N/FPS).toFixed(1)+'s')
+console.log('wrote', N, 'frames', `${W*SCALE}x${H*SCALE} → ${W}x${H}`, '=', (N/FPS).toFixed(1)+'s')
 const OUT = 'experiments/laser-experiment/laser-experiment.gif'
-execSync(`ffmpeg -y -framerate ${FPS} -i ${join(FR,'f%04d.png')} -filter_complex "[0:v] split [a][b];[a] palettegen=max_colors=64:stats_mode=diff [p];[b][p] paletteuse=dither=bayer:bayer_scale=4" ${OUT}`, {stdio:'inherit'})
+execSync(`ffmpeg -y -framerate ${FPS} -i ${join(FR,'f%04d.png')} -filter_complex "[0:v] scale=${W}:${H}:flags=lanczos,split [a][b];[a] palettegen=max_colors=96:stats_mode=diff [p];[b][p] paletteuse=dither=none" ${OUT}`, {stdio:'inherit'})
 console.log('wrote', OUT)
