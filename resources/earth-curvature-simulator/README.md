@@ -9,7 +9,7 @@
 &nbsp;·&nbsp; [live](https://replicationbench.github.io/RB/resources/earth-curvature-simulator/simulator.html)
 
 Supports the experiment it was built alongside:
-**[Earth Curvature by Laser Over Water](../../experiments/earth-curvature-laser/)**.
+**[Water-Surface Shape by Laser](../../experiments/water-surface-shape-laser/)**.
 
 ## What it does
 

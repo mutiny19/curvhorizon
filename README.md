@@ -86,7 +86,7 @@ table by hand — edit the metadata and re-run the script.
 <!-- CATALOG:START -->
 | Experiment | Claim tested | Cost | Difficulty | Safety | Status |
 |---|---|---|---|---|---|
-| [Earth Curvature by Laser Over Water](./experiments/earth-curvature-laser/) | The Earth's surface is flat over long line-of-sight distances. | $50-$300 | medium | low | ⬜ untested |
+| [Water-Surface Shape by Laser](./experiments/water-surface-shape-laser/) | The Earth's surface is flat over long line-of-sight distances. | $50-$300 | medium | low | ⬜ untested |
 <!-- CATALOG:END -->
 
 `status` is one of `replicated` · `refuted` · `inconclusive` · `untested`, and it
@@ -119,7 +119,7 @@ and asserts nothing about the world; only a measured run does.** Each lives unde
 <!-- RESOURCES:START -->
 | Resource | What it is | Supports | Contributor |
 |---|---|---|---|
-| [Earth Curvature & Horizon Simulator](./resources/earth-curvature-simulator/) | To-scale interactive model of curvature, horizon dip, hidden height, and atmospheric refraction. A teaching and visualization tool, not a measurement. | [earth-curvature-laser](./experiments/earth-curvature-laser/) | ReplicationBench |
+| [Earth Curvature & Horizon Simulator](./resources/earth-curvature-simulator/) | To-scale interactive model of curvature, horizon dip, hidden height, and atmospheric refraction. A teaching and visualization tool, not a measurement. | [water-surface-shape-laser](./experiments/water-surface-shape-laser/) | ReplicationBench |
 <!-- RESOURCES:END -->
 
 ---
