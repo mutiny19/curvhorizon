@@ -396,7 +396,7 @@
   <div class="tagline">NO MAP  ·  NO COMPASS  ·  NO PROGRAMMED DIRECTION  ·  THE BEAM IS THE ONLY GUIDE</div>
 
   <div class="diagram" style="margin-top:18px">
-    <img src="laser-experiment.gif" alt="Animated schematic of the experiment: a laser levelled on a bluff fires a level beam east over open water while a drone flies out along it logging its height above the water; both predictions are drawn — flat (the height holds) and curved (the water falls away, about 8 inches times miles squared) — and the readings land on one. Illustration, not to scale." style="display:block;width:100%;height:auto">
+    <img src="laser-experiment.gif" width="960" height="505" alt="Animated schematic of the experiment: a laser levelled on a bluff fires a level beam east over open water while a drone flies out along it logging its height above the water; both predictions are drawn — flat (the height holds) and curved (the water falls away, about 8 inches times miles squared) — and the readings land on one. Illustration, not to scale." style="display:block;width:100%;height:auto">
   </div>
 
   <div class="summary">
@@ -1700,8 +1700,10 @@
       });
       span.insertBefore(a, span.firstChild);
     });
+    function fromHash(){ if(location.hash) openSection(decodeURIComponent(location.hash.slice(1)), true); }
     window.addEventListener('hashchange',function(){ openSection(decodeURIComponent(location.hash.slice(1)), true); });
-    if(location.hash){ var hid=decodeURIComponent(location.hash.slice(1)); setTimeout(function(){ openSection(hid,true); },80); }
+    setTimeout(fromHash,80);                                              // open + first scroll once the DOM is ready
+    window.addEventListener('load',function(){ setTimeout(fromHash,60); }); // re-open/scroll after the hero GIF and fonts settle, so a cold load still lands on the section
   })();
 
   // ---- equipment accordion: each component collapses to its name + price range ----
