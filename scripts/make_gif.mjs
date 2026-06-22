@@ -167,7 +167,7 @@ function frame(ctx,i){
   // legend (top-right)
   ctx.font=mono(11)
   ctx.fillStyle=C.flat;   ctx.fillRect(W-326,22,16,3); ctx.fillText('IF FLAT — height holds', W-304,27)
-  ctx.fillStyle=C.curved; ctx.fillRect(W-326,40,16,3); ctx.fillText('IF CURVED — water falls (≈8 in×mi²)', W-304,45)
+  ctx.fillStyle=C.curved; ctx.fillRect(W-326,40,16,3); ctx.fillText('IF CURVED — water falls away', W-304,45)
 
   drawQR(ctx)
 
