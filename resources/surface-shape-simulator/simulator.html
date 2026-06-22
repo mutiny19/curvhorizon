@@ -1424,13 +1424,13 @@ function render(){
     else renderObserverFlat(d0,hT,h0);
     return;
   }
-  if(S.view==='side')renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd,hidBy,rayRes);
+  if(S.view==='side')renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd,hidBy,rayRes,hHidRaw);
   else if(S.view==='laser')renderLaser(R,d0,hT,h0,hBul);
   else renderObserver(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd,hHidRaw);
 }
 
 // ===================== SIDE VIEW =====================
-function renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd,hidBy,rayRes){
+function renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd,hidBy,rayRes,hHidRaw){
   if(!V.manual)fitSide();
   // A canvas scale bar (drawn at end) replaces the text readout in this view
   document.getElementById('scaleInfo').style.display='none';
@@ -1532,7 +1532,10 @@ function renderSide(R,d0,hT,h0,d1,hHid,hBul,hVis,dropEnd,hidBy,rayRes){
     ],50,10,10);
   }else if(hHid>=hT){
     line(tgtSurf,tgtTop,'#ff6b6b',5*lw*V.s,null,0.6);
-    callout(tgtTop,[{text:'FULLY HIDDEN',color:'#ff6b6b'}],50,10,11);
+    callout(tgtTop,[
+      {text:'FULLY HIDDEN',color:'#ff6b6b'},
+      {text:'below horizon by '+fmtH(hHidRaw-hT),color:'#ff6b6b'},
+    ],50,10,11);
   }else{
     line(tgtSurf,tgtTop,'#55efc4',5*lw*V.s);
   }
