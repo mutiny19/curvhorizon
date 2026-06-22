@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   Surface Shape Simulator
-  Version 1.10.2  ·  Last revised 2026-06-21
+  Version 1.10.3  ·  Last revised 2026-06-21
   Spherical/WGS84 curvature & visibility model with observer/camera view.
 
   Copyright (c) 2026 ReplicationBench.
@@ -119,7 +119,7 @@
     <span class="sub">Spherical model &middot; R = 6,371 km</span>
   </div>
   <div style="display:flex;align-items:center;gap:14px">
-    <span class="hide-mobile" style="font-size:10px;color:#556" title="Last revised 2026-06-21">v1.10.2 &middot; 2026-06-21</span>
+    <span class="hide-mobile" style="font-size:10px;color:#556" title="Last revised 2026-06-21">v1.10.3 &middot; 2026-06-21</span>
     <button id="btnGuide">? How to use</button>
     <span class="hide-mobile" style="font-size:11px;color:#556">Scroll to zoom &middot; Drag to pan</span>
   </div>
@@ -212,11 +212,12 @@
     </div>
     <div class="sec laser-only">
       <h3>Laser Beam</h3>
-      <div class="note" id="laserNote">Choose how the beam is aimed. <b>Aim at detector</b> draws a straight ray between the two points and asks whether the water bulge rises into it. <b>Aim by sight</b> is what a person does in the field: tilt the laser until the beam lands on the target. It always lands, so the tilt it takes is the only output — and that tilt quietly absorbs both the curvature and the refraction, which is why hitting the target proves nothing (the FECORE error). Drag the refraction slider and watch the aim shift while the hit never moves. <b>Level at origin</b> fires the beam level where it stands (and lets you tilt it up or down), the way the field protocol levels its laser instead of pointing it at a target, then reads where the beam passes the detector's distance.</div>
+      <div class="note" id="laserNote">Choose how the beam is aimed. <b>Aim at detector</b> draws a straight ray between the two points and asks whether the water bulge rises into it. <b>Aim by sight</b> is what a person does in the field: tilt the laser until the beam lands on the target. It always lands, so the tilt it takes is the only output — and that tilt quietly absorbs both the curvature and the refraction, which is why hitting the target proves nothing (the FECORE error). Drag the refraction slider and watch the aim shift while the hit never moves. <b>Aim for max range</b> tilts the laser down just enough to graze the surface — as close to the water as it can get without striking it — so the beam reaches its farthest at the horizon, and beyond that the curve falls away and lifts it off the water. <b>Level at origin</b> fires the beam level where it stands (and lets you tilt it up or down), the way the field protocol levels its laser instead of pointing it at a target, then reads where the beam passes the detector's distance.</div>
       <div class="row" style="margin-top:8px"><label>Beam</label>
         <select id="iLaserMode" style="flex:1;padding:4px">
           <option value="detector">Aim at detector</option>
           <option value="aim">Aim by sight (human)</option>
+          <option value="range">Aim for max range</option>
           <option value="level">Level at origin</option>
         </select>
       </div>
@@ -373,7 +374,7 @@
         <p><strong style="color:var(--text)">Photo overlay (experimental):</strong> The Observer View can load a real photograph as a background. Because the view maps the horizontal field of view (2·arctan(sensor / 2·focal)) across the full frame, a photo shot at a known focal length and sensor size shares the same angular scale as the overlays. When a JPEG carries EXIF, the focal length and sensor width are read automatically (the sensor is derived from the 35mm-equivalent focal length, or from the focal-plane resolution tags); otherwise you enter them. After you register the photo's horizon against the orange horizon line, the predicted hidden/visible split lands on the real scene at the correct pixel height. The alignment nudges (move, roll, scale) only register the image; a roll control levels a tilted horizon, and fine scale absorbs lens distortion and EXIF rounding. None of these feed back into any calculation, so treat it as a comparison aid rather than a measurement.</p>
         <p><strong style="color:var(--text)">What this does <em>not</em> show:</strong> it predicts the <em>geometry</em> of what curvature hides. It cannot tell you whether a specific photo is genuine clear-air, a mirage, or intervening terrain; those depend on conditions on the day.</p>
         <p style="margin-top:6px"><strong style="color:var(--text)">Credit:</strong> The core curvature formulas follow and match the widely used <a href="https://dizzib.github.io/earth/curve-calc/" target="_blank" rel="noopener" style="color:var(--accent)">dizzib Earth curve calculator</a>; this tool adds scaled visualization, an observer/camera view, refraction bands, and visual range.</p>
-        <p style="margin-top:6px;color:#667">Version 1.10.2 &middot; last revised 2026-06-21</p>
+        <p style="margin-top:6px;color:#667">Version 1.10.3 &middot; last revised 2026-06-21</p>
         <p style="margin-top:8px"><strong style="color:var(--text)">Glossary</strong> <span style="color:#667">(terms link to neutral, scientific definitions)</span></p>
         <dl style="margin:2px 0 4px 0">
           <dt style="margin-top:5px"><a href="https://en.wikipedia.org/wiki/Horizon" target="_blank" rel="noopener" style="color:var(--accent)">Horizon</a></dt>
@@ -724,6 +725,7 @@ function serializeState(){
   if(S.showBands)p.set('b','1');
   if(S.view==='laser'&&S.laserMode==='level'){p.set('lm','level');if(Math.abs(S.laserTilt)>1e-9)p.set('lt',+S.laserTilt.toFixed(4));}
   else if(S.view==='laser'&&S.laserMode==='aim')p.set('lm','aim');
+  else if(S.view==='laser'&&S.laserMode==='range')p.set('lm','range');
   if(S.extra.length)p.set('x',S.extra.join(','));
   return p.toString();
 }
@@ -747,6 +749,7 @@ function applyStateFromURL(){
   S.showBands=p.get('b')==='1';
   if(p.get('lm')==='level')S.laserMode='level';
   else if(p.get('lm')==='aim')S.laserMode='aim';
+  else if(p.get('lm')==='range')S.laserMode='range';
   if(p.has('lt'))S.laserTilt=f('lt',S.laserTilt);
   if(p.has('x'))S.extra=p.get('x').split(',').map(parseFloat).filter(v=>v>0);
   return true;
@@ -781,12 +784,12 @@ function exportPNG(){
   o.fillStyle='#0a0e17';o.fillRect(0,0,off.width,off.height);o.drawImage(src,0,0);
   o.fillStyle='#0c1320';o.fillRect(0,src.height,off.width,footH);
   o.fillStyle='#8aa0b8';o.font=(13*dpr)+"px 'SF Mono',monospace";o.textBaseline='middle';
-  o.fillText('Surface Shape Simulator v1.10.2  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  replicationbench.github.io/RB',10*dpr,src.height+footH/2);
+  o.fillText('Surface Shape Simulator v1.10.3  ·  eye '+fmtH(S.h0)+'  dist '+fmtD(S.d0)+'  target '+fmtH(S.hT)+'  k='+S.k+'  '+earthLabel()+'  ·  replicationbench.github.io/RB',10*dpr,src.height+footH/2);
   off.toBlob(function(b){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='curvature-'+S.view+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);});
 }
 function exportCSV(){
   const R=effR(S.k),gR=baseR(),h0=S.h0,hT=S.hT,fin=isFinite(R);
-  const lines=['# Surface Shape Simulator v1.10.2',
+  const lines=['# Surface Shape Simulator v1.10.3',
     '# eye_height_m='+h0+',target_height_m='+hT+',k='+S.k+',earth='+earthLabel(),
     '# permalink='+buildPermalink(),
     'distance_km,horizon_km,drop_below_tangent_m,bulge_m,hidden_m_kSel,visible_m,hidden_m_k0'];
@@ -988,14 +991,14 @@ function init(){
   document.getElementById('iK').addEventListener('input',function(){S.k=parseFloat(this.value)||0;syncKUI();V.manual=false;render()});
   document.getElementById('iLaserK').addEventListener('input',function(){S.k=parseFloat(this.value)||0;syncKUI();V.manual=false;render()});
   function syncLaserTiltUI(){
-    const v=S.laserTilt||0, lvl=S.laserMode==='level', aim=S.laserMode==='aim';
+    const v=S.laserTilt||0, lvl=S.laserMode==='level', aim=S.laserMode==='aim', rng=S.laserMode==='range';
     document.getElementById('laserTiltRow').style.display=lvl?'':'none';          // manual tilt slider: level mode only
-    document.getElementById('laserTiltReadout').style.display=(lvl||aim)?'':'none';
+    document.getElementById('laserTiltReadout').style.display=(lvl||aim||rng)?'':'none';
     if(lvl)document.getElementById('laserTiltReadout').textContent=Math.abs(v)<1e-9?'level (0.000°)':(v>0?'up ':'down ')+Math.abs(v).toFixed(3)+'°';
     // in aim mode the readout shows the tilt the laser had to take, computed in renderLaser
   }
   document.getElementById('iLaserMode').addEventListener('change',function(){
-    S.laserMode=(this.value==='level'||this.value==='aim')?this.value:'detector';syncLaserTiltUI();V.manual=false;render();
+    S.laserMode=(this.value==='level'||this.value==='aim'||this.value==='range')?this.value:'detector';syncLaserTiltUI();V.manual=false;render();
   });
   document.getElementById('iLaserTilt').addEventListener('input',function(){
     S.laserTilt=parseFloat(this.value)||0;syncLaserTiltUI();V.manual=false;render();
@@ -1708,10 +1711,13 @@ function renderLaser(R,d0,hL,hLaser,hBul){
   const E=pt(emA,hEm);
   const levelMode=S.laserMode==='level';
   const aimMode=S.laserMode==='aim';
+  const rangeMode=S.laserMode==='range';
+  const dGrz=hDist(hEm,R);                                // grazing / horizon distance for the laser height
+  const dipDeg=Math.acos(R/(R+hEm))*180/Math.PI;         // depression that makes the beam graze the surface
   let beamEnd, beamHeightAtDet=hDet;
-  if(levelMode){
-    const tr=(S.laserTilt||0)*Math.PI/180;
-    const bd={x:Math.sin(emA+tr),y:-Math.cos(emA+tr)};   // level + tilt direction at the emitter
+  if(levelMode||rangeMode){
+    const tr=(levelMode?(S.laserTilt||0):-dipDeg)*Math.PI/180; // level+tilt, or tilt down to graze
+    const bd={x:Math.sin(emA+tr),y:-Math.cos(emA+tr)};   // beam direction at the emitter
     const u={x:Math.cos(detA),y:Math.sin(detA)};         // detector's radial line
     const tt=(E.y*u.x-E.x*u.y)/(bd.x*u.y-bd.y*u.x);
     beamEnd={x:E.x+tt*bd.x,y:E.y+tt*bd.y};
@@ -1790,7 +1796,11 @@ function renderLaser(R,d0,hL,hLaser,hBul){
       const Smin=pt(minA,0);
       line(Smin,minPt,'#ffd93d',1.6*lw*V.s,[4*lw*V.s,3*lw*V.s]);
       dot(minPt,4*lw,'#ffd93d','#fff');
-      callout(minPt,[
+      callout(minPt,rangeMode?[
+        {text:'GRAZES THE SURFACE',color:'#ffd93d'},
+        {text:'max range '+fmtD(dGrz),color:'#ffd93d'},
+        {text:'beyond here the curve lifts it off the water',color:'#888'},
+      ]:[
         {text:'MIN CLEARANCE',color:'#ffd93d'},
         {text:fmtH(minClear)+' above water',color:'#ffd93d'},
         {text:'at '+fmtD(minDist),color:'#888'},
@@ -1823,7 +1833,7 @@ function renderLaser(R,d0,hL,hLaser,hBul){
   // Endpoint callouts
   callout(E,[
     {text:'LASER',color:'#ff5b5b'},
-    {text:aimMode?('aimed '+(aimTiltDeg>=0?'up ':'down ')+Math.abs(aimTiltDeg).toFixed(3)+'°'):(fmtH(hEm)+(S.laserTilt&&levelMode?', '+(S.laserTilt>0?'up ':'down ')+Math.abs(S.laserTilt).toFixed(3)+'°':' height')),color:'#ff5b5b'},
+    {text:aimMode?('aimed '+(aimTiltDeg>=0?'up ':'down ')+Math.abs(aimTiltDeg).toFixed(3)+'°'):rangeMode?('aimed down '+dipDeg.toFixed(3)+'°'):(fmtH(hEm)+(S.laserTilt&&levelMode?', '+(S.laserTilt>0?'up ':'down ')+Math.abs(S.laserTilt).toFixed(3)+'°':' height')),color:'#ff5b5b'},
   ],-30,-66,10);
   callout(detTop,[
     {text:'DETECTOR',color:'#00f2fe'},
@@ -1844,6 +1854,9 @@ function renderLaser(R,d0,hL,hLaser,hBul){
     const dir=aimTiltDeg>=0?'up':'down';
     summary='AIMED at the target: the laser is tilted '+dir+' '+Math.abs(aimTiltDeg).toFixed(3)+'° so the beam lands on it. It always lands — drag refraction and the aim just shifts to keep landing, so the hit says nothing about flat vs curved; the tilt has swallowed both. Firing LEVEL instead is what turns the gap into a reading.';
     document.getElementById('laserTiltReadout').textContent='aimed '+(aimTiltDeg>=0?'up ':'down ')+Math.abs(aimTiltDeg).toFixed(3)+'°';
+  }else if(rangeMode){
+    summary='AIMED FOR MAX RANGE: tilted down '+dipDeg.toFixed(3)+'° so the beam grazes the surface as far out as it can — '+fmtD(dGrz)+', the laser’s horizon. Aim any lower and it strikes the water sooner; any higher and it rides up off the surface. Past the grazing point the curve falls away and lifts the beam off the water, the curvature shown directly.';
+    document.getElementById('laserTiltReadout').textContent='aimed down '+dipDeg.toFixed(3)+'°';
   }else{
     summary='Beam reaches the detector, clearing the water by '+fmtH(minClear)+' at its lowest  (without curvature the clearance would stay constant)';
   }
