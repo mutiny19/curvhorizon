@@ -378,11 +378,30 @@
   .signoff div { flex: 1 1 220px; border-top: 1px solid var(--ink-lll); padding-top: 5px; }
   .formula { font-family: ui-monospace, monospace; font-size: 15px; color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 3px; padding: 13px 16px; margin: 8px 0 12px; text-align: center; letter-spacing: 0.02em; line-height: 1.6; }
   .formula sub { font-size: 0.72em; }
+  .warnbox{margin:0 0 6px;border:1.5px solid var(--gold);border-radius:3px;background:#fcf6e4}
+  .warnbox>summary{list-style:none;cursor:pointer;padding:11px 16px;font-family:'Jura',sans-serif;font-weight:600;letter-spacing:0.05em;color:var(--gold);font-size:13.5px;display:flex;align-items:center;gap:10px}
+  .warnbox>summary::-webkit-details-marker{display:none}
+  .warnbox>summary::after{content:"▾ read";margin-left:auto;font-family:ui-monospace,monospace;font-size:11px;font-weight:400;opacity:.85;white-space:nowrap}
+  .warnbox[open]>summary::after{content:"▴ close"}
+  .warnbody{padding:2px 16px 14px;font-family:'IBM Plex Serif',Georgia,serif;font-size:14.5px;line-height:1.7;color:var(--ink-l)}
+  .warnbody p{margin:0 0 10px}
+  .warnbody a{color:var(--gold);font-weight:600;text-decoration:none}
+  .warnlinks{font-family:ui-monospace,monospace;font-size:12px;margin-top:2px}
 </style>
 </head>
 <body>
 
 <article class="poster">
+
+  <details class="warnbox">
+    <summary>A STANDING CHALLENGE &mdash; TRY TO BREAK THIS DESIGN, IN THE OPEN</summary>
+    <div class="warnbody">
+      <p>This design is built to be attacked. If you can see how a clean run could be explained away, that is not a problem for the experiment &mdash; it is a control it does not have yet. But it only helps if you say it <em>before</em> anyone flies.</p>
+      <p>So state your out in advance. How would you explain a result you did not expect &mdash; &ldquo;the laser only bends up,&rdquo; &ldquo;refraction was never measured,&rdquo; &ldquo;the float settled,&rdquo; &ldquo;the drone drifted&rdquo;? Post it now. An objection raised before the run becomes a control the run will carry; the same objection produced after the result is only an excuse, and everyone can tell the two apart. The aim is one experiment strong and defensible from every side &mdash; flat, curved, and undecided alike.</p>
+      <p>And in fairness to those who have already contributed: dissecting this in a closed room and keeping it there is not the spirit of the work. Objections become controls only when they are shared. Bring them into the open and they are folded in and credited, like every contribution before them.</p>
+      <div class="warnlinks"><a href="#discuss">Comment below &darr;</a> &nbsp;&middot;&nbsp; <a href="https://github.com/ReplicationBench/RB/issues/new?template=propose-change.yml">Propose a change &nearr;</a> &nbsp;&middot;&nbsp; <a href="https://github.com/ReplicationBench/RB/discussions">Discuss on GitHub &nearr;</a></div>
+    </div>
+  </details>
 
   <div class="global-controls">
     <a href="https://github.com/ReplicationBench/RB/issues/new/choose" target="_blank" rel="noopener">REPORT AN ISSUE ↗</a>
@@ -402,20 +421,6 @@
   <div class="summary">
     <p>A laser is levelled where it stands, on a height above open water, locked on both axes, and never aimed at anything downrange. A drone flies out along that level beam and logs its height above the water the whole way, tens of thousands of readings strung along the run. That dense profile is the measurement, and it is what lifts the test past the older ways: a leveling shot is two points, the classic three-marker figure is three, and this is the whole run, far too dense for any single glitch or staged frame to fake. On flat water the height holds the same the whole way out. On curved water it climbs, by amounts this page works out for every distance, with Polaris, the depression read at the end, and an optional midpoint photograph each checking that climb a different way.</p>
     <p>Refraction is the one thing that can imitate the signal, so the protocol measures it on the night rather than assuming it, firing two colors of light that bend by different amounts to hand back the bend as a number. The predicted figures are written down and signed by both sides before the run, the raw readings are published after, and the surface is left to say what it says. It costs from a few hundred dollars to about a thousand, over a stretch of open water, so anyone can check it. Flat is a result. Curved is a result. A run that does not resolve is a result. Neither is the goal.</p>
-  </div>
-
-  <div style="margin:22px 0 0;padding:16px 20px;border:1px dashed var(--gold);border-radius:3px;background:#fcf6e4">
-    <div style="font-family:'Jura',sans-serif;font-weight:600;letter-spacing:0.07em;color:var(--gold);font-size:15px;margin-bottom:8px">A STANDING CHALLENGE &mdash; TEAR IT APART, OUT LOUD</div>
-    <div style="font-family:'IBM Plex Serif',Georgia,serif;font-size:14.5px;line-height:1.7;color:var(--ink-l)">
-      <p style="margin:0 0 10px">This design is built to be attacked. If you can see how a clean run could be explained away, that is not a problem for the experiment &mdash; it is a control it does not have yet. But it only helps if you say it <em>before</em> anyone flies.</p>
-      <p style="margin:0 0 10px">So state your out in advance. How would you explain a result you did not expect &mdash; &ldquo;the laser only bends up,&rdquo; &ldquo;refraction was never measured,&rdquo; &ldquo;the float settled,&rdquo; &ldquo;the drone drifted&rdquo;? Post it now. An objection raised before the run becomes a control the run will carry; the same objection produced after the result is only an excuse, and everyone can tell the two apart. The aim is one experiment strong and defensible from every side &mdash; flat, curved, and undecided alike.</p>
-      <p style="margin:0 0 12px">And in fairness to those who have already contributed: dissecting this in a closed room and keeping it there is not the spirit of the work. Objections become controls only when they are shared. Bring them into the open and they are folded in and credited, like every contribution before them.</p>
-      <div style="font-family:ui-monospace,monospace;font-size:12px">
-        <a href="https://github.com/ReplicationBench/RB/issues/new?template=propose-change.yml" style="color:var(--gold);font-weight:600;text-decoration:none">Propose a change &nearr;</a>
-        &nbsp;&middot;&nbsp;
-        <a href="https://github.com/ReplicationBench/RB/discussions" style="color:var(--gold);font-weight:600;text-decoration:none">Discuss it &nearr;</a>
-      </div>
-    </div>
   </div>
 
   <div class="section-header">
@@ -1616,7 +1621,7 @@
     <span class="secondary">IF ANY MEASUREMENT DISAGREES — REPEAT THE EXPERIMENT BEFORE DRAWING ANY CONCLUSION.</span>
   </div>
 
-  <div class="section-header" style="margin-top:40px">
+  <div class="section-header" id="discuss" style="margin-top:40px">
     <span>DISCUSS THIS EXPERIMENT</span>
   </div>
   <div class="summary">
