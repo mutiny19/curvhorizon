@@ -1,6 +1,6 @@
 # Laser Beam Follow Experiment
 
-![Animated schematic: a laser levelled on a bluff fires a level beam east over open water while a drone flies out along it logging its height above the water; both predictions are drawn — flat (the height holds) and curved (the water falls away, ≈ 8 in × mi²) — and the readings land on one. Illustration, not to scale.](laser-experiment.gif)
+![Animated schematic: a laser levelled on a bluff fires a level beam east over open water while a drone flies out along it logging its height above the water; both predictions are drawn — flat (the height holds) and curved (the water falls away, ≈ 8 in per mi²) — and the readings land on one. Illustration, not to scale.](laser-experiment.gif)
 
 > Level a laser over open water, never aim it at a target, and measure whether the
 > water holds a constant height under the beam (flat) or falls away from it
@@ -47,7 +47,7 @@ line as a function of distance.
 - **If the surface is a sphere of radius R:** the water falls below the level
   line by **R(1 − cos θ)** with θ = d/R — the exact, trigonometric drop, which
   over these distances equals the familiar **d²/2R** to better than a part in a
-  thousand — the everyday **"8 inches per mile squared"** (≈ 8 in × mi²). At
+  thousand — the everyday **"8 inches per mile squared"** (drop in inches ≈ 8 × miles²). At
   3 mi ≈ 6 ft; at 5 mi ≈ 17 ft. Note this is the drop *below the level line*
   (what the drone measures straight down), **not** the "hidden height" of an
   object behind the horizon — a different figure that also depends on observer
