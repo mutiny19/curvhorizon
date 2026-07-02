@@ -387,6 +387,15 @@
   .warnbody p{margin:0 0 10px}
   .warnbody a{color:var(--gold);font-weight:600;text-decoration:none}
   .warnlinks{font-family:ui-monospace,monospace;font-size:12px;margin-top:2px}
+  .plainbox{margin:14px 0 0;border:1.5px solid #2d64a5;border-radius:3px;background:#eef3fb}
+  .plainbox>summary{list-style:none;cursor:pointer;padding:11px 16px;font-family:'Jura',sans-serif;font-weight:600;letter-spacing:0.05em;color:#2d64a5;font-size:13.5px;display:flex;align-items:center;gap:10px}
+  .plainbox>summary::-webkit-details-marker{display:none}
+  .plainbox>summary::after{content:"▾ read";margin-left:auto;font-family:ui-monospace,monospace;font-size:11px;font-weight:400;opacity:.85;white-space:nowrap}
+  .plainbox[open]>summary::after{content:"▴ close"}
+  .plainbody{padding:2px 16px 14px;font-family:'IBM Plex Serif',Georgia,serif;font-size:14.5px;line-height:1.7;color:var(--ink-l)}
+  .plainbody p{margin:0 0 10px}
+  .plainbody a{color:#2d64a5;font-weight:600;text-decoration:none}
+  .plainlinks{font-family:ui-monospace,monospace;font-size:12px;margin-top:2px}
 </style>
 </head>
 <body>
@@ -413,6 +422,16 @@
     <div class="subtitle">— A FIELD PROTOCOL —</div>
   </div>
   <div class="tagline">NO MAP  ·  NO COMPASS ABOARD  ·  NO PROGRAMMED DIRECTION  ·  THE BEAM IS THE ONLY GUIDE</div>
+
+  <details class="plainbox">
+    <summary>IN PLAIN WORDS &mdash; WHAT THIS EXPERIMENT DOES</summary>
+    <div class="plainbody">
+      <p>Stand on a bluff over open water. Set a laser so it is perfectly level, clamp it, and never touch it again. A drone rides the beam like a bead on a string, and the whole way out it measures one thing: how far the water is below it.</p>
+      <p>If the water is flat, that gap stays the same all the way. If the water curves, the gap grows &mdash; slowly at first, then faster and faster. Air bends light a little, so on the same night the bending is measured too &mdash; two colors of laser bend by slightly different amounts, and the gap between them gives the whole bend &mdash; and taken back out.</p>
+      <p>Both sides write their predicted numbers down before the flight. Every raw reading is published after. The water answers &mdash; flat, curved, or could-not-tell &mdash; and all three count.</p>
+      <div class="plainlinks"><a href="#about">More detail &darr;</a> &nbsp;&middot;&nbsp; <a href="#procedure">The steps &darr;</a> &nbsp;&middot;&nbsp; <a href="#simrun">Try a simulated run &darr;</a></div>
+    </div>
+  </details>
 
   <div class="diagram" style="margin-top:18px">
     <img src="laser-experiment.gif" width="960" height="505" alt="Animated schematic of the experiment: a laser levelled on a bluff fires a level beam east over open water while a drone flies out along it logging its height above the water; both predictions are drawn — flat (the height holds) and curved (the water falls away with the square of the distance) — and the readings land on one. Illustration, not to scale." style="display:block;width:100%;height:auto">
@@ -781,6 +800,66 @@
       <p>The four cells split into two pairs, one for each axis the drone has to hold. Top against bottom reads the beam riding high or low, which is height. Left against right reads it off to one side, which is north or south, because the beam runs east and the sensor faces square back down it. Matching the top-and-bottom pair holds the height, matching the left-and-right pair holds the line, and the beam counts as centered only when both pairs agree at once.</p>
       <p>The point where all four match is the center of the beam's spot, and for a symmetric beam that center rides on the beam's own axis however wide the spot has spread. Balancing the quadrants therefore finds the axis to a small fraction of the spot, not to its width, which is how a beam metres across at range is still followed to centimetres. That holds only while the beam stays symmetric, so the spot is checked for shape before the run, because a lopsided beam would pull its center off the axis.</p>
 
+      <div class="diagram" style="margin:18px 0 6px">
+        <svg viewBox="0 0 1000 430" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1000" height="430" fill="#f0f4fc"/>
+          <text x="500" y="34" font-family="ui-monospace,monospace" font-size="11" fill="#3c3c38" text-anchor="middle" letter-spacing="0.06em">WHAT THE DRONE SEES &mdash; THE SENSOR FACES BACK ALONG THE BEAM</text>
+
+          <g transform="translate(150,66)">
+            <rect x="0" y="0" width="200" height="200" rx="6" fill="#ffe9c2" stroke="#a06e14" stroke-width="2"/>
+            <line x1="100" y1="0" x2="100" y2="200" stroke="#a06e14" stroke-width="1"/>
+            <line x1="0" y1="100" x2="200" y2="100" stroke="#a06e14" stroke-width="1"/>
+            <circle cx="100" cy="100" r="46" fill="#1e8c50" opacity="0.25"/>
+            <circle cx="100" cy="100" r="28" fill="#1e8c50" opacity="0.45"/>
+            <circle cx="100" cy="100" r="11" fill="#1e8c50"/>
+            <circle cx="100" cy="100" r="15" fill="none" stroke="#3c3c38" stroke-width="1" stroke-dasharray="2 2"/>
+            <g font-family="ui-monospace,monospace" font-size="10" fill="#7a5a20">
+              <text x="10" y="16">TL</text><text x="176" y="16">TR</text>
+              <text x="10" y="192">BL</text><text x="176" y="192">BR</text>
+            </g>
+            <g transform="translate(0,222)">
+              <rect x="18"  y="10" width="30" height="30" fill="#1e8c50" opacity="0.7"/>
+              <rect x="62"  y="10" width="30" height="30" fill="#1e8c50" opacity="0.7"/>
+              <rect x="106" y="10" width="30" height="30" fill="#1e8c50" opacity="0.7"/>
+              <rect x="150" y="10" width="30" height="30" fill="#1e8c50" opacity="0.7"/>
+              <g font-family="ui-monospace,monospace" font-size="9" fill="#3c3c38" text-anchor="middle">
+                <text x="33" y="54">TL</text><text x="77" y="54">TR</text><text x="121" y="54">BL</text><text x="165" y="54">BR</text>
+              </g>
+            </g>
+            <text x="100" y="308" font-family="ui-monospace,monospace" font-size="10.5" fill="#1e8c50" text-anchor="middle" letter-spacing="0.05em">ALL FOUR EQUAL &mdash; HOLD COURSE</text>
+          </g>
+
+          <g transform="translate(650,66)">
+            <rect x="0" y="0" width="200" height="200" rx="6" fill="#ffe9c2" stroke="#a06e14" stroke-width="2"/>
+            <line x1="100" y1="0" x2="100" y2="200" stroke="#a06e14" stroke-width="1"/>
+            <line x1="0" y1="100" x2="200" y2="100" stroke="#a06e14" stroke-width="1"/>
+            <circle cx="58" cy="52" r="46" fill="#1e8c50" opacity="0.25"/>
+            <circle cx="58" cy="52" r="28" fill="#1e8c50" opacity="0.45"/>
+            <circle cx="58" cy="52" r="11" fill="#1e8c50"/>
+            <circle cx="100" cy="100" r="15" fill="none" stroke="#3c3c38" stroke-width="1" stroke-dasharray="2 2"/>
+            <line x1="58" y1="52" x2="94" y2="94" stroke="#a03228" stroke-width="1.5" stroke-dasharray="5 3"/>
+            <polygon points="94,94 84,88 90,82" fill="#a03228"/>
+            <g font-family="ui-monospace,monospace" font-size="10" fill="#7a5a20">
+              <text x="10" y="16">TL</text><text x="176" y="16">TR</text>
+              <text x="10" y="192">BL</text><text x="176" y="192">BR</text>
+            </g>
+            <g transform="translate(0,222)">
+              <rect x="18"  y="0"  width="30" height="40" fill="#1e8c50" opacity="0.8"/>
+              <rect x="62"  y="18" width="30" height="22" fill="#1e8c50" opacity="0.55"/>
+              <rect x="106" y="18" width="30" height="22" fill="#1e8c50" opacity="0.55"/>
+              <rect x="150" y="30" width="30" height="10" fill="#1e8c50" opacity="0.4"/>
+              <g font-family="ui-monospace,monospace" font-size="9" fill="#3c3c38" text-anchor="middle">
+                <text x="33" y="54">TL</text><text x="77" y="54">TR</text><text x="121" y="54">BL</text><text x="165" y="54">BR</text>
+              </g>
+            </g>
+            <text x="100" y="308" font-family="ui-monospace,monospace" font-size="10.5" fill="#a03228" text-anchor="middle" letter-spacing="0.05em">SPOT RIDES HIGH-LEFT &mdash; CLIMB AND SLIDE UNTIL EQUAL</text>
+          </g>
+
+          <text x="500" y="412" font-family="ui-monospace,monospace" font-size="10" fill="#646460" text-anchor="middle" letter-spacing="0.04em">TOP&minus;BOTTOM PAIR = HEIGHT &middot; LEFT&minus;RIGHT PAIR = LINE &middot; THE CENTRE IS FOUND TO A FRACTION OF THE SPOT</text>
+        </svg>
+        <div class="dist-caption">FRONT VIEW OF THE QUADRANT SENSOR &middot; THE FLIGHT CONTROLLER'S ONLY INPUT</div>
+      </div>
+
       <div class="subhead">RETROREFLECTOR (REAR)</div>
       <p>Beside the sensor, a retroreflector sends part of the beam straight back to the origin. That return is what the operator sights at the end of the run for the depression reading, Measurement 3, and it lets a reciprocal refraction check work from the origin end.</p>
 
@@ -855,6 +934,44 @@
 
       <div class="subhead">THE THREE-POINT FIGURE, A ONE-INSTANT CHECK (OPTIONAL)</div>
       <p>Where a marker can be anchored at the midpoint, the oldest version of this measurement can run alongside the profile, and it is worth doing because it is a different kind of evidence. The dense profile is a time series, built reading by reading as the drone flies, so it rests on the rangefinder behaving the same from the first sample to the last. Three fixed marks at equal height, photographed in one frame from the origin, are a single figure caught in one instant, immune to anything drifting over the run. On a flat surface the three equal heights fall on one straight line, so the middle mark sits on the chord between the outer two; on a curved surface the water stands higher in the middle than along that chord, so the middle mark rides above it. It is a corroboration, not the measurement. Where the geometry cannot be set, far out on open water most of all, the run stands on the profile without it.</p>
+
+      <div class="diagram" style="margin:18px 0 6px">
+        <svg viewBox="0 0 1000 400" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1000" height="400" fill="#f0f4fc"/>
+          <text x="500" y="34" font-family="ui-monospace,monospace" font-size="11" fill="#3c3c38" text-anchor="middle" letter-spacing="0.06em">THREE EQUAL HEIGHTS, PHOTOGRAPHED IN ONE FRAME</text>
+
+          <text x="250" y="86" font-family="ui-monospace,monospace" font-size="11" fill="#5d83a0" text-anchor="middle" letter-spacing="0.08em">IF THE WATER IS FLAT</text>
+          <path d="M60,300 L440,300 L440,362 L60,362 Z" fill="#cdddec"/>
+          <line x1="60" y1="300" x2="440" y2="300" stroke="#7fa6c4" stroke-width="2"/>
+          <line x1="90"  y1="300" x2="90"  y2="230" stroke="#3c3c38" stroke-width="3"/>
+          <line x1="250" y1="300" x2="250" y2="230" stroke="#3c3c38" stroke-width="3"/>
+          <line x1="410" y1="300" x2="410" y2="230" stroke="#3c3c38" stroke-width="3"/>
+          <line x1="90" y1="230" x2="410" y2="230" stroke="#a03c6e" stroke-width="1.4" stroke-dasharray="7 4"/>
+          <circle cx="90"  cy="230" r="5" fill="#a03c6e"/>
+          <circle cx="250" cy="230" r="5" fill="#a03c6e"/>
+          <circle cx="410" cy="230" r="5" fill="#a03c6e"/>
+          <text x="250" y="205" font-family="ui-monospace,monospace" font-size="10.5" fill="#3c3c38" text-anchor="middle" letter-spacing="0.04em">MIDDLE SITS ON THE CHORD</text>
+
+          <text x="750" y="86" font-family="ui-monospace,monospace" font-size="11" fill="#5d83a0" text-anchor="middle" letter-spacing="0.08em">IF THE WATER CURVES</text>
+          <path d="M560,310 Q750,240 940,310 L940,362 L560,362 Z" fill="#cdddec"/>
+          <path d="M560,310 Q750,240 940,310" fill="none" stroke="#7fa6c4" stroke-width="2"/>
+          <line x1="590" y1="300" x2="590" y2="230" stroke="#3c3c38" stroke-width="3"/>
+          <line x1="750" y1="275" x2="750" y2="205" stroke="#3c3c38" stroke-width="3"/>
+          <line x1="910" y1="300" x2="910" y2="230" stroke="#3c3c38" stroke-width="3"/>
+          <line x1="590" y1="230" x2="910" y2="230" stroke="#a03c6e" stroke-width="1.4" stroke-dasharray="7 4"/>
+          <circle cx="590" cy="230" r="5" fill="#a03c6e"/>
+          <circle cx="750" cy="205" r="5" fill="#a03c6e"/>
+          <circle cx="910" cy="230" r="5" fill="#a03c6e"/>
+          <line x1="770" y1="230" x2="770" y2="205" stroke="#a06e14" stroke-width="1.2"/>
+          <polygon points="770,205 766,212 774,212" fill="#a06e14"/>
+          <polygon points="770,230 766,223 774,223" fill="#a06e14"/>
+          <text x="782" y="221" font-family="ui-monospace,monospace" font-size="9.5" fill="#a06e14" letter-spacing="0.03em">RISE &mdash; GROWS AS RUN&sup2;</text>
+          <text x="750" y="180" font-family="ui-monospace,monospace" font-size="10.5" fill="#3c3c38" text-anchor="middle" letter-spacing="0.04em">MIDDLE RIDES ABOVE THE CHORD</text>
+
+          <text x="500" y="388" font-family="ui-monospace,monospace" font-size="10" fill="#646460" text-anchor="middle" letter-spacing="0.04em">MAST HEIGHTS SET BY THE SAME TAPE &middot; CHORD = THE LINE JOINING THE OUTER TWO TOPS &middot; CURVE EXAGGERATED FOR CLARITY</text>
+        </svg>
+        <div class="dist-caption">MEASUREMENT 4 &middot; PROJECTION KEEPS STRAIGHT LINES STRAIGHT, SO ONLY A LIFTED SURFACE MOVES THE MIDDLE OFF THE LINE</div>
+      </div>
 
       <div class="subhead">THE HISTORICAL LINEAGE</div>
       <p>This is an old measurement. Alfred Russel Wallace set it up on the Old Bedford Canal in 1870, sighting between two marks at equal height six miles apart with a third at the midpoint, and recorded the midpoint mark standing above the line of the other two (Wallace, 1908). Henry Oldham repeated the demonstration for the British Association in 1901 and reported the same figure (Oldham, 1901). More recently the photographer known as Soundly has documented the same geometry across Lake Pontchartrain, where a line of equal-height transmission towers shows the middle towers riding above the chord, imagery examined in detail in a long public thread (West, 2017). The three-point figure is what each of these records in common. The protocol here is a way to produce it on demand, with markers you control and heights you set.</p>
@@ -1436,6 +1553,43 @@
       <p>α<sub>g</sub> is the green beam's total bending angle, s the vertical separation between the green and red spots at the drone, d the distance out to it, and n<sub>g</sub> and n<sub>r</sub> the refractive indices of air at the two colors. The bracketed ratio is the dispersion factor, about a hundred and sixty for green and red, and because both indices scale together with air density it holds near that value whatever the temperature and pressure do. There is no radius in it and no shape assumed. It returns the beam's own bend from numbers you measured and the optics of air alone, so it stands whether the surface beneath comes out level or curved. Take that bend out of the angle the climb implies, and what remains is the surface, reported rather than presumed.</p>
       <p>The price is that the separation is small. Between green at 532 nm and red at 635 nm the dispersion is well under a hundredth of the total bend, so the factor you scale it back up by is of order a hundred, and the raw split at the drone is millimetres, not centimetres. Two things make it readable. Distance helps, because the separation grows as the run lengthens, so the longer runs are where the two colors earn their keep. And a wider color split helps more, so a blue beam against the red opens a larger gap than green does and is worth the swap if the dispersion comes out marginal. Both beams have to leave the origin bore-sighted through the same aperture, so they cross the same air, and the drone needs a color camera, or two filtered detectors, to find each color's center on its own. Done that way, the two colors do not just say refraction is present, they hand back the number to subtract from the climb.</p>
 
+      <div class="diagram" style="margin:18px 0 6px">
+        <svg viewBox="0 0 1000 390" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1000" height="390" fill="#f0f4fc"/>
+          <text x="500" y="34" font-family="ui-monospace,monospace" font-size="11" fill="#3c3c38" text-anchor="middle" letter-spacing="0.06em">TWO COLORS, ONE APERTURE &mdash; THE SPLIT RETURNS THE WHOLE BEND</text>
+
+          <rect x="58" y="168" width="30" height="38" rx="3" fill="#dcdad0" stroke="#3c3c38" stroke-width="1.4"/>
+          <text x="73" y="228" font-family="ui-monospace,monospace" font-size="9" fill="#646460" text-anchor="middle">ORIGIN</text>
+          <text x="73" y="240" font-family="ui-monospace,monospace" font-size="9" fill="#646460" text-anchor="middle">bore-sighted</text>
+
+          <path d="M88,184 Q500,196 866,210" fill="none" stroke="#a03228" stroke-width="1.6" stroke-dasharray="6 4"/>
+          <path d="M88,188 Q500,208 866,236" fill="none" stroke="#1e8c50" stroke-width="2"/>
+          <text x="470" y="176" font-family="ui-monospace,monospace" font-size="10" fill="#a03228" text-anchor="middle" letter-spacing="0.04em">RED 635 nm &mdash; BENDS LESS</text>
+          <text x="470" y="252" font-family="ui-monospace,monospace" font-size="10" fill="#1e8c50" text-anchor="middle" letter-spacing="0.04em">GREEN 532 nm &mdash; BENDS MORE</text>
+
+          <rect x="862" y="196" width="16" height="52" rx="2" fill="#ffe9c2" stroke="#a06e14" stroke-width="1.4"/>
+          <text x="870" y="270" font-family="ui-monospace,monospace" font-size="9" fill="#646460" text-anchor="middle">AT THE DRONE</text>
+
+          <line x1="878" y1="212" x2="912" y2="120" stroke="#969692" stroke-width="0.8" stroke-dasharray="3 3"/>
+          <line x1="878" y1="234" x2="912" y2="160" stroke="#969692" stroke-width="0.8" stroke-dasharray="3 3"/>
+          <circle cx="930" cy="122" r="46" fill="#ffffff" stroke="#969692" stroke-width="1.2"/>
+          <circle cx="930" cy="104" r="7" fill="#a03228"/>
+          <circle cx="930" cy="142" r="7" fill="#1e8c50"/>
+          <line x1="952" y1="104" x2="952" y2="142" stroke="#3c3c38" stroke-width="1.2"/>
+          <polygon points="952,104 948,111 956,111" fill="#3c3c38"/>
+          <polygon points="952,142 948,135 956,135" fill="#3c3c38"/>
+          <text x="930" y="66" font-family="ui-monospace,monospace" font-size="9.5" fill="#3c3c38" text-anchor="middle">SPLIT s</text>
+          <text x="930" y="78" font-family="ui-monospace,monospace" font-size="9" fill="#646460" text-anchor="middle">millimetres</text>
+
+          <path d="M60,330 L940,330 L940,362 L60,362 Z" fill="#cdddec"/>
+          <line x1="60" y1="330" x2="940" y2="330" stroke="#7fa6c4" stroke-width="1.5"/>
+
+          <text x="500" y="304" font-family="ui-monospace,monospace" font-size="10.5" fill="#3c3c38" text-anchor="middle" letter-spacing="0.05em">TOTAL BEND &alpha; &asymp; (s / d) &times; ~160 &mdash; THE RATIO IS A FIXED PROPERTY OF AIR</text>
+          <text x="500" y="382" font-family="ui-monospace,monospace" font-size="9" fill="#646460" text-anchor="middle" letter-spacing="0.04em">NO RADIUS, NO ASSUMED TEMPERATURE PROFILE &middot; BENDS GREATLY EXAGGERATED FOR CLARITY</text>
+        </svg>
+        <div class="dist-caption">THE DISPERSION MEASUREMENT &middot; THE SMALL SPLIT AT THE DRONE IS A FIXED FRACTION (~1/160) OF THE BEAM'S WHOLE BEND</div>
+      </div>
+
       <div class="subhead">MEASURING REFRACTION WITHOUT A GLOBE</div>
       <p>It is worth pausing on what all of this actually measures, because the usual way of quoting refraction quietly borrows the very thing the run is testing. Refraction is a property of the air, not of the Earth. Light bends because air is denser low and thinner high, and the size of the bend is set by how fast that density falls with height: the ray follows its own gentle arc, of radius ρ fixed by the vertical gradient of refractivity. That relation is Snell's law in layered air, and there is no Earth in it. The same gradient bends the beam by the same amount whether the ground beneath runs flat, round, or anything else.</p>
       <div class="formula">ρ ≈ −1 / (dn/dh)　·　sag ≈ d² / 2ρ　·　k = R / ρ　(optional)</div>
@@ -1484,6 +1638,46 @@
       <p>The objection is sharp and deserves a straight answer: assume the earth is curved, measure altitude over the curve, and of course you find a curve, so the result was baked into the method. If that were what happened here it would be a fatal flaw. It is not what happens here, and the reason is worth setting out a step at a time.</p>
       <p>The apparatus is handed exactly one geometric fact, and it is not a shape. It is <em>level</em>, set at the origin by gravity, with a bubble or a plumb line, the same level a carpenter or a surveyor uses and the same one both models already accept. The beam is locked to that local horizontal and never told where the far end is. A radius for the earth is entered nowhere in the rig: not in the laser, not in the flight controller, not in the lidar, not in the encoder. The instruments record physical quantities, a height straight down to the water, an angle down from the level line, a marker against a chord, and each of those returns the same number whatever the surface turns out to be. Nothing in the measurement presupposes a shape.</p>
       <p>Where a radius does appear is in the <em>predictions</em>, and only there. One of the two, the sphere's, says the water should fall below the level line by R(1 − cos&thinsp;θ), the versine of the angle θ = d/R the run subtends — a trigonometric quantity. The familiar "distance squared over twice the radius," d²/2R, is only the small-angle approximation of that, the first term of its series; over the distances here the two agree to better than a part in a thousand, so the page quotes the shorter form, but the exact prediction is the cosine expression. A folk version of that drop circulates as <strong>"eight inches per mile squared,"</strong> and this protocol does not use it; it is named here only because it is so often misused, and a misuse called out in advance cannot be smuggled in later. It is the small-angle form with a radius already baked into its coefficient, so quoting it as the prediction assumes the very number the run exists to return &mdash; here the prediction is the cosine expression, the radius enters only as the candidate under test, and the radius the readings imply, R = d&sup2;/(2&thinsp;&times;&thinsp;drop), is the output. The rule is also routinely pointed at the wrong quantity: it describes the drop of the surface <em>below a level line</em>, which is exactly the gap this run measures straight down to the water, and <em>not</em> the "hidden height" of a distant object sunk behind the horizon, a different figure that also depends on how high the observer stands; the two are endlessly confused in arguments about the horizon. This run never sights along a horizon, so the clean drop-below-level is the one in play. The other, the flat one, has no radius in it at all and says the gap should not change. Both are written down before the run. The readings then land nearer one or the other, and which one they land on is the output, not the input. If the water is flat, a gravity-levelled beam holds the same height above it the whole way and the lidar logs a constant; nothing in the rig reaches in to bend that into a climb. The known-flat control exists to prove exactly that, by showing the apparatus reads level when the surface is known to be level.</p>
+
+      <div class="diagram" style="margin:18px 0 6px">
+        <svg viewBox="0 0 1000 420" xmlns="http://www.w3.org/2000/svg">
+          <rect width="1000" height="420" fill="#f0f4fc"/>
+          <text x="500" y="34" font-family="ui-monospace,monospace" font-size="11" fill="#3c3c38" text-anchor="middle" letter-spacing="0.06em">TWO FIGURES, ENDLESSLY CONFUSED &mdash; THIS RUN READS ONLY THE FIRST</text>
+
+          <text x="255" y="80" font-family="ui-monospace,monospace" font-size="11" fill="#1e8c50" text-anchor="middle" letter-spacing="0.08em">DROP BELOW A LEVEL LINE</text>
+          <polygon points="60,360 60,250 130,258 155,360" fill="#c3bcac" stroke="#969692" stroke-width="1"/>
+          <line x1="118" y1="240" x2="470" y2="240" stroke="#1e8c50" stroke-width="2"/>
+          <rect x="100" y="234" width="20" height="12" rx="3" fill="#cfe3d6" stroke="#1e8c50" stroke-width="1.2"/>
+          <path d="M130,300 Q300,316 470,352 L470,392 L130,392 Z" fill="#cdddec"/>
+          <path d="M130,300 Q300,316 470,352" fill="none" stroke="#7fa6c4" stroke-width="2"/>
+          <rect x="416" y="234" width="28" height="10" rx="2" fill="#dcdad0" stroke="#3c3c38" stroke-width="1.2"/>
+          <line x1="412" y1="232" x2="424" y2="232" stroke="#3c3c38" stroke-width="1.4"/>
+          <line x1="436" y1="232" x2="448" y2="232" stroke="#3c3c38" stroke-width="1.4"/>
+          <line x1="430" y1="248" x2="430" y2="342" stroke="#a03c6e" stroke-width="1.4"/>
+          <polygon points="430,248 426,256 434,256" fill="#a03c6e"/>
+          <polygon points="430,342 426,334 434,334" fill="#a03c6e"/>
+          <text x="248" y="386" font-family="ui-monospace,monospace" font-size="9.5" fill="#a03c6e" text-anchor="middle" letter-spacing="0.03em">THE GAP &mdash; MEASURED STRAIGHT DOWN, NO HORIZON IN THE NUMBER</text>
+          <text x="255" y="112" font-family="ui-monospace,monospace" font-size="9" fill="#646460" text-anchor="middle">constant if flat &middot; grows as d&sup2; if curved &middot; what this run logs</text>
+
+          <text x="750" y="80" font-family="ui-monospace,monospace" font-size="11" fill="#a03228" text-anchor="middle" letter-spacing="0.08em">HIDDEN HEIGHT BEHIND A HORIZON</text>
+          <path d="M560,320 Q740,290 940,356 L940,392 L560,392 Z" fill="#cdddec"/>
+          <path d="M560,320 Q740,290 940,356" fill="none" stroke="#7fa6c4" stroke-width="2"/>
+          <line x1="575" y1="320" x2="575" y2="296" stroke="#3c3c38" stroke-width="2"/>
+          <circle cx="575" cy="292" r="4" fill="#2d64a5"/>
+          <line x1="575" y1="294" x2="940" y2="331" stroke="#969692" stroke-width="1.2" stroke-dasharray="5 4"/>
+          <circle cx="742" cy="306" r="4" fill="#a06e14"/>
+          <text x="742" y="286" font-family="ui-monospace,monospace" font-size="9" fill="#a06e14" text-anchor="middle">HORIZON &mdash; SIGHT LINE GRAZES HERE</text>
+          <rect x="872" y="330" width="36" height="16" fill="#a03228" opacity="0.45" stroke="#a03228" stroke-width="1"/>
+          <line x1="890" y1="330" x2="890" y2="300" stroke="#3c3c38" stroke-width="2"/>
+          <line x1="882" y1="304" x2="898" y2="304" stroke="#3c3c38" stroke-width="1.4"/>
+          <line x1="922" y1="346" x2="922" y2="325" stroke="#a03228" stroke-width="1.4"/>
+          <polygon points="922,325 918,332 926,332" fill="#a03228"/>
+          <polygon points="922,346 918,339 926,339" fill="#a03228"/>
+          <text x="750" y="386" font-family="ui-monospace,monospace" font-size="9.5" fill="#a03228" text-anchor="middle" letter-spacing="0.03em">HULL HIDDEN BELOW THE SIGHT LINE &mdash; A DIFFERENT FIGURE, AND IT DEPENDS ON EYE HEIGHT</text>
+          <text x="750" y="112" font-family="ui-monospace,monospace" font-size="9" fill="#646460" text-anchor="middle">this run never sights along a horizon &middot; curve exaggerated for clarity</text>
+        </svg>
+        <div class="dist-caption">THE FOLK RULE DESCRIBES THE LEFT FIGURE &middot; ARGUMENTS ABOUT SHIPS AND SKYLINES ARE USUALLY ABOUT THE RIGHT ONE</div>
+      </div>
       <p>One assumption is shared, and naming it is the point rather than hiding it. Both sides agree a spirit level finds the local horizontal, the direction gravity hands you where you stand. What they disagree about is whether that horizontal <em>turns</em> as you travel along the surface, the plumb line at the far end tilted away from the one at the origin or parallel to it. That turning, or its absence, is the whole of what the run measures. It is assumed by neither side. It is read off the dials, and a result the dials do not support is not kept.</p>
     </div>
   </div>
