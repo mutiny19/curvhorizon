@@ -19,7 +19,7 @@
 
 ## 1. The question
 
-Over miles of calm open water, does a gravity-levelled line of sight keep a
+Over miles of calm open water, does a levelled line of sight keep a
 **constant** height above the surface, or does the surface **fall away** beneath
 it? The two positions make opposite, quantitative predictions:
 
@@ -37,7 +37,8 @@ readings land on — including *inconclusive*.
 
 *Declared before building, and signed by both sides before any number is taken.*
 
-A laser is levelled to local gravity where it stands, locked on both axes, and
+A laser is levelled to the local horizontal where it stands (the direction a
+plumb line hangs and still water settles), locked on both axes, and
 **never aimed at the far end**. A drone (or, in the entry build, three
 equal-height markers) reports the height of the surface relative to that level
 line as a function of distance.
