@@ -150,7 +150,7 @@
   .eq-item.open .eq-caret { transform: rotate(180deg); }
   .eq-head:hover .eq-name { color: var(--gold); }
   .eq-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
-  .eq-item.open .eq-body { max-height: 4000px; }
+  .eq-item.open .eq-body { max-height: 12000px; }
   .eq-bodyinner { padding: 2px 0 14px; }
 
   .detail {
@@ -1949,9 +1949,31 @@
 </article>
 
 <script>
+  // Expand by animating to the section's real height, then remove the cap entirely
+  // (max-height:none) once the transition ends. A fixed pixel cap silently clipped
+  // the longest sections (refraction outgrew 6000px) - this way no section ever can.
+  function setDetailOpen(el, open) {
+    if (open) {
+      el.classList.add('open');
+      el.style.maxHeight = el.scrollHeight + 'px';
+      var done = function (e) {
+        if (e.target !== el || e.propertyName !== 'max-height') return;
+        if (el.classList.contains('open')) el.style.maxHeight = 'none';
+        el.removeEventListener('transitionend', done);
+      };
+      el.addEventListener('transitionend', done);
+    } else {
+      if (getComputedStyle(el).maxHeight === 'none') {
+        el.style.maxHeight = el.scrollHeight + 'px';
+        void el.offsetHeight;
+      }
+      el.style.maxHeight = '';
+      el.classList.remove('open');
+    }
+  }
   function toggleDetail(id) {
     const el = document.getElementById(id);
-    el.classList.toggle('open');
+    setDetailOpen(el, !el.classList.contains('open'));
     const trigger = document.querySelector(`[onclick="toggleDetail('${id}')"]`);
     if (trigger) {
       trigger.textContent = el.classList.contains('open') ? 'COLLAPSE ▴' : 'EXPAND ▾';
@@ -1963,10 +1985,7 @@
     const details = document.querySelectorAll('.detail');
     const anyClosed = Array.from(details).some(d => !d.classList.contains('open'));
 
-    details.forEach(d => {
-      if (anyClosed) d.classList.add('open');
-      else d.classList.remove('open');
-    });
+    details.forEach(d => setDetailOpen(d, anyClosed));
 
     document.querySelectorAll('.expand-trigger').forEach(t => {
       if (t === btn) return;
