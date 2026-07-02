@@ -56,7 +56,9 @@ line as a function of distance.
   object behind the horizon — a different figure that also depends on observer
   height, and the two are often confused.
 - **Decision rule:** fit the measured height-vs-distance profile to a level line
-  (flat) and to a parabola (sphere). The radius the run *implies*,
+  (flat) and to a parabola (sphere). The fit includes a slope term, so an
+  imperfectly levelled laser shows up as slope, which both models share, and
+  cannot pose as curvature. The radius the run *implies*,
   R = d²/(2·drop), is an **output of the readings**, not an input. Report which
   prediction the data land on, with its error.
 - **Inconclusive (also a result):** the predicted drop sits inside the
