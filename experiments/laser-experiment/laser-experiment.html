@@ -287,7 +287,7 @@
 
   .global-controls {
     position: sticky; top: 20px;
-    text-align: right; margin-bottom: -32px; z-index: 10;
+    text-align: right; margin-bottom: 6px; z-index: 10;
   }
   .global-controls button, .global-controls a {
     display: inline-block;
@@ -301,6 +301,57 @@
   .global-controls a { margin-right: 8px; }
   .global-controls button:hover, .global-controls a:hover { color: var(--gold); border-color: var(--gold); }
 
+  /* ---- Long-form argument reads in serif; labels, data, and captions stay mono ---- */
+  .detail-inner p:not(.opt-what) {
+    font-family: 'IBM Plex Serif', Georgia, serif;
+    font-size: 14.5px; line-height: 1.78;
+  }
+
+  /* ---- Chart cartouche: the experiment's specimen data, survey-title-block style ---- */
+  .cartouche {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+    gap: 1px; background: var(--rule-2);
+    border: 1px solid var(--rule); margin: 22px 0 18px;
+  }
+  .c-cell { background: var(--bg); padding: 9px 14px 8px; }
+  .c-k { display: block; font-size: 9px; letter-spacing: 0.14em; color: var(--gold); font-weight: 600; margin-bottom: 3px; }
+  .c-v { display: block; font-size: 12px; color: var(--ink-l); letter-spacing: 0.03em; }
+
+  /* ---- Contents: chart-index with leader dots, wired to the deep-link router ---- */
+  .contents { margin: 22px 0 0; border: 1px solid var(--rule); padding: 16px 22px 13px; }
+  .contents-title { font-family: 'Jura', sans-serif; font-weight: 500; font-size: 13px; color: var(--gold); letter-spacing: 0.14em; margin-bottom: 9px; }
+  .contents ol { list-style: none; margin: 0; padding: 0; columns: 2; column-gap: 44px; }
+  .contents li { break-inside: avoid; }
+  .contents a { display: flex; align-items: baseline; text-decoration: none; color: var(--ink-l); font-size: 12px; letter-spacing: 0.02em; padding: 2.5px 0; }
+  .contents a .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .contents a:hover .name, .contents a:focus-visible .name { color: var(--gold); }
+  .contents .dots { flex: 1; min-width: 14px; border-bottom: 1px dotted var(--rule); margin: 0 7px; transform: translateY(-3px); }
+  .contents .m { color: var(--ink-lll); font-size: 10px; flex: none; }
+
+  /* ---- Plate numbers on diagram captions ---- */
+  .plate-no { color: var(--gold); font-weight: 600; letter-spacing: 0.08em; }
+
+  /* ---- The beam rail: the reader rides the beam the way the drone does ---- */
+  .beamrail { position: fixed; top: 28px; bottom: 28px; left: calc(50% - 550px - 36px); width: 20px; z-index: 5; }
+  .br-track { position: absolute; top: 0; bottom: 0; left: 9px; width: 1px; background: var(--rule); }
+  .br-origin { position: absolute; top: -4px; left: 5px; width: 9px; height: 7px; background: var(--gold); border-radius: 1px; }
+  .br-end { position: absolute; bottom: -4px; left: 6px; width: 7px; height: 7px; border: 1px solid var(--ink-lll); border-radius: 50%; background: var(--bg); }
+  .br-fill { position: absolute; top: 0; bottom: 0; left: 8.5px; width: 2px; background: var(--green);
+    box-shadow: 0 0 7px rgba(30,140,80,0.5); transform-origin: top; transform: scaleY(0); }
+  .br-ticks span { position: absolute; left: 4px; width: 11px; height: 1px; background: var(--ink-lll); opacity: 0.45; }
+  .br-drone { position: absolute; left: 0; top: 0; width: 19px; height: 12px; will-change: transform; }
+  @media (max-width: 1270px) { .beamrail { display: none; } }
+
+  /* ---- Keyboard focus ---- */
+  a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible {
+    outline: 2px solid var(--cold); outline-offset: 2px;
+  }
+
+  /* At mid widths the sticky controls collide with the wrapped title; let them flow instead */
+  @media (max-width: 1080px) {
+    .global-controls { position: static; margin-bottom: 0; }
+  }
+
   @media (max-width: 768px) {
     .poster { padding: 30px 24px; }
     .title-block h1 { font-size: 36px; }
@@ -308,13 +359,14 @@
     .meas .row { grid-template-columns: 1fr; }
     .equipment { flex-direction: column; }
     .polaris-inset { margin: 0 auto 16px; }
+    .contents ol { columns: 1; }
   }
 
   @media print {
     body { padding: 0; background: #fff; }
     .poster { box-shadow: none; border: none; padding: 0; }
     .detail { max-height: none !important; }
-    .expand-trigger, .global-controls { display: none !important; }
+    .expand-trigger, .global-controls, .beamrail { display: none !important; }
     .diagram svg { max-height: 300px; }
   }
 
@@ -402,6 +454,21 @@
 
 <article class="poster">
 
+  <div class="beamrail" aria-hidden="true">
+    <div class="br-track"></div>
+    <div class="br-origin"></div>
+    <div class="br-end"></div>
+    <div class="br-fill" id="brFill"></div>
+    <div class="br-ticks" id="brTicks"></div>
+    <svg class="br-drone" id="brDrone" viewBox="0 0 20 12" xmlns="http://www.w3.org/2000/svg">
+      <line x1="0.5" y1="3" x2="7.5" y2="3" stroke="#3c3c38" stroke-width="1.4"/>
+      <line x1="12.5" y1="3" x2="19.5" y2="3" stroke="#3c3c38" stroke-width="1.4"/>
+      <rect x="3" y="3.6" width="2.4" height="1.8" fill="#3c3c38"/>
+      <rect x="14.6" y="3.6" width="2.4" height="1.8" fill="#3c3c38"/>
+      <rect x="6.5" y="5" width="7" height="4.4" rx="1.2" fill="#3c3c38"/>
+    </svg>
+  </div>
+
   <details class="warnbox">
     <summary>A STANDING CHALLENGE &mdash; TRY TO BREAK THIS DESIGN, IN THE OPEN</summary>
     <div class="warnbody">
@@ -421,6 +488,15 @@
     <h1>LASER BEAM FOLLOW<br>EXPERIMENT</h1>
     <div class="subtitle">— A FIELD PROTOCOL —</div>
   </div>
+  <div class="cartouche">
+    <div class="c-cell"><span class="c-k">CATALOG</span><span class="c-v">REPLICATIONBENCH / RB</span></div>
+    <div class="c-cell"><span class="c-k">STATUS</span><span class="c-v">&#11036; UNTESTED &mdash; NO RUNS LOGGED</span></div>
+    <div class="c-cell"><span class="c-k">COST</span><span class="c-v">$50&ndash;$1,915</span></div>
+    <div class="c-cell"><span class="c-k">DIFFICULTY</span><span class="c-v">MEDIUM</span></div>
+    <div class="c-cell"><span class="c-k">TIME</span><span class="c-v">ONE WEEKEND</span></div>
+    <div class="c-cell"><span class="c-k">SAFETY</span><span class="c-v">LOW &middot; LASER GOGGLES</span></div>
+  </div>
+
   <div class="tagline">NO MAP  ·  NO COMPASS ABOARD  ·  NO PROGRAMMED DIRECTION  ·  THE BEAM IS THE ONLY GUIDE</div>
 
   <details class="plainbox">
@@ -432,6 +508,31 @@
       <div class="plainlinks"><a href="#about">More detail &darr;</a> &nbsp;&middot;&nbsp; <a href="#procedure">The steps &darr;</a> &nbsp;&middot;&nbsp; <a href="#simrun">Try a simulated run &darr;</a></div>
     </div>
   </details>
+
+  <nav class="contents" aria-label="Contents">
+    <div class="contents-title">CONTENTS</div>
+    <ol>
+      <li><a href="#about"><span class="name">About this experiment</span><span class="dots"></span><span class="m">&#9662;</span></a></li>
+      <li><a href="#codesign"><span class="name">Design it with the other side</span><span class="dots"></span><span class="m">&#9662;</span></a></li>
+      <li><a href="#diagram"><span class="name">Setup diagram</span><span class="dots"></span><span class="m">&#9662;</span></a></li>
+      <li><a href="#laserstation"><span class="name">Laser station layout</span><span class="dots"></span><span class="m">&#9662;</span></a></li>
+      <li><a href="#dronelayout"><span class="name">Drone sensor layout</span><span class="dots"></span><span class="m">&#9662;</span></a></li>
+      <li><a href="#threepoint"><span class="name">Tens of thousands of points</span><span class="dots"></span><span class="m">&#9662;</span></a></li>
+      <li><a href="#procedure"><span class="name">Procedure</span><span class="dots"></span><span class="m">&#9662;</span></a></li>
+      <li><a href="#controls"><span class="name">Controls before you trust a number</span><span class="dots"></span><span class="m">&#9662;</span></a></li>
+      <li><a href="#equipment"><span class="name">Equipment</span><span class="dots"></span><span class="m">&#9662;</span></a></li>
+      <li><a href="#shortrun"><span class="name">The short run</span><span class="dots"></span><span class="m">&#9662;</span></a></li>
+      <li><a href="#measurements"><span class="name">Independent measurements</span><span class="dots"></span><span class="m">&#9662;</span></a></li>
+      <li><a href="#simrun"><span class="name">Simulate a run</span><span class="dots"></span><span class="m">&#9662;</span></a></li>
+      <li><a href="#refraction"><span class="name">Handling atmospheric refraction</span><span class="dots"></span><span class="m">&#9662;</span></a></li>
+      <li><a href="#circular"><span class="name">Is this circular?</span><span class="dots"></span><span class="m">&#9662;</span></a></li>
+      <li><a href="#fecore"><span class="name">A note on FECORE</span><span class="dots"></span><span class="m">&#9662;</span></a></li>
+      <li><a href="#challenge"><span class="name">Run it yourself &mdash; the checklist</span><span class="dots"></span><span class="m">&#9662;</span></a></li>
+      <li><a href="#fieldrecord"><span class="name">Field record</span><span class="dots"></span><span class="m">&#9662;</span></a></li>
+      <li><a href="#references"><span class="name">References</span><span class="dots"></span><span class="m">&mdash;</span></a></li>
+      <li><a href="#discuss"><span class="name">Discuss this experiment</span><span class="dots"></span><span class="m">&mdash;</span></a></li>
+    </ol>
+  </nav>
 
   <div class="diagram" style="margin-top:18px">
     <img src="laser-experiment.gif" width="960" height="505" alt="Animated schematic of the experiment: a laser levelled on a bluff fires a level beam east over open water while a drone flies out along it logging its height above the water; both predictions are drawn — flat (the height holds) and curved (the water falls away with the square of the distance) — and the readings land on one. Illustration, not to scale." style="display:block;width:100%;height:auto">
@@ -1874,6 +1975,53 @@
 
     btn.textContent = anyClosed ? 'COLLAPSE ALL' : 'EXPAND ALL';
   }
+
+  // ---- plate numbers: diagrams are plates; number them in document order ----
+  (function(){
+    var rom=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+    document.querySelectorAll('.dist-caption').forEach(function(c,i){
+      var s=document.createElement('span'); s.className='plate-no';
+      s.textContent='PLATE '+(rom[i]||(i+1))+' · ';
+      c.insertBefore(s, c.firstChild);
+    });
+  })();
+
+  // ---- the beam rail: reading progress drawn as the beam, with the drone riding it ----
+  (function(){
+    var rail=document.querySelector('.beamrail'); if(!rail) return;
+    var fill=document.getElementById('brFill'), drone=document.getElementById('brDrone'), ticks=document.getElementById('brTicks');
+    var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var lastH=0;
+    function docSpan(){ return document.documentElement.scrollHeight - window.innerHeight; }
+    function layoutTicks(){
+      ticks.innerHTML='';
+      var dh=docSpan(); if(dh<=0) return;
+      var rh=rail.clientHeight;
+      document.querySelectorAll('.section-header, .results h2').forEach(function(h){
+        var y=h.getBoundingClientRect().top + window.scrollY;
+        var t=Math.min(Math.max((y - window.innerHeight*0.35)/dh, 0), 1);
+        var s=document.createElement('span'); s.style.top=(t*rh)+'px'; ticks.appendChild(s);
+      });
+      lastH=document.documentElement.scrollHeight;
+    }
+    var pending=false;
+    function update(){
+      pending=false;
+      if(document.documentElement.scrollHeight!==lastH) layoutTicks();  // sections opened/closed
+      var dh=docSpan();
+      var p=dh>0 ? Math.min(Math.max(window.scrollY/dh, 0), 1) : 0;
+      fill.style.transform='scaleY('+p+')';
+      drone.style.transform='translateY('+(p*(rail.clientHeight-12))+'px)';
+    }
+    function onScroll(){ if(!pending){ pending=true; requestAnimationFrame(update); } }
+    if(reduce){
+      fill.style.transform='scaleY(1)'; drone.style.display='none'; layoutTicks();
+    } else {
+      window.addEventListener('scroll', onScroll, {passive:true});
+      window.addEventListener('resize', function(){ layoutTicks(); update(); }, {passive:true});
+      layoutTicks(); update();
+    }
+  })();
 
   // ---- shareable section handles: deep links that auto-open and scroll to a section ----
   (function(){
