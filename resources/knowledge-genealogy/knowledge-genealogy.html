@@ -79,8 +79,8 @@
   .arc.can-zoom{cursor:pointer;}
   .arc.inter{}                      /* interdisciplinary — dashed edge set in JS */
   .lbl{font-family:"IBM Plex Sans",sans-serif;font-weight:500;fill:#0C0F17;
-    paint-order:stroke;stroke:rgba(247,242,228,.0);pointer-events:none;user-select:none;}
-  .lbl.on-dark{fill:#F4EFE2;stroke:rgba(0,0,0,.35);stroke-width:2.2px;}
+    paint-order:stroke;stroke:rgba(247,242,228,.62);stroke-width:2.2px;pointer-events:none;user-select:none;}
+  .lbl.on-dark{fill:#F4EFE2;stroke:rgba(0,0,0,.42);stroke-width:2.2px;}
   #links path{fill:none;stroke:var(--glow);stroke-width:1.6;stroke-dasharray:4 3;
     opacity:.85;filter:drop-shadow(0 0 5px rgba(244,233,198,.7));}
   #links circle{fill:var(--glow);filter:drop-shadow(0 0 5px rgba(244,233,198,.8));}
@@ -460,6 +460,23 @@
     return `hsl(${h} ${s}% ${l}%)`;
   }
 
+  // Pick each label's ink for contrast against the wedge it sits on. Every label used
+  // to be forced light, which vanished on the paler outer rings (~1.8:1 contrast).
+  function hslToRgb(h,s,l){s/=100;l/=100;const k=n=>(n+h/30)%12,a=s*Math.min(l,1-l),
+    f=n=>l-a*Math.max(-1,Math.min(k(n)-3,9-k(n),1));return [f(0),f(8),f(4)].map(v=>Math.round(v*255));}
+  function relLum(c){const a=c.map(v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);});
+    return 0.2126*a[0]+0.7152*a[1]+0.0722*a[2];}
+  function contrastRatio(a,b){const L1=relLum(a),L2=relLum(b);return (Math.max(L1,L2)+0.05)/(Math.min(L1,L2)+0.05);}
+  function arcRGB(d){const t=traditionOf(d);if(!t)return [58,68,92];const [h,s]=HUE[t.data.name]||[40,10];
+    return hslToRgb(h,s,46+(d.depth-1)*6.4);}
+  // The wedge is painted at <1 opacity over a near-black page, so its PERCEIVED colour is
+  // darker than the nominal fill; composite it before choosing ink or the picker misjudges.
+  const PAGE_BG=[14,19,31];
+  function composite(fg,op){return fg.map((c,i)=>Math.round(c*op+PAGE_BG[i]*(1-op)));}
+  const INK_DARK=[12,15,23],INK_LIGHT=[244,239,226];
+  function labelClass(d){const bg=composite(arcRGB(d), d.children?0.92:0.78);
+    return "lbl"+(contrastRatio(INK_LIGHT,bg)>=contrastRatio(INK_DARK,bg)?" on-dark":"");}
+
   const arc = d3.arc()
     .startAngle(d => d.x0)
     .endAngle(d => d.x1)
@@ -498,7 +515,7 @@
     .selectAll("text")
     .data(root.descendants().slice(1))
     .join("text")
-      .attr("class", d => "lbl on-dark")
+      .attr("class", d => labelClass(d))
       .attr("dy","0.32em")
       .attr("font-size", d => d.depth>=3 ? 9.5 : (d.depth===2 ? 11 : 12.5))
       .attr("fill-opacity", d => +labelVisible(d.current))
