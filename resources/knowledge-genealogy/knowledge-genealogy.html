@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Genealogy of Knowledge</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<script src="vendor/d3.min.js"></script>
+<style>
+  :root{
+    --void-0:#0B0E15;
+    --void-1:#111726;
+    --ink:#0B0E15;
+    --paper:#EDE8DA;
+    --paper-dim:#A9A492;
+    --hair:#2A3247;
+    --gold:#E4C776;
+    --glow:#F4E9C6;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{
+    background:
+      radial-gradient(120% 120% at 50% 32%, #161D2E 0%, #0E131F 46%, #090C13 100%);
+    color:var(--paper);
+    font-family:"IBM Plex Sans",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  /* faint starfield */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.35), transparent),
+      radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,.25), transparent),
+      radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,.22), transparent),
+      radial-gradient(1px 1px at 85% 25%, rgba(255,255,255,.28), transparent),
+      radial-gradient(1px 1px at 12% 68%, rgba(255,255,255,.2), transparent),
+      radial-gradient(1px 1px at 58% 12%, rgba(255,255,255,.2), transparent);
+    opacity:.6;
+  }
+  .stage{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;}
+
+  header{padding:26px 34px 6px;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start;}
+  .brand .eyebrow{
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.32em;
+    text-transform:uppercase;color:var(--gold);margin:0 0 6px;
+  }
+  h1{
+    font-family:"Fraunces",serif;font-optical-sizing:auto;font-weight:600;
+    font-size:clamp(26px,3.4vw,44px);line-height:1;margin:0;letter-spacing:.005em;
+  }
+  h1 em{font-style:italic;font-weight:400;color:var(--gold);}
+  .brand p{margin:10px 0 0;max-width:46ch;color:var(--paper-dim);font-size:14px;line-height:1.5;}
+
+  .legend{display:flex;flex-direction:column;gap:7px;min-width:210px;}
+  .legend .lg-title{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.28em;
+    text-transform:uppercase;color:var(--paper-dim);margin-bottom:2px;}
+  .chip{
+    display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.03);
+    border:1px solid var(--hair);border-radius:999px;padding:5px 12px 5px 8px;
+    cursor:pointer;color:var(--paper);font-size:12.5px;transition:background .18s,border-color .18s,transform .18s;
+    text-align:left;font-family:inherit;
+  }
+  .chip:hover{background:rgba(255,255,255,.07);border-color:#3c4763;transform:translateX(-2px);}
+  .chip .dot{width:11px;height:11px;border-radius:50%;flex:0 0 auto;box-shadow:0 0 10px 0 currentColor;}
+
+  .breadcrumb{padding:2px 36px 0;min-height:22px;font-family:"IBM Plex Mono",monospace;
+    font-size:11.5px;color:var(--paper-dim);display:flex;flex-wrap:wrap;align-items:center;gap:4px;}
+  .breadcrumb button{background:none;border:none;color:var(--paper-dim);font:inherit;cursor:pointer;padding:2px 3px;border-radius:4px;}
+  .breadcrumb button:hover{color:var(--glow);}
+  .breadcrumb button.here{color:var(--gold);}
+  .breadcrumb .sep{opacity:.5;}
+
+  .wheelwrap{flex:1;display:flex;align-items:center;justify-content:center;padding:4px 12px 12px;min-height:0;}
+  svg#wheel{width:min(86vh,940px);max-width:96vw;height:auto;display:block;overflow:visible;}
+
+  .arc{cursor:default;}
+  .arc.can-zoom{cursor:pointer;}
+  .arc.inter{}                      /* interdisciplinary — dashed edge set in JS */
+  .lbl{font-family:"IBM Plex Sans",sans-serif;font-weight:500;fill:#0C0F17;
+    paint-order:stroke;stroke:rgba(247,242,228,.0);pointer-events:none;user-select:none;}
+  .lbl.on-dark{fill:#F4EFE2;stroke:rgba(0,0,0,.35);stroke-width:2.2px;}
+  #links path{fill:none;stroke:var(--glow);stroke-width:1.6;stroke-dasharray:4 3;
+    opacity:.85;filter:drop-shadow(0 0 5px rgba(244,233,198,.7));}
+  #links circle{fill:var(--glow);filter:drop-shadow(0 0 5px rgba(244,233,198,.8));}
+
+  .hub-name{font-family:"Fraunces",serif;font-weight:600;fill:var(--paper);text-anchor:middle;}
+  .hub-sub{font-family:"IBM Plex Mono",monospace;fill:var(--paper-dim);text-anchor:middle;letter-spacing:.16em;}
+  .hub-hit{cursor:pointer;}
+
+  /* tooltip */
+  #tip{
+    position:fixed;z-index:20;pointer-events:none;max-width:290px;
+    background:rgba(12,16,26,.94);border:1px solid #38425e;border-radius:12px;
+    padding:13px 15px;opacity:0;transform:translateY(4px);transition:opacity .12s;
+    box-shadow:0 18px 46px -18px rgba(0,0,0,.9);backdrop-filter:blur(3px);
+  }
+  #tip.show{opacity:1;transform:none;}
+  #tip .t-name{font-family:"Fraunces",serif;font-weight:600;font-size:17px;line-height:1.15;margin-bottom:3px;}
+  #tip .t-era{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+  #tip .t-note{font-size:13px;line-height:1.5;color:#DCD8CB;}
+  #tip .t-from{margin-top:9px;padding-top:8px;border-top:1px solid #2b3346;font-size:11.5px;color:var(--paper-dim);}
+  #tip .t-from b{color:var(--glow);font-weight:500;}
+
+  footer{padding:6px 34px 26px;}
+  details.caveats{max-width:70ch;border:1px solid var(--hair);border-radius:12px;
+    background:rgba(255,255,255,.025);padding:0 16px;}
+  details.caveats summary{cursor:pointer;list-style:none;padding:13px 2px;
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);}
+  details.caveats summary::-webkit-details-marker{display:none;}
+  details.caveats summary::before{content:"⊕ ";}
+  details.caveats[open] summary::before{content:"⊖ ";}
+  details.caveats .body{padding:0 2px 16px;color:#CFCABD;font-size:13.5px;line-height:1.6;}
+  details.caveats .body p{margin:0 0 10px;}
+  details.caveats .body b{color:var(--paper);font-weight:600;}
+  .hint{margin-top:12px;color:var(--paper-dim);font-size:12px;font-family:"IBM Plex Mono",monospace;}
+
+  @media (max-width:720px){
+    header{padding:18px 18px 4px;}
+    .breadcrumb{padding-left:18px;padding-right:18px;}
+    footer{padding:6px 18px 22px;}
+    .legend{flex-direction:row;flex-wrap:wrap;min-width:0;}
+    .chip{padding:4px 10px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .chip,#tip{transition:none;}
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <header>
+    <div class="brand">
+      <p class="eyebrow">A figurative system of human knowledge</p>
+      <h1>The Genealogy of <em>Knowledge</em></h1>
+      <p>Every modern discipline began as a question inside philosophy. Click any wedge to travel down its lineage; hover to trace the path back to the center. Dashed edges mark fields with more than one parent.</p>
+    </div>
+    <nav class="legend" id="legend" aria-label="Traditions">
+      <span class="lg-title">Five traditions</span>
+    </nav>
+  </header>
+
+  <div class="breadcrumb" id="crumb" aria-label="Current location"></div>
+
+  <div class="wheelwrap">
+    <svg id="wheel" role="img" aria-label="Zoomable sunburst of the genealogy of knowledge"></svg>
+  </div>
+
+  <footer>
+    <details class="caveats">
+      <summary>On accuracy — why a clean tree oversimplifies</summary>
+      <div class="body">
+        <p><b>Medicine predates biology.</b> As a healing art it is ancient; only modern scientific medicine is biologically grounded. The chain shown, Medicine → Pathology → Oncology, is the real specialization path.</p>
+        <p><b>Psychology and neuroscience are dual-rooted.</b> They grew from experimental physiology as much as from philosophy of mind. They sit in the Mind tradition here for narrative clarity, with a glowing link back to physiology on hover.</p>
+        <p><b>Economics came from moral philosophy.</b> Adam Smith held a chair in moral philosophy, not economics; the field began as "political economy."</p>
+        <p><b>Mathematics is only partly a descendant.</b> It has ancient, semi-independent roots, but its foundations are a philosophical project (Frege, Russell, Gödel), which is why it hangs under logic and epistemology.</p>
+        <p><b>Interdisciplinary fields have no single parent.</b> A strict tree cannot show this, so cognitive science, biochemistry, bioinformatics, computational linguistics, behavioral economics and others carry a dashed edge and reveal their second parent as a link across the core when hovered.</p>
+      </div>
+      <p class="hint" style="padding-bottom:14px;">Tip: click the center to zoom back out one level.</p>
+    </details>
+  </footer>
+</div>
+
+<div id="tip" role="tooltip"></div>
+
+<script type="application/json" id="tree-data">
+{
+  "name": "Philosophy",
+  "era": "Antiquity — present",
+  "note": "The parent inquiry: the systematic study of fundamental questions about existence, knowledge, values, reason, mind, and language. Every discipline below began as a question asked here.",
+  "children": [
+    {
+      "name": "Natural Philosophy",
+      "era": "Antiquity — 18th c.",
+      "note": "The study of nature before it fragmented into the sciences. Newton's 1687 masterwork was literally titled Mathematical Principles of Natural Philosophy.",
+      "children": [
+        {
+          "name": "Physics",
+          "era": "Scientific Revolution, 17th c.",
+          "note": "Broke from natural philosophy as the mathematical study of matter, motion, and energy.",
+          "children": [
+            { "name": "Classical mechanics", "era": "17th c. (Newton)", "note": "Motion of bodies under forces; the first fully mathematised physics." },
+            { "name": "Thermodynamics", "era": "19th c.", "note": "Heat, work, and entropy, born from the age of steam." },
+            { "name": "Electromagnetism", "era": "19th c. (Maxwell)", "note": "Unified electricity, magnetism, and light into one field theory." },
+            { "name": "Quantum mechanics", "era": "early 20th c.", "note": "Physics of the very small, where energy is discrete and outcomes probabilistic." },
+            { "name": "Relativity", "era": "1905–1915 (Einstein)", "note": "Reconceived space, time, and gravity as a single geometric structure." },
+            {
+              "name": "Astrophysics",
+              "era": "19th–20th c.",
+              "note": "Physics applied to stars and galaxies, once spectroscopy let us read starlight.",
+              "children": [
+                { "name": "Cosmology", "era": "20th c.", "note": "The origin, structure, and fate of the universe as a whole." }
+              ]
+            },
+            { "name": "Particle physics", "era": "20th c.", "note": "The elementary constituents of matter and the forces between them." }
+          ]
+        },
+        {
+          "name": "Chemistry",
+          "era": "18th c. (Lavoisier)",
+          "note": "Emerged from alchemy and natural philosophy once matter was weighed and conserved.",
+          "children": [
+            { "name": "Organic chemistry", "era": "19th c.", "note": "The chemistry of carbon compounds and, eventually, of life." },
+            { "name": "Inorganic chemistry", "era": "19th c.", "note": "Elements and compounds beyond the carbon chains." },
+            { "name": "Physical chemistry", "era": "late 19th c.", "note": "Physics brought to bear on chemical systems: thermodynamics, kinetics, quantum." },
+            { "name": "Biochemistry", "era": "late 19th–20th c.", "note": "The chemistry of living systems — a true hybrid of chemistry and biology.", "alsoFrom": ["Biology"] }
+          ]
+        },
+        {
+          "name": "Biology",
+          "era": "term coined c.1800",
+          "note": "Formalised in the 19th century out of natural history; the unified study of living things.",
+          "children": [
+            { "name": "Botany", "era": "ancient; systematised 18th c.", "note": "The study of plants, among the oldest descriptive sciences." },
+            { "name": "Zoology", "era": "systematised 18th–19th c.", "note": "The study of animals, their form, behaviour, and classification." },
+            { "name": "Physiology", "era": "17th c. onward", "note": "How living systems function — the mechanistic study of life's processes." },
+            { "name": "Ecology", "era": "coined 1866 (Haeckel)", "note": "Relationships between organisms and their environment." },
+            { "name": "Evolutionary biology", "era": "1859 (Darwin)", "note": "Descent with modification: the organising principle of all biology." },
+            {
+              "name": "Genetics",
+              "era": "1860s (Mendel); rediscovered 1900",
+              "note": "The mechanism of heredity, from pea plants to the double helix.",
+              "children": [
+                { "name": "Genomics", "era": "late 20th c.", "note": "Whole-genome sequencing and analysis." },
+                { "name": "Bioinformatics", "era": "1990s", "note": "Computational analysis of biological data — biology fused with computer science.", "alsoFrom": ["Computer Science"] }
+              ]
+            },
+            {
+              "name": "Medicine",
+              "era": "ancient practice; scientific from 19th c.",
+              "note": "Predates biology as a healing art; modern medicine is biologically grounded. (A rare case where the application is older than the science.)",
+              "children": [
+                { "name": "Anatomy", "era": "antiquity; Vesalius 1543", "note": "The structure of the body." },
+                {
+                  "name": "Pathology",
+                  "era": "19th c. (Virchow)",
+                  "note": "The study of disease at the tissue and cellular level.",
+                  "children": [
+                    { "name": "Oncology", "era": "20th c. specialty", "note": "Diagnosis and treatment of cancer — five levels of specialisation from philosophy." }
+                  ]
+                },
+                { "name": "Cardiology", "era": "20th c. specialty", "note": "The heart and circulatory system." },
+                { "name": "Neurology", "era": "19th c.", "note": "Disorders of the nervous system." },
+                { "name": "Immunology", "era": "late 19th c.", "note": "The body's defence systems." }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Geology",
+          "era": "18th–19th c. (Hutton, Lyell)",
+          "note": "The history and structure of the Earth, read from its rocks and deep time.",
+          "children": [
+            { "name": "Mineralogy", "era": "18th c.", "note": "The composition and structure of minerals." },
+            { "name": "Petrology", "era": "19th c.", "note": "The origin and formation of rocks." },
+            { "name": "Paleontology", "era": "19th c.", "note": "Ancient life through the fossil record — geology meeting biology.", "alsoFrom": ["Biology"] },
+            { "name": "Seismology", "era": "late 19th c.", "note": "Earthquakes and the Earth's interior structure." },
+            { "name": "Volcanology", "era": "19th–20th c.", "note": "Volcanoes and magmatic processes." }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Philosophy of Mind",
+      "era": "Antiquity — present",
+      "note": "Questions of consciousness, perception, and the mind–body relation. Its empirical offspring split off only in the late 19th century.",
+      "children": [
+        {
+          "name": "Psychology",
+          "era": "1879 (Wundt's lab)",
+          "note": "Dual-rooted: born from philosophy of mind and experimental physiology, not from one alone.",
+          "alsoFrom": ["Physiology"],
+          "children": [
+            { "name": "Cognitive psychology", "era": "1950s–60s", "note": "Mental processes: attention, memory, reasoning, perception." },
+            { "name": "Clinical psychology", "era": "20th c.", "note": "Assessment and treatment of mental distress." },
+            { "name": "Developmental psychology", "era": "20th c.", "note": "How mind and behaviour change across the lifespan." },
+            { "name": "Social psychology", "era": "20th c.", "note": "How others shape thought, feeling, and behaviour." }
+          ]
+        },
+        {
+          "name": "Neuroscience",
+          "era": "coalesced mid-20th c.",
+          "note": "Placed here for its cognitive lineage, but its backbone is biological — neuroanatomy and physiology as much as philosophy of mind.",
+          "alsoFrom": ["Physiology"],
+          "children": [
+            { "name": "Cognitive neuroscience", "era": "1980s", "note": "The neural basis of mental processes.", "alsoFrom": ["Cognitive psychology"] },
+            { "name": "Computational neuroscience", "era": "1980s–90s", "note": "Mathematical and computational models of neural systems.", "alsoFrom": ["Computer Science"] },
+            { "name": "Behavioral neuroscience", "era": "20th c.", "note": "The biological basis of behaviour." }
+          ]
+        },
+        {
+          "name": "Cognitive science",
+          "era": "1950s–1970s",
+          "note": "The interdisciplinary hub of mind study — no single parent. Draws on psychology, computer science, linguistics, neuroscience, and philosophy at once.",
+          "alsoFrom": ["Computer Science", "Linguistics"]
+        }
+      ]
+    },
+    {
+      "name": "Logic & Epistemology",
+      "era": "Antiquity — present",
+      "note": "The study of valid reasoning and of knowledge itself — how we know what we know.",
+      "children": [
+        {
+          "name": "Mathematics",
+          "era": "ancient; foundations tied to logic",
+          "note": "Semi-independent and ancient, but its foundations are a philosophical project (Frege, Russell, Gödel).",
+          "children": [
+            { "name": "Formal logic", "era": "Aristotle → Boole 1847 → Frege 1879", "note": "The formalisation of valid inference; the bridge from philosophy to mathematics and computing." },
+            { "name": "Algebra", "era": "ancient — 9th c. (al-Khwarizmi)", "note": "Structure, relation, and the manipulation of symbols." },
+            { "name": "Geometry", "era": "antiquity (Euclid)", "note": "Space, shape, and the axiomatic method itself." },
+            { "name": "Number theory", "era": "antiquity — present", "note": "The deep properties of the integers." },
+            { "name": "Statistics", "era": "18th–20th c.", "note": "Inference under uncertainty; the mathematics of evidence." }
+          ]
+        },
+        {
+          "name": "Computer Science",
+          "era": "1930s (Turing, Church)",
+          "note": "Grew directly out of mathematical logic — the theory of computation preceded the computer.",
+          "children": [
+            { "name": "Algorithms", "era": "20th c. (ancient roots)", "note": "Step-by-step procedures and their efficiency." },
+            { "name": "Theory of computation", "era": "1930s–", "note": "What can be computed, and at what cost." },
+            { "name": "Cryptography", "era": "ancient; modern 1970s", "note": "Secure communication and its mathematical guarantees." },
+            {
+              "name": "Artificial intelligence",
+              "era": "1956 (Dartmouth)",
+              "note": "Machines performing tasks once thought to require human intelligence.",
+              "children": [
+                {
+                  "name": "Machine learning",
+                  "era": "1990s–2000s",
+                  "note": "Systems that improve from data rather than explicit rules.",
+                  "children": [
+                    { "name": "Deep learning", "era": "2010s", "note": "Many-layered neural networks; the engine behind the current AI wave." }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Philosophy of Language",
+      "era": "Antiquity — present",
+      "note": "Meaning, reference, and how words connect to the world.",
+      "children": [
+        {
+          "name": "Linguistics",
+          "era": "19th–20th c.",
+          "note": "The scientific study of language, grown from philology and philosophy of language.",
+          "children": [
+            { "name": "Phonetics", "era": "19th c.", "note": "The physical sounds of speech." },
+            { "name": "Phonology", "era": "20th c.", "note": "How sounds pattern within a language." },
+            { "name": "Syntax", "era": "20th c. (Chomsky)", "note": "The structure of sentences and the rules that generate them." },
+            { "name": "Semantics", "era": "20th c.", "note": "Linguistic meaning, in words and sentences." },
+            { "name": "Pragmatics", "era": "20th c.", "note": "Meaning in context — what speakers actually intend." },
+            { "name": "Computational linguistics", "era": "mid-20th c.", "note": "Language modelled and processed by machines; parent of NLP.", "alsoFrom": ["Computer Science"] }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ethics & Political Phil.",
+      "era": "Antiquity — present",
+      "note": "How we should live and organise ourselves — the moral and political questions.",
+      "children": [
+        {
+          "name": "Political science",
+          "era": "19th–20th c.",
+          "note": "The empirical study of power, governance, and institutions.",
+          "children": [
+            { "name": "International relations", "era": "20th c.", "note": "Relations between states and global order." },
+            { "name": "Comparative politics", "era": "20th c.", "note": "Systematic comparison of political systems." },
+            { "name": "Political theory", "era": "continuous with philosophy", "note": "The normative core still closest to its philosophical root." }
+          ]
+        },
+        {
+          "name": "Economics",
+          "era": "18th c. (Adam Smith)",
+          "note": "Grew out of moral philosophy as 'political economy' — Smith held a chair in moral philosophy, not economics.",
+          "children": [
+            { "name": "Microeconomics", "era": "19th–20th c.", "note": "Choices of individuals and firms." },
+            { "name": "Macroeconomics", "era": "1930s (Keynes)", "note": "Aggregate output, employment, and inflation." },
+            { "name": "Behavioral economics", "era": "1970s–", "note": "Economics with realistic psychology of choice.", "alsoFrom": ["Psychology"] },
+            { "name": "Econometrics", "era": "20th c.", "note": "Statistical methods applied to economic data.", "alsoFrom": ["Statistics"] }
+          ]
+        },
+        {
+          "name": "Sociology",
+          "era": "1830s (Comte); Durkheim",
+          "note": "The study of society and social structure, born from social and political philosophy.",
+          "children": [
+            { "name": "Urban sociology", "era": "20th c.", "note": "Social life and structure of cities." },
+            { "name": "Criminology", "era": "19th–20th c.", "note": "Crime, deviance, and social control." }
+          ]
+        },
+        {
+          "name": "Anthropology",
+          "era": "19th c.",
+          "note": "The holistic study of humans across cultures and time.",
+          "children": [
+            { "name": "Cultural anthropology", "era": "19th–20th c.", "note": "Human cultures, meaning, and social practice." },
+            { "name": "Archaeology", "era": "19th c.", "note": "The human past through material remains." },
+            { "name": "Linguistic anthropology", "era": "20th c.", "note": "Language as cultural practice.", "alsoFrom": ["Linguistics"] }
+          ]
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<script>
+(function(){
+  const DATA = JSON.parse(document.getElementById("tree-data").textContent);
+
+  const HUE = {
+    "Natural Philosophy":     [212, 52],
+    "Philosophy of Mind":     [166, 46],
+    "Logic & Epistemology":   [41, 60],
+    "Philosophy of Language": [17, 60],
+    "Ethics & Political Phil.":[336, 48]
+  };
+  const TRAD_ORDER = Object.keys(HUE);
+
+  const reduce = window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const DUR = reduce ? 0 : 760;
+
+  const RADIUS = 460;          // outer radius of the 3 visible rings
+  const WINDOW = 4;            // y1 <= WINDOW is visible (=> 3 data rings at a time)
+  const RM = RADIUS / WINDOW;  // radius per ring unit
+  const M = 34;                // margin
+  const SIDE = 2 * (RADIUS + M);
+
+  const svg = d3.select("#wheel")
+    .attr("viewBox", [-(RADIUS+M), -(RADIUS+M), SIDE, SIDE])
+    .attr("preserveAspectRatio", "xMidYMid meet");
+
+  // orbit guide rings
+  const guides = svg.append("g").attr("fill","none").attr("stroke","#20283b").attr("stroke-width",1);
+  for (let i=1;i<=WINDOW;i++) guides.append("circle").attr("r", i*RM).attr("opacity", .5);
+
+  // hierarchy + partition (preserve authored order; do not sort)
+  const root = d3.hierarchy(DATA).sum(d => d.children ? 0 : 1);
+  d3.partition().size([2*Math.PI, root.height + 1])(root);
+  root.each(d => d.current = d);
+
+  const byName = new Map();
+  root.each(d => { if(!byName.has(d.data.name)) byName.set(d.data.name, d); });
+
+  function traditionOf(d){ let n=d; while(n.depth>1) n=n.parent; return n.depth===1 ? n : null; }
+  function colorFor(d){
+    const t = traditionOf(d);
+    if(!t) return "#3a445c";
+    const [h,s] = HUE[t.data.name] || [40,10];
+    const l = 46 + (d.depth-1)*6.4;
+    return `hsl(${h} ${s}% ${l}%)`;
+  }
+
+  const arc = d3.arc()
+    .startAngle(d => d.x0)
+    .endAngle(d => d.x1)
+    .padAngle(d => Math.min((d.x1-d.x0)/2, 0.006))
+    .padRadius(RM*1.5)
+    .innerRadius(d => d.y0*RM)
+    .outerRadius(d => Math.max(d.y0*RM, d.y1*RM - 1.6));
+
+  function arcVisible(d){ return d.y1<=WINDOW && d.y0>=1 && d.x1>d.x0; }
+  function labelVisible(d){ return d.y1<=WINDOW && d.y0>=1 && (d.y1-d.y0)*(d.x1-d.x0) > 0.028; }
+  function baseOpacity(d){ return d.children ? 0.92 : 0.78; }
+
+  // ---- arcs
+  const g = svg.append("g");
+  const path = g.selectAll("path")
+    .data(root.descendants().slice(1))
+    .join("path")
+      .attr("class", d => "arc" + (d.children ? " can-zoom" : "") + (d.data.alsoFrom ? " inter" : ""))
+      .attr("fill", colorFor)
+      .attr("fill-opacity", d => arcVisible(d.current) ? baseOpacity(d) : 0)
+      .attr("pointer-events", d => arcVisible(d.current) ? "auto" : "none")
+      .attr("stroke", d => d.data.alsoFrom ? "#F1E7CC" : "#0B0E15")
+      .attr("stroke-width", d => d.data.alsoFrom ? 1.1 : 1.4)
+      .attr("stroke-dasharray", d => d.data.alsoFrom ? "3 2.4" : null)
+      .attr("stroke-linejoin","round")
+      .attr("d", d => arc(d.current));
+
+  path.filter(d => d.children).on("click", (e,d)=>zoomTo(d));
+  path.on("mouseenter", hover).on("mousemove", moveTip).on("mouseleave", unhover);
+
+  // ---- interdisciplinary links overlay
+  const linkG = svg.append("g").attr("id","links");
+
+  // ---- labels
+  const label = g.append("g").attr("pointer-events","none")
+    .selectAll("text")
+    .data(root.descendants().slice(1))
+    .join("text")
+      .attr("class", d => "lbl on-dark")
+      .attr("dy","0.32em")
+      .attr("font-size", d => d.depth>=3 ? 9.5 : (d.depth===2 ? 11 : 12.5))
+      .attr("fill-opacity", d => +labelVisible(d.current))
+      .attr("text-anchor","middle")
+      .attr("transform", d => labelTransform(d.current))
+      .text(d => d.data.name);
+
+  function labelTransform(d){
+    const x = (d.x0 + d.x1)/2 * 180/Math.PI;
+    const y = (d.y0 + d.y1)/2 * RM;
+    return `rotate(${x-90}) translate(${y},0) rotate(${x<180?0:180})`;
+  }
+
+  // ---- center hub
+  const hub = svg.append("g");
+  hub.append("circle").attr("r", RM-3).attr("fill","#0C111C")
+     .attr("stroke","#33405e").attr("stroke-width",1.4);
+  hub.append("circle").attr("r", RM-9).attr("fill","none")
+     .attr("stroke","#1b2233").attr("stroke-width",1);
+  const hubName = hub.append("text").attr("class","hub-name");
+  const hubSub  = hub.append("text").attr("class","hub-sub").attr("y", 20)
+     .attr("font-size",9).text("");
+  // invisible hit area to zoom out
+  const parent = hub.append("circle").attr("class","hub-hit")
+     .attr("r", RM-3).attr("fill","transparent")
+     .datum(root)
+     .on("click", (e,d)=>{ if(d && d.parent) zoomTo(d.parent); });
+
+  function setHub(node){
+    parent.datum(node);
+    const nm = node.data.name === "Philosophy" ? "PHILOSOPHY" : node.data.name;
+    const size = nm.length>18 ? 13 : nm.length>13 ? 16 : nm.length>9 ? 19 : 23;
+    // wrap into up to 2 lines
+    hubName.selectAll("tspan").remove();
+    const words = nm.split(" ");
+    let lines = [nm];
+    if(nm.length>11 && words.length>1){
+      let mid = Math.ceil(words.length/2);
+      lines = [words.slice(0,mid).join(" "), words.slice(mid).join(" ")];
+    }
+    const yStart = lines.length>1 ? -(size*0.52) : 0;
+    lines.forEach((ln,i)=>{
+      hubName.append("tspan").attr("x",0).attr("y", yStart + i*size*1.02).text(ln);
+    });
+    hubName.attr("font-size", size);
+    hubSub.attr("y", (lines.length>1? size*0.9 : size*0.7)+8)
+          .text(node.parent ? "◎ ZOOM OUT" : "THE ROOT");
+    hub.style("cursor", node.parent ? "pointer" : "default");
+  }
+  setHub(root);
+
+  // ---- zoom
+  function zoomTo(p){
+    parent.datum(p.parent || p);
+    root.each(d => d.target = {
+      x0: Math.max(0, Math.min(1, (d.x0 - p.x0) / (p.x1 - p.x0))) * 2*Math.PI,
+      x1: Math.max(0, Math.min(1, (d.x1 - p.x0) / (p.x1 - p.x0))) * 2*Math.PI,
+      y0: Math.max(0, d.y0 - p.depth),
+      y1: Math.max(0, d.y1 - p.depth)
+    });
+    const t = g.transition().duration(DUR);
+    path.transition(t)
+      .tween("data", d => { const i = d3.interpolate(d.current, d.target); return tt => d.current = i(tt); })
+      .filter(function(d){ return +this.getAttribute("fill-opacity") || arcVisible(d.target); })
+      .attr("fill-opacity", d => arcVisible(d.target) ? baseOpacity(d) : 0)
+      .attr("pointer-events", d => arcVisible(d.target) ? "auto" : "none")
+      .attrTween("d", d => () => arc(d.current));
+
+    label.filter(function(d){ return +this.getAttribute("fill-opacity") || labelVisible(d.target); })
+      .transition(t)
+      .attr("fill-opacity", d => +labelVisible(d.target))
+      .attrTween("transform", d => () => labelTransform(d.current));
+
+    setHub(p);
+    setCrumb(p);
+    clearLinks();
+    hideTip();
+  }
+
+  // ---- hover: lineage highlight + interdisciplinary links + tooltip
+  function hover(event, d){
+    const anc = new Set(d.ancestors());
+    path.attr("fill-opacity", o => !arcVisible(o.current) ? 0 : (anc.has(o) ? (o.children?1:0.96) : 0.16));
+    drawLinks(d);
+    showTip(event, d);
+  }
+  function unhover(){
+    path.attr("fill-opacity", o => arcVisible(o.current) ? baseOpacity(o) : 0);
+    clearLinks();
+    hideTip();
+  }
+
+  function centroid(node){
+    const c = node.current;
+    const a = (c.x0 + c.x1)/2, r = (c.y0 + c.y1)/2 * RM;
+    return [Math.sin(a)*r, -Math.cos(a)*r];
+  }
+  function drawLinks(d){
+    clearLinks();
+    const also = d.data.alsoFrom;
+    if(!also) return;
+    const [x1,y1] = centroid(d);
+    also.forEach(nm => {
+      const tgt = byName.get(nm);
+      if(!tgt || !arcVisible(tgt.current)) return;
+      const [x2,y2] = centroid(tgt);
+      linkG.append("path")
+        .attr("d", `M${x1},${y1} Q0,0 ${x2},${y2}`);
+      linkG.append("circle").attr("cx",x2).attr("cy",y2).attr("r",3.2);
+    });
+    if(!linkG.selectAll("*").empty()){
+      linkG.insert("circle",":first-child").attr("cx",x1).attr("cy",y1).attr("r",3.2);
+    }
+  }
+  function clearLinks(){ linkG.selectAll("*").remove(); }
+
+  // ---- tooltip
+  const tip = document.getElementById("tip");
+  function showTip(event, d){
+    const also = d.data.alsoFrom;
+    const parentName = (d.parent && d.parent.data.name !== "Philosophy") ? d.parent.data.name : null;
+    let html = `<div class="t-name">${d.data.name}</div>`;
+    if(d.data.era) html += `<div class="t-era">${d.data.era}</div>`;
+    if(d.data.note) html += `<div class="t-note">${d.data.note}</div>`;
+    let from = "";
+    if(parentName) from += `Emerged from <b>${parentName}</b>`;
+    if(also && also.length){ from += (from?" &nbsp;·&nbsp; ":"") + `Also draws from <b>${also.join(", ")}</b>`; }
+    if(from) html += `<div class="t-from">${from}</div>`;
+    tip.innerHTML = html;
+    tip.classList.add("show");
+    moveTip(event);
+  }
+  function moveTip(event){
+    if(!tip.classList.contains("show")) return;
+    const pad = 16, w = tip.offsetWidth, h = tip.offsetHeight;
+    let x = event.clientX + pad, y = event.clientY + pad;
+    if(x + w > innerWidth - 8)  x = event.clientX - w - pad;
+    if(y + h > innerHeight - 8) y = event.clientY - h - pad;
+    tip.style.left = x + "px"; tip.style.top = y + "px";
+  }
+  function hideTip(){ tip.classList.remove("show"); }
+
+  // ---- breadcrumb
+  const crumb = document.getElementById("crumb");
+  function setCrumb(node){
+    crumb.innerHTML = "";
+    const chain = node.ancestors().reverse();
+    chain.forEach((n,i)=>{
+      if(i>0){ const s=document.createElement("span"); s.className="sep"; s.textContent="›"; crumb.appendChild(s); }
+      const b=document.createElement("button");
+      b.textContent = n.data.name;
+      if(n===node) b.className="here";
+      b.onclick=()=>zoomTo(n);
+      crumb.appendChild(b);
+    });
+  }
+  setCrumb(root);
+
+  // ---- legend
+  const legend = document.getElementById("legend");
+  TRAD_ORDER.forEach(name=>{
+    const [h,s]=HUE[name];
+    const btn=document.createElement("button");
+    btn.className="chip";
+    btn.innerHTML=`<span class="dot" style="background:hsl(${h} ${s}% 55%);color:hsl(${h} ${s}% 55%)"></span>${name}`;
+    btn.onclick=()=>{ const n=byName.get(name); if(n) zoomTo(n); };
+    legend.appendChild(btn);
+  });
+
+  // ---- intro reveal
+  if(!reduce){
+    path.attr("fill-opacity",0);
+    path.transition().delay((d)=> (d.depth-1)*90 + Math.random()*60).duration(500)
+      .attr("fill-opacity", d => arcVisible(d.current) ? baseOpacity(d) : 0);
+  }
+})();
+</script>
+</body>
+</html>

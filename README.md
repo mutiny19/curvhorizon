@@ -123,6 +123,7 @@ and asserts nothing about the world; only a measured run does.** Each lives unde
 | Resource | What it is | Supports | Contributor |
 |---|---|---|---|
 | [Surface Shape Simulator](./resources/surface-shape-simulator/) | To-scale interactive model of curvature, horizon dip, hidden height, and atmospheric refraction. A teaching and visualization tool, not a measurement. | [laser-experiment](./experiments/laser-experiment/) | ReplicationBench |
+| [The Genealogy of Knowledge](./resources/knowledge-genealogy/) | Interactive zoomable sunburst tracing how the branches of philosophy became the modern disciplines, five levels deep, with interdisciplinary links a strict tree cannot show. A teaching visualization, not a measurement. | — | ReplicationBench |
 <!-- RESOURCES:END -->
 
 ---
