@@ -497,6 +497,7 @@
       .attr("class", d => "arc" + (d.children ? " can-zoom" : "") + (d.data.alsoFrom ? " inter" : ""))
       .attr("fill", colorFor)
       .attr("fill-opacity", d => arcVisible(d.current) ? baseOpacity(d) : 0)
+      .attr("stroke-opacity", d => arcVisible(d.current) ? 1 : 0)   // else an out-of-window wedge's stroke (esp. the light dashed interdisciplinary one) floats outside the wheel
       .attr("pointer-events", d => arcVisible(d.current) ? "auto" : "none")
       .attr("stroke", d => d.data.alsoFrom ? "#F1E7CC" : "#0B0E15")
       .attr("stroke-width", d => d.data.alsoFrom ? 1.1 : 1.4)
@@ -518,7 +519,7 @@
       .attr("class", d => labelClass(d))
       .attr("dy","0.32em")
       .attr("font-size", d => d.depth>=3 ? 9.5 : (d.depth===2 ? 11 : 12.5))
-      .attr("fill-opacity", d => +labelVisible(d.current))
+      .attr("opacity", d => +labelVisible(d.current))   // opacity, not fill-opacity, so a hidden label's halo (stroke) is hidden too
       .attr("text-anchor","middle")
       .attr("transform", d => labelTransform(d.current))
       .text(d => d.data.name);
@@ -581,12 +582,13 @@
       .tween("data", d => { const i = d3.interpolate(d.current, d.target); return tt => d.current = i(tt); })
       .filter(function(d){ return +this.getAttribute("fill-opacity") || arcVisible(d.target); })
       .attr("fill-opacity", d => arcVisible(d.target) ? baseOpacity(d) : 0)
+      .attr("stroke-opacity", d => arcVisible(d.target) ? 1 : 0)
       .attr("pointer-events", d => arcVisible(d.target) ? "auto" : "none")
       .attrTween("d", d => () => arc(d.current));
 
-    label.filter(function(d){ return +this.getAttribute("fill-opacity") || labelVisible(d.target); })
+    label.filter(function(d){ return +this.getAttribute("opacity") || labelVisible(d.target); })
       .transition(t)
-      .attr("fill-opacity", d => +labelVisible(d.target))
+      .attr("opacity", d => +labelVisible(d.target))
       .attrTween("transform", d => () => labelTransform(d.current));
 
     setHub(p);
