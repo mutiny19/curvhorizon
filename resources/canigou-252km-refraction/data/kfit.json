@@ -1,0 +1,99 @@
+{
+ "k": 0.12569999999999998,
+ "meas": [
+  [
+   "NDG statue top",
+   6.0,
+   1.5
+  ],
+  [
+   "Garlaban summit",
+   53.0,
+   3.0
+  ],
+  [
+   "Mont Puget summit",
+   49.5,
+   3.0
+  ],
+  [
+   "Windmill blade tips",
+   9.9,
+   2.0
+  ]
+ ],
+ "results": {
+  "Wind turbines (base 2m, tip 77m)": {
+   "D_km": 214.68473475671388,
+   "hidden_m": 11.914067234091808,
+   "top_m": 77,
+   "visible_m": 65.0859327659082
+  },
+  "Notre-Dame de la Garde (hill 154m, top 224m)": {
+   "D_km": 252.7463272026955,
+   "hidden_m": 180.14338037131543,
+   "top_m": 224,
+   "visible_m": 43.85661962868457
+  },
+  "Super Rouviere B (base ~115m, top ~195m)": {
+   "D_km": 255.20721889739832,
+   "hidden_m": 197.8627794669111,
+   "top_m": 195,
+   "visible_m": 0
+  },
+  "Grande Tete Rouge (520m)": {
+   "D_km": 264.13619048109206,
+   "hidden_m": 269.1331172680359,
+   "top_m": 520,
+   "visible_m": 250.8668827319641
+  },
+  "Pic du Taoume (668m)": {
+   "D_km": 265.73779302181083,
+   "hidden_m": 283.0742374144025,
+   "top_m": 668,
+   "visible_m": 384.9257625855975
+  },
+  "Tete Ronde (638m)": {
+   "D_km": 267.12472747874756,
+   "hidden_m": 295.4311882824717,
+   "top_m": 638,
+   "visible_m": 342.5688117175283
+  },
+  "Garlaban (714m)": {
+   "D_km": 268.1807301360154,
+   "hidden_m": 305.0166993325617,
+   "top_m": 714,
+   "visible_m": 408.9833006674383
+  },
+  "Mont Puget (565m)": {
+   "D_km": 256.35135976381486,
+   "hidden_m": 206.38406519872396,
+   "top_m": 565,
+   "visible_m": 358.615934801276
+  },
+  "Ste-Victoire Pic des Mouches (1011m)": {
+   "D_km": 284.6535512480781,
+   "hidden_m": 474.3559240175546,
+   "top_m": 1011,
+   "visible_m": 536.6440759824454
+  },
+  "Mont Ventoux (1910m)": {
+   "D_km": 293.50301684176975,
+   "hidden_m": 580.703672304797,
+   "top_m": 1910,
+   "visible_m": 1329.296327695203
+  },
+  "Cap Sicie (358m)": {
+   "D_km": 284.2594483442498,
+   "hidden_m": 469.86978469999485,
+   "top_m": 358,
+   "visible_m": 0
+  },
+  "Barre des Ecrins (4102m)": {
+   "D_km": 412.59645640286067,
+   "hidden_m": 3057.4065509098623,
+   "top_m": 4102,
+   "visible_m": 1044.5934490901377
+  }
+ }
+}

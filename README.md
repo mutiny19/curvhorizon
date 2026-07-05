@@ -122,6 +122,7 @@ and asserts nothing about the world; only a measured run does.** Each lives unde
 <!-- RESOURCES:START -->
 | Resource | What it is | Supports | Contributor |
 |---|---|---|---|
+| [Canigou 252 km: Refraction Analysis](./resources/canigou-252km-refraction/) | Solves the atmospheric refraction coefficient (k = 0.126) directly from a 252 km near-infrared panorama of Marseille seen from the Canigou, over four independent targets, and reads each landmark's hidden height against the curve. A worked case of measuring refraction rather than assuming it. | [laser-experiment](./experiments/laser-experiment/) | ReplicationBench |
 | [Surface Shape Simulator](./resources/surface-shape-simulator/) | To-scale interactive model of curvature, horizon dip, hidden height, and atmospheric refraction. A teaching and visualization tool, not a measurement. | [laser-experiment](./experiments/laser-experiment/) | ReplicationBench |
 | [The Genealogy of Knowledge](./resources/knowledge-genealogy/) | Interactive zoomable sunburst tracing how the branches of philosophy became the modern disciplines, five levels deep, with interdisciplinary links a strict tree cannot show. A teaching visualization, not a measurement. | — | ReplicationBench |
 <!-- RESOURCES:END -->

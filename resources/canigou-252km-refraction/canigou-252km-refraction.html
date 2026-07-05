@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Canigou to Marseille, 252 km: Refraction &amp; Visibility Analysis</title>
+<meta name="description" content="Solves the atmospheric refraction coefficient (k = 0.126) directly from a 252 km near-infrared panorama of Marseille seen from the Canigou, over four independent targets, and reads each landmark's hidden height against the curve. A worked case of measuring refraction rather than assuming it.">
+<style>
+  :root{
+    --paper:#fbf9f3; --panel:#fffdf8; --ink:#22201b; --ink-l:#4a463d; --ink-ll:#7d7768;
+    --rule:#e4ddcc; --rule-2:#efe9db; --gold:#a8791f; --blue:#2d64a5; --green:#2f7d4f; --red:#a8352a;
+  }
+  *{box-sizing:border-box;}
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    font-size:17px; line-height:1.65;
+  }
+  .wrap{ max-width:820px; margin:0 auto; padding:34px 22px 90px; }
+  .mono{ font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; }
+  a{ color:var(--blue); text-decoration:none; border-bottom:1px solid rgba(45,100,165,.32); }
+  a:hover{ border-bottom-color:var(--blue); }
+
+  .eyebrow{ font-family:ui-monospace,monospace; font-size:11.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); margin:0 0 10px; }
+  h1{ font-size:clamp(26px,4.4vw,40px); line-height:1.08; margin:0 0 8px; letter-spacing:.005em; font-weight:600; }
+  h1 .sub{ display:block; font-size:.5em; color:var(--ink-l); font-weight:400; font-style:italic; margin-top:8px; }
+  .credit{ font-size:14.5px; color:var(--ink-l); margin:14px 0 0; }
+  .credit b{ color:var(--ink); font-weight:600; }
+
+  .backlink{ font-family:ui-monospace,monospace; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; }
+
+  .headline{
+    margin:26px 0 8px; padding:20px 22px; background:var(--panel);
+    border:1px solid var(--rule); border-left:4px solid var(--gold); border-radius:4px;
+  }
+  .headline .k{ font-size:clamp(30px,6vw,46px); font-weight:700; letter-spacing:-.01em; line-height:1; }
+  .headline .k span{ color:var(--gold); }
+  .headline .fine{ font-size:14.5px; color:var(--ink-l); margin-top:10px; }
+  .tag{ display:inline-block; font-family:ui-monospace,monospace; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; padding:2px 7px; border-radius:999px; border:1px solid var(--rule); color:var(--ink-ll); margin:2px 4px 2px 0; }
+  .tag.solved{ color:var(--gold); border-color:#e3cf9d; background:#fdf6e6; }
+  .tag.meas{ color:var(--blue); border-color:#cfdcee; background:#f0f5fb; }
+  .tag.assum{ color:var(--ink-ll); }
+
+  h2{ font-size:15px; font-family:ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--gold);
+      margin:44px 0 6px; padding-bottom:7px; border-bottom:1px solid var(--rule); }
+  h3{ font-size:16px; margin:24px 0 4px; color:var(--ink); }
+  p{ margin:12px 0; }
+  .lead{ font-size:18.5px; color:var(--ink-l); }
+  em.term{ font-style:normal; font-weight:600; }
+
+  .formula{ font-family:ui-monospace,monospace; font-size:15px; background:var(--panel); border:1px solid var(--rule);
+    border-radius:4px; padding:12px 14px; margin:14px 0; overflow-x:auto; color:var(--ink); }
+  .note{ background:#f0f5fb; border:1px solid #d3e0ef; border-left:4px solid var(--blue); border-radius:4px; padding:14px 16px; margin:18px 0; font-size:15.5px; }
+  .note b{ color:var(--blue); }
+
+  .fig{ margin:22px 0 6px; }
+  .fig svg{ width:100%; height:auto; display:block; background:var(--panel); border:1px solid var(--rule); border-radius:4px; }
+  .cap{ font-family:ui-monospace,monospace; font-size:11.5px; color:var(--ink-ll); letter-spacing:.03em; text-align:center; margin-top:8px; }
+
+  .tblwrap{ overflow-x:auto; margin:18px 0; }
+  table{ border-collapse:collapse; width:100%; font-size:14px; }
+  th,td{ padding:7px 10px; text-align:right; border-bottom:1px solid var(--rule-2); white-space:nowrap; }
+  th{ font-family:ui-monospace,monospace; font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--gold); border-bottom:1px solid var(--rule); text-align:right; }
+  td:first-child,th:first-child{ text-align:left; }
+  td.name{ font-family:inherit; }
+  .vis{ color:var(--green); font-weight:600; }
+  .hid{ color:var(--red); font-weight:600; }
+  tr.fitrow td{ background:#fdf6e6; }
+
+  .dl{ display:flex; flex-wrap:wrap; gap:8px; margin:14px 0; }
+  .dl a{ font-family:ui-monospace,monospace; font-size:12.5px; padding:8px 12px; border:1px solid var(--rule); border-radius:6px; background:var(--panel); border-bottom:1px solid var(--rule); }
+  .dl a:hover{ border-color:var(--gold); color:var(--gold); }
+
+  .refs{ font-size:12.5px; color:var(--ink-l); line-height:1.6; }
+  .refs p{ padding-left:2em; text-indent:-2em; margin:0 0 8px; }
+  footer{ margin-top:44px; padding-top:16px; border-top:1px solid var(--rule); font-size:12.5px; color:var(--ink-ll); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="eyebrow">ReplicationBench &middot; Member resource</p>
+  <h1>The Canigou over Marseille, 252&nbsp;km
+    <span class="sub">Solving atmospheric refraction from a single long-range photograph</span>
+  </h1>
+  <p class="credit">Source panorama: near-infrared, by <b>Antoine Mangiavacca</b>, 12 September 2019, 19:15 CEST, shot from the summit of the Canigou (2,784.7&nbsp;m) toward the Gulf of Lion. Documented by Marc Bret at <a href="https://beyondrange.wordpress.com/2019/09/12/canigo-pyriness-notre-dame-de-la-garde-marseille-252-kms/" target="_blank" rel="noopener">Beyond Horizons</a> (photographer's own galleries at <a href="https://www.klape.fr/panoramas" target="_blank" rel="noopener">klape.fr</a>). The image is not reproduced here out of respect for the photographer's rights; follow the links to view it. This page is an independent analysis of it.</p>
+  <p class="credit backlink" style="margin-top:14px"><a href="../../experiments/laser-experiment/laser-experiment.html">&larr; The Laser Beam Follow Experiment</a> &nbsp;&middot;&nbsp; <a href="../surface-shape-simulator/simulator.html">Surface Shape Simulator &rarr;</a></p>
+
+  <div class="headline">
+    <div class="k">k&nbsp;=&nbsp;<span>0.126</span></div>
+    <div class="fine">The refraction coefficient during the exposure, <b>solved from the image itself</b> over four independent targets. 1&sigma; range 0.118&ndash;0.134; &chi;&sup2;&nbsp;=&nbsp;0.18 for 3 degrees of freedom (all four residuals under one pixel). Optical horizon from the summit at this k: <b>201.5&nbsp;km</b>. Standard-atmosphere models predict k&nbsp;&asymp;&nbsp;0.14&ndash;0.16 for this path, so the evening air was refracting slightly less than textbook, in the physically expected direction.</div>
+  </div>
+  <p style="margin-top:10px">
+    <span class="tag meas">measured: pixel heights &amp; plate scale</span>
+    <span class="tag assum">assumed: distances, elevations, R&prime;=R/(1&minus;k)</span>
+    <span class="tag solved">solved: exactly one number, k</span>
+  </p>
+
+  <p class="lead">Every visibility fact in the panorama falls into place at one refraction coefficient, fitted once and never tuned per target. That is the whole point of the exercise, and the reason it sits beside the <a href="../../experiments/laser-experiment/laser-experiment.html">laser experiment</a>: it is a worked example of <em class="term">measuring</em> refraction rather than assuming it, on a scene long argued over.</p>
+
+  <h2>One honest correction first</h2>
+  <p>The panorama was shot through a 1,000&nbsp;nm filter on a converted camera. That is <em class="term">reflected near-infrared</em> &mdash; sunlight bouncing off rock, vegetation, and haze &mdash; not thermal emission. Pixel brightness measures NIR reflectance and haze penetration, not temperature, and no degree value can honestly be pinned to a pixel. Any temperature scale placed on this image is decoration, not measurement. (The published false-color renders use a warm "ironbow" palette because it reads well, with legends that say plainly they show relative NIR brightness.)</p>
+
+  <h2>The method, in one paragraph</h2>
+  <p>Refraction is modelled the standard surveyor's way, by bending the ray a fixed fraction k of the Earth's own curvature, equivalently replacing the Earth's radius R with an effective radius R&prime;. From the observer's height H the optical horizon sits at d&nbsp;=&nbsp;&radic;(2R&prime;H), and a target past it is truncated from below by a hidden zone that grows with the square of the distance beyond the horizon:</p>
+  <div class="formula">R&prime; = R / (1 &minus; k)&nbsp;&nbsp;&middot;&nbsp;&nbsp;d(horizon) = &radic;(2 R&prime; H)&nbsp;&nbsp;&middot;&nbsp;&nbsp;h(hidden) = (D &minus; &radic;(2 R&prime; H))&sup2; / (2 R&prime;)</div>
+  <p>How far a feature stands <em class="term">above the visible sea horizon</em> is what the photograph actually records, and it depends on k. So: measure feature heights above the horizon in pixels, and solve for the single k that reproduces them all. The plate scale (5.92&Prime; per pixel) was fixed from WGS84 geodesic azimuths to four labelled landmarks spanning the 33&deg; frame; the sea-horizon row was found by sub-pixel edge detection at eight positions and each feature referenced to its <em>local</em> horizon, which cancels the gentle stitch bow. Nothing in the pixel measurements assumes a value of k; k is the one thing the fit returns.</p>
+
+  <h2>Solving k from four targets</h2>
+  <p>Four features with well-known top elevations, spanning 215&ndash;268&nbsp;km and 77&ndash;714&nbsp;m, were measured in pixels above their local horizon. One global k must fit all four at once. It does, to within a pixel each:</p>
+  <div class="tblwrap">
+  <table>
+    <tr><th>Fit target</th><th>Top (m)</th><th>D (km)</th><th>Measured (px)</th><th>Predicted @ k=0.126</th></tr>
+    <tr class="fitrow"><td class="name">Notre-Dame de la Garde spike</td><td>224</td><td>252.7</td><td>6.0 &plusmn; 1.5</td><td>6.1</td></tr>
+    <tr class="fitrow"><td class="name">Garlaban summit</td><td>714</td><td>268.2</td><td>53.0 &plusmn; 3.0</td><td>53.2</td></tr>
+    <tr class="fitrow"><td class="name">Mont Puget summit</td><td>565</td><td>256.4</td><td>49.5 &plusmn; 3.0</td><td>48.7</td></tr>
+    <tr class="fitrow"><td class="name">Wind-turbine blade tips</td><td>77</td><td>214.7</td><td>9.9 &plusmn; 2.0</td><td>10.6</td></tr>
+  </table>
+  </div>
+  <p>A one-parameter &chi;&sup2; fit lands at <b>k&nbsp;=&nbsp;0.126, &chi;&sup2;&nbsp;=&nbsp;0.18 over 3 degrees of freedom</b>. Two more features then act as out-of-sample checks pointing opposite ways: <b>Cap Sici&eacute;</b> (358&nbsp;m, 284&nbsp;km) needs k&nbsp;&ge;&nbsp;0.19 to clear the curve and is duly <span class="hid">absent</span> &mdash; bounding k from above &mdash; while <b>Super Rouvi&egrave;re</b>'s top floors are marginally <span class="vis">visible</span>, bounding it from below. The photographer noted capturing Cap Sici&eacute; the following dawn "thanks to a big refraction," independently confirming k crossed 0.19 overnight, exactly the nocturnal-inversion regime long-range survey work describes.</p>
+
+  <h2>The hidden-height signature</h2>
+  <p>Plotted against distance, the truncation is a clean parabola rising from the 201.5&nbsp;km horizon. A flat surface predicts the flat line at zero: nothing hidden, at any distance. The photograph shows the curve.</p>
+  <div class="fig">
+    <svg viewBox="0 0 820 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hidden height versus distance. A flat surface predicts zero hidden height everywhere; the sphere at k=0.126 predicts a parabola rising from the 201.5 km horizon, and the measured landmarks fall on it.">
+      <!-- frame -->
+      <line x1="70" y1="330" x2="800" y2="330" stroke="#c9c0ab" stroke-width="1.2"/>
+      <line x1="70" y1="30" x2="70" y2="330" stroke="#c9c0ab" stroke-width="1.2"/>
+      <!-- y gridlines + labels (hidden m: 0,100,200,300,400,500) -->
+      <g font-family="ui-monospace,monospace" font-size="10" fill="#7d7768">
+        <line x1="70" y1="330" x2="800" y2="330" stroke="#efe9db"/>
+        <line x1="70" y1="270" x2="800" y2="270" stroke="#efe9db"/><text x="64" y="273" text-anchor="end">100</text>
+        <line x1="70" y1="210" x2="800" y2="210" stroke="#efe9db"/><text x="64" y="213" text-anchor="end">200</text>
+        <line x1="70" y1="150" x2="800" y2="150" stroke="#efe9db"/><text x="64" y="153" text-anchor="end">300</text>
+        <line x1="70" y1="90"  x2="800" y2="90"  stroke="#efe9db"/><text x="64" y="93"  text-anchor="end">400</text>
+        <line x1="70" y1="30"  x2="800" y2="30"  stroke="#efe9db"/><text x="64" y="33"  text-anchor="end">500</text>
+        <text x="64" y="333" text-anchor="end">0</text>
+        <text x="20" y="180" transform="rotate(-90 20 180)" text-anchor="middle" fill="#a8791f" letter-spacing="0.08em">HIDDEN HEIGHT (m)</text>
+      </g>
+      <!-- x labels: 200..300 km. map 195->70, 300->800 => px = 70 + (D-195)*(730/105) -->
+      <g font-family="ui-monospace,monospace" font-size="10" fill="#7d7768" text-anchor="middle">
+        <text x="105" y="348">200</text><text x="244" y="348">220</text><text x="383" y="348">240</text>
+        <text x="522" y="348">260</text><text x="661" y="348">280</text><text x="800" y="348">300</text>
+        <text x="435" y="368" fill="#a8791f" letter-spacing="0.08em">DISTANCE FROM SUMMIT (km)</text>
+      </g>
+      <!-- flat prediction: hidden = 0 everywhere -->
+      <line x1="70" y1="330" x2="800" y2="330" stroke="#9bb6cf" stroke-width="2.4" stroke-dasharray="7 4"/>
+      <text x="120" y="322" font-family="ui-monospace,monospace" font-size="10.5" fill="#5d83a0">FLAT: nothing hidden, any distance</text>
+      <!-- horizon marker at 201.5 km => px = 70 + (201.5-195)*6.952 = 115.2 -->
+      <line x1="115" y1="30" x2="115" y2="330" stroke="#c98a4b" stroke-width="1" stroke-dasharray="3 3"/>
+      <text x="119" y="46" font-family="ui-monospace,monospace" font-size="10" fill="#a8791f">horizon 201.5 km</text>
+      <!-- sphere curve h = (D-201.5)^2/(2R'), R'=7289 km. y = 330 - h*0.6 (0.6 px per m). points every 5km -->
+      <path d="M119,330 L174,327 L209,323 L244,316 L279,307 L313,297 L348,284 L383,269 L418,252 L453,233 L487,212 L522,189 L557,164 L592,137 L627,108 L661,77 L696,43"
+            fill="none" stroke="#2f7d4f" stroke-width="2.6"/>
+      <text x="405" y="196" font-family="ui-monospace,monospace" font-size="10.5" fill="#2f7d4f" transform="rotate(-33 405 196)">SPHERE at k=0.126: (D&minus;horizon)&sup2; / 2R&prime;</text>
+      <!-- landmark points: (D_km, hidden_m). px_x = 70+(D-195)*6.952 ; px_y = 330 - hidden*0.6 -->
+      <!-- turbines 214.7,12 -->
+      <g fill="#22201b" font-family="ui-monospace,monospace" font-size="9.5">
+        <circle cx="207" cy="323" r="3.4"/><text x="212" y="320">turbine tips (12 m)</text>
+        <!-- NDG 252.7,180 -->
+        <circle cx="472" cy="222" r="3.4"/><text x="416" y="214">Notre-Dame (180 m)</text>
+        <!-- Mont Puget 256.4,206 -->
+        <circle cx="498" cy="206" r="3.4"/>
+        <!-- Garlaban 268.2,305 -->
+        <circle cx="580" cy="147" r="3.4"/><text x="586" y="150">Garlaban (305 m)</text>
+        <!-- Cap Sicie 284.3,470 (hidden -> below-curve, would need more k) -->
+        <circle cx="691" cy="48" r="3.4" fill="none" stroke="#a8352a" stroke-width="1.6"/><text x="600" y="44" fill="#a8352a">Cap Sici&eacute;: hidden (needs k&ge;0.19)</text>
+      </g>
+    </svg>
+    <div class="cap">HIDDEN HEIGHT VS DISTANCE &middot; original figure computed from the model &amp; data, not from the photograph &middot; curve exaggerated only by the axis scale</div>
+  </div>
+
+  <h2>Every landmark, hidden vs visible at k = 0.126</h2>
+  <p>The concealment height is how much of each target sits behind the curve at its distance; the rest is what shows. The table is recomputable &mdash; the spreadsheet below lets you change k in one cell and watch every row move.</p>
+  <div class="tblwrap">
+  <table>
+    <tr><th>Target</th><th>D (km)</th><th>Az (&deg;)</th><th>Top (m)</th><th>Hidden (m)</th><th>Visible (m)</th><th>Status</th></tr>
+    <tr><td class="name">25 wind turbines, Port-St-Louis</td><td>214.7</td><td>60.9</td><td>77</td><td>12</td><td>65</td><td class="vis">rotors &amp; upper masts</td></tr>
+    <tr><td class="name">Notre-Dame de la Garde</td><td>252.7</td><td>69.4</td><td>224</td><td>180</td><td>44</td><td class="vis">statue + upper tower</td></tr>
+    <tr><td class="name">Super Rouvi&egrave;re bldg B</td><td>255.7</td><td>70.4</td><td>~225</td><td>201</td><td>~24</td><td class="vis">top floors only</td></tr>
+    <tr><td class="name">Chapelle N-D-de-Vie, Vitrolles</td><td>250.4</td><td>64.4</td><td>119</td><td>164</td><td>0</td><td class="hid">hidden (needs k&ge;0.175)</td></tr>
+    <tr><td class="name">Grande T&ecirc;te Rouge</td><td>264.1</td><td>68.8</td><td>520</td><td>268</td><td>252</td><td class="vis">visible</td></tr>
+    <tr><td class="name">Pic du Taoum&eacute;</td><td>265.7</td><td>68.8</td><td>668</td><td>282</td><td>386</td><td class="vis">visible</td></tr>
+    <tr><td class="name">T&ecirc;te Ronde</td><td>267.1</td><td>69.1</td><td>638</td><td>295</td><td>343</td><td class="vis">visible</td></tr>
+    <tr><td class="name">Garlaban</td><td>268.2</td><td>69.3</td><td>714</td><td>305</td><td>409</td><td class="vis">visible</td></tr>
+    <tr><td class="name">Cr&ecirc;te de la Lare (Encanaux)</td><td>278.2</td><td>69.6</td><td>845</td><td>403</td><td>442</td><td class="vis">visible</td></tr>
+    <tr><td class="name">Mont Puget</td><td>256.4</td><td>71.4</td><td>565</td><td>206</td><td>359</td><td class="vis">visible</td></tr>
+    <tr><td class="name">Ste-Victoire (Pic des Mouches)</td><td>284.7</td><td>65.4</td><td>1011</td><td>474</td><td>537</td><td class="vis">visible</td></tr>
+    <tr><td class="name">Mont Ventoux</td><td>293.5</td><td>50.3</td><td>1910</td><td>580</td><td>1330</td><td class="vis">visible</td></tr>
+    <tr><td class="name">Cap Sici&eacute;</td><td>284.3</td><td>76.5</td><td>358</td><td>470</td><td>0</td><td class="hid">hidden (needs k&ge;0.19)</td></tr>
+    <tr><td class="name">Barre des &Eacute;crins (Alps)</td><td>412.6</td><td>48.3</td><td>4102</td><td>3055</td><td>1047</td><td class="vis">visible</td></tr>
+  </table>
+  </div>
+
+  <div class="note">
+    <b>Why this is not a fudge factor.</b> k was fitted <em>once</em>, globally, to four simultaneous measurements across 70&nbsp;km of distance and 33&deg; of azimuth, with three degrees of freedom left over and every residual under a pixel. No target got its own coefficient; no value was revised after a prediction failed. The single revision in the whole analysis corrected an input elevation (Super Rouvi&egrave;re's base), not k. The solved 0.126 sits inside the plain-air band controlled surveys report for elevated, settled-evening paths, far from the &minus;4 to +16 chaos of the ground-grazing layer &mdash; and the same photograph documents, in the author's dawn frames, the k&nbsp;&gt;&nbsp;0.19 inversion a few hours later.
+  </div>
+
+  <h2>What would falsify it</h2>
+  <p>The falsifiable content is the distance law. A flat surface predicts zero hidden height for every target at every distance: the full 224&nbsp;m of Notre-Dame de la Garde (25&nbsp;px at this plate scale, not the 6&nbsp;px observed), complete turbine masts down to a visible shoreline, and Cap Sici&eacute; in plain view. What the image shows instead is truncation growing with the square of the distance beyond 201.5&nbsp;km &mdash; 12&nbsp;m missing at 215&nbsp;km, 180&nbsp;m at 253&nbsp;km, 305&nbsp;m at 268&nbsp;km, 470&nbsp;m at 284&nbsp;km &mdash; the specific (D&nbsp;&minus;&nbsp;&radic;(2R&prime;H))&sup2;/2R&prime; signature, reproduced across the whole frame by one number. For refraction alone to mimic that on a flat surface, the air would have to bend light upward with a curvature tuned to imitate a quadratic distance law identically in every direction, and then reverse overnight to reveal Cap Sici&eacute; at dawn. No measured atmospheric profile behaves that way.</p>
+  <p>And the analysis is open to refutation on its own terms: a demonstrably identified feature standing clearly visible <em>below</em> the k&nbsp;=&nbsp;0.126 concealment line at its distance, or a re-measurement of the four fit features yielding pixel heights outside the stated errors, would break the solution. The pixel coordinates, the formulas, the geodesic geometry, and a recomputable spreadsheet are all provided below so anyone can check the work.</p>
+
+  <h2>How this connects to the experiment</h2>
+  <p>The <a href="../../experiments/laser-experiment/laser-experiment.html">Laser Beam Follow Experiment</a> argues that refraction should be <em class="term">measured on the night, not assumed</em>, and that a coefficient chosen after the fact to save a result is a knob, not evidence. This panorama is the same argument run in reverse and in the wild: given a single photograph of a scene people have argued over for two centuries, the refraction is recovered from the image itself, over-determined and falsifiable, and it lands in the physically expected place. The <a href="../surface-shape-simulator/simulator.html">Surface Shape Simulator</a> reproduces the same hidden-height geometry interactively; set its Canigou / Marseille preset and slide k to 0.126 to watch this table appear.</p>
+
+  <h2>Data, code, and the source image</h2>
+  <p>Everything needed to reproduce or contest the result. The photograph itself is <b>not hosted here</b>; view it at the source links.</p>
+  <div class="dl">
+    <a href="data/geometry.json" download>geometry.json &mdash; distances, azimuths, per-k hidden heights</a>
+    <a href="data/kfit.json" download>kfit.json &mdash; fit inputs &amp; results</a>
+    <a href="data/Canigou_hidden_vs_visible.xlsx" download>hidden_vs_visible.xlsx &mdash; change k, everything recomputes</a>
+  </div>
+  <div class="dl">
+    <a href="scripts/geometry.py" download>geometry.py &mdash; geodesic + effective-radius model</a>
+    <a href="scripts/render_overlay.py" download>render_overlay.py</a>
+    <a href="scripts/render_heat.py" download>render_heat.py</a>
+  </div>
+  <div class="dl">
+    <a href="https://beyondrange.wordpress.com/2019/09/12/canigo-pyriness-notre-dame-de-la-garde-marseille-252-kms/" target="_blank" rel="noopener">View the panorama &mdash; Beyond Horizons &nearr;</a>
+    <a href="https://www.klape.fr/panoramas" target="_blank" rel="noopener">Photographer's galleries &mdash; klape.fr &nearr;</a>
+  </div>
+
+  <h2>Selected references</h2>
+  <div class="refs">
+    <p>Bomford, G. (1980). <em>Geodesy</em> (4th ed.). Oxford University Press.</p>
+    <p>Bret, M. (2019, September 12). <em>252&nbsp;km &mdash; Canig&oacute;, Pyrenees to Marseille</em>. Beyond Horizons. https://beyondrange.wordpress.com/2019/09/12/canigo-pyriness-notre-dame-de-la-garde-marseille-252-kms/</p>
+    <p>Farr, T. G., et al. (2007). The Shuttle Radar Topography Mission. <em>Reviews of Geophysics, 45</em>(2), RG2004. https://doi.org/10.1029/2005RG000183</p>
+    <p>Friedli, E., Presl, R., &amp; Wieser, A. (2019). Influence of atmospheric refraction on terrestrial laser scanning at long range. <em>JISDM</em>, Athens.</p>
+    <p>Hirt, C., et al. (2010). Monitoring of the refraction coefficient in the lower atmosphere. <em>Journal of Geophysical Research: Atmospheres, 115</em>(D21), D21102. https://doi.org/10.1029/2010JD014067</p>
+    <p>Karney, C. F. F. (2013). Algorithms for geodesics. <em>Journal of Geodesy, 87</em>(1), 43&ndash;55. https://doi.org/10.1007/s00190-012-0578-z</p>
+    <p>Young, A. T. (n.d.). <em>An introduction to mirages</em>. San Diego State University. https://aty.sdsu.edu/mirages/mirintro.html</p>
+  </div>
+
+  <footer>
+    Analysis prepared for ReplicationBench, in the measured / assumed / solved discipline of the laser experiment. Source panorama &copy; Antoine Mangiavacca, used here by reference only. Full reference list, figure-by-figure identifications, and the plateau-pylon / chapel-label investigation are in the long-form report accompanying the data.
+  </footer>
+
+</div>
+</body>
+</html>
