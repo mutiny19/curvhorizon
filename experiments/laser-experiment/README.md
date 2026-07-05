@@ -1,18 +1,18 @@
 # Laser Beam Follow Experiment
 
-![Animated schematic: a laser levelled on a bluff fires a level beam east over open water while a drone flies out along it logging its height above the water; both predictions are drawn — flat (the height holds) and curved (the water falls away with the square of the distance) — and the readings land on one. Illustration, not to scale.](laser-experiment.gif)
+![Animated schematic: a laser levelled on a bluff fires a level beam east over open water while a drone flies out along it logging its height above the water; both predictions are drawn, flat (the height holds) and curved (the water falls away with the square of the distance), and the readings land on one. Illustration, not to scale.](laser-experiment.gif)
 
 > Level a laser over open water, never aim it at a target, and measure whether the
 > water holds a constant height under the beam (flat) or falls away from it
-> (curved) — with refraction measured on the night, not assumed.
+> (curved), with refraction measured on the night, not assumed.
 
 **Status:** ⬜ untested · **Cost:** $50–$1,915 · **Difficulty:** medium · **Time:** one weekend · **Safety:** low
 
 **Interactive references**
-- ▶ **[The field protocol](laser-experiment.html)** — full build, setup diagrams, procedure, refraction handling, equipment options, and a live run simulator embedded in it.
-- ▶ **[Curvature & horizon simulator](../../resources/surface-shape-simulator/simulator.html)** — to-scale model of curvature, horizon dip, hidden height, and refraction.
+- ▶ **[The field protocol](laser-experiment.html)**, full build, setup diagrams, procedure, refraction handling, equipment options, and a live run simulator embedded in it.
+- ▶ **[Curvature & horizon simulator](../../resources/surface-shape-simulator/simulator.html)**, to-scale model of curvature, horizon dip, hidden height, and refraction.
 
-*(Browsing on GitHub? Those are HTML pages — open them via the
+*(Browsing on GitHub? Those are HTML pages, open them via the
 [live site](https://replicationbench.github.io/RB/experiments/laser-experiment/laser-experiment.html).)*
 
 ---
@@ -23,15 +23,15 @@ Over miles of calm open water, does a levelled line of sight keep a
 **constant** height above the surface, or does the surface **fall away** beneath
 it? The two positions make opposite, quantitative predictions:
 
-- **Flat:** the clearance stays constant out to the horizon and beyond — a level
+- **Flat:** the clearance stays constant out to the horizon and beyond, a level
   laser keeps the same gap above the water the whole way; implied curvature zero.
 - **Curved (sphere of radius R):** the water drops below the level line as
-  **R(1 − cos θ)**, θ = d/R — growing with the square of the distance — and the
+  **R(1 − cos θ)**, θ = d/R, growing with the square of the distance, and the
   run returns a finite radius R = d²/(2·drop).
 
 The experiment presupposes neither. It measures which one the water does, with
 refraction measured on the night rather than assumed, and reports whichever the
-readings land on — including *inconclusive*.
+readings land on, including *inconclusive*.
 
 ## 2. Hypothesis & decision rule
 
@@ -43,18 +43,18 @@ plumb line hangs and still water settles), locked on both axes, and
 equal-height markers) reports the height of the surface relative to that level
 line as a function of distance.
 
-- **If the surface is flat:** the height under the beam is constant — the water
+- **If the surface is flat:** the height under the beam is constant, the water
   stays parallel to the level line. The implied curvature is zero.
 - **If the surface is a sphere of radius R:** the water falls below the level
-  line by **R(1 − cos θ)** with θ = d/R — the exact, trigonometric drop, which
+  line by **R(1 − cos θ)** with θ = d/R, the exact, trigonometric drop, which
   over these distances equals the familiar **d²/2R** to better than a part in a
-  thousand. At 3 mi ≈ 6 ft; at 5 mi ≈ 17 ft for the candidate R = 6,371 km —
+  thousand. At 3 mi ≈ 6 ft; at 5 mi ≈ 17 ft for the candidate R = 6,371 km, 
   the run returns R = d²/(2·drop) as an output, never an input. (The folk
   "8 inches per mile squared" is this drop with a radius pre-baked into its
   coefficient, and commonly misused; the protocol does not use it.)
   Note this is the drop *below the level line*
   (what the drone measures straight down), **not** the "hidden height" of an
-  object behind the horizon — a different figure that also depends on observer
+  object behind the horizon, a different figure that also depends on observer
   height, and the two are often confused.
 - **Decision rule:** fit the measured height-vs-distance profile to a level line
   (flat) and to a parabola (sphere). The fit includes a slope term, so an
@@ -65,14 +65,14 @@ line as a function of distance.
 - **Inconclusive (also a result):** the predicted drop sits inside the
   instrument noise at the chosen distance, refraction was never measured, the air
   shifted so no single shape fits, or the cross-checks disagree. Then say so and
-  run again — do not force a verdict.
+  run again, do not force a verdict.
 
 ## 3. Bill of materials
 
 Priced list with a checked-on date: **[`hardware/BOM.csv`](hardware/BOM.csv)**.
 The $50–$300 entry assumes you already own a tripod, a camera, and an
 inclinometer. The fuller **drone-profile** build (downward lidar logging tens of
-thousands of height readings) costs more — its tiered, linked component options
+thousands of height readings) costs more, its tiered, linked component options
 are in the protocol's [Equipment section](laser-experiment.html#equipment).
 
 ## 4. Build
@@ -125,11 +125,11 @@ successful contribution.
 
 ## Sources
 
-- Wallace, A. R. (1908). *My Life* — Bedford Level, 1870.
+- Wallace, A. R. (1908). *My Life*, Bedford Level, 1870.
 - Oldham, H. Y. (1901). Experimental demonstration of the curvature of the earth's surface. *Report of the British Association*.
 - Hirt, C., et al. (2010). Monitoring of the refraction coefficient in the lower atmosphere. *JGR Atmospheres*, 115(D21). https://doi.org/10.1029/2010JD014067
 - Friedli, E., Presl, R., & Wieser, A. (2019). Influence of atmospheric refraction on terrestrial laser scanning at long range. *JISDM/FIG*. https://www.fig.net/resources/proceedings/2019/04_JISDM2019/18.pdf
-- FECORE (Szekely & Cavanaugh, 2018) and the Metabunk analysis (Rodoxag, 2021) — prior laser-over-water attempts the protocol is built against.
-- Soundly / Lake Pontchartrain (West, 2017, Metabunk) — three-point geometry in the field.
+- FECORE (Szekely & Cavanaugh, 2018) and the Metabunk analysis (Rodoxag, 2021), prior laser-over-water attempts the protocol is built against.
+- Soundly / Lake Pontchartrain (West, 2017, Metabunk), three-point geometry in the field.
 
 Full citations are in the protocol's [References](laser-experiment.html#references).
