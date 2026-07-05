@@ -89,7 +89,7 @@
 
   <div class="headline">
     <div class="k">k&nbsp;=&nbsp;<span>0.126</span></div>
-    <div class="fine">The refraction coefficient during the exposure, <b>solved from the image itself</b> over four independent targets. 1&sigma; range 0.118&ndash;0.134; &chi;&sup2;&nbsp;=&nbsp;0.18 for 3 degrees of freedom (all four residuals under one pixel). Optical horizon from the summit at this k: <b>201.5&nbsp;km</b>. Standard-atmosphere models predict k&nbsp;&asymp;&nbsp;0.14&ndash;0.16 for this path, so the evening air was refracting slightly less than textbook, in the physically expected direction.</div>
+    <div class="fine">The <b>effective (path-average) refraction coefficient</b> for the 252&nbsp;km sight line during the exposure, solved from the image itself over four independent targets. 1&sigma; range 0.118&ndash;0.134; &chi;&sup2;&nbsp;=&nbsp;0.18 for 3 degrees of freedom, all four residuals under one pixel. Optical horizon from the summit at this k: <b>201.5&nbsp;km</b>. Standard-atmosphere models predict k&nbsp;&asymp;&nbsp;0.14&ndash;0.16 for this path, so the evening air refracted a little less than textbook.</div>
   </div>
   <p style="margin-top:10px">
     <span class="tag meas">measured: pixel heights &amp; plate scale</span>
@@ -97,10 +97,10 @@
     <span class="tag solved">solved: exactly one number, k</span>
   </p>
 
-  <p class="lead">Every visibility fact in the panorama falls into place at one refraction coefficient, fitted once and never tuned per target. That is the whole point of the exercise, and the reason it sits beside the <a href="../../experiments/laser-experiment/laser-experiment.html">laser experiment</a>: it is a worked example of <em class="term">measuring</em> refraction rather than assuming it, on a scene long argued over.</p>
+  <p class="lead">One refraction coefficient, fitted once and never adjusted per target, reproduces what is visible and what is hidden across the whole panorama. That is why it belongs beside the <a href="../../experiments/laser-experiment/laser-experiment.html">laser experiment</a>: it recovers refraction from the image instead of assuming it, on a scene people have argued over for two centuries.</p>
 
   <h2>One honest correction first</h2>
-  <p>The panorama was shot through a 1,000&nbsp;nm filter on a converted camera. That is <em class="term">reflected near-infrared</em> &mdash; sunlight bouncing off rock, vegetation, and haze &mdash; not thermal emission. Pixel brightness measures NIR reflectance and haze penetration, not temperature, and no degree value can honestly be pinned to a pixel. Any temperature scale placed on this image is decoration, not measurement. (The published false-color renders use a warm "ironbow" palette because it reads well, with legends that say plainly they show relative NIR brightness.)</p>
+  <p>The panorama was shot through a 1,000&nbsp;nm filter on a converted camera. That is <em class="term">reflected near-infrared</em> (sunlight bouncing off rock, vegetation, and haze), not thermal emission. Pixel brightness measures NIR reflectance and haze penetration, not temperature, and no degree value can honestly be pinned to a pixel. Any temperature scale placed on this image is decoration, not measurement. (The published false-color renders use a warm "ironbow" palette because it reads well, with legends that say plainly they show relative NIR brightness.)</p>
 
   <h2>The method, in one paragraph</h2>
   <p>Refraction is modelled the standard surveyor's way, by bending the ray a fixed fraction k of the Earth's own curvature, equivalently replacing the Earth's radius R with an effective radius R&prime;. From the observer's height H the optical horizon sits at d&nbsp;=&nbsp;&radic;(2R&prime;H), and a target past it is truncated from below by a hidden zone that grows with the square of the distance beyond the horizon:</p>
@@ -118,7 +118,7 @@
     <tr class="fitrow"><td class="name">Wind-turbine blade tips</td><td>77</td><td>214.7</td><td>9.9 &plusmn; 2.0</td><td>10.6</td></tr>
   </table>
   </div>
-  <p>A one-parameter &chi;&sup2; fit lands at <b>k&nbsp;=&nbsp;0.126, &chi;&sup2;&nbsp;=&nbsp;0.18 over 3 degrees of freedom</b>. Two more features then act as out-of-sample checks pointing opposite ways: <b>Cap Sici&eacute;</b> (358&nbsp;m, 284&nbsp;km) needs k&nbsp;&ge;&nbsp;0.19 to clear the curve and is duly <span class="hid">absent</span> &mdash; bounding k from above &mdash; while <b>Super Rouvi&egrave;re</b>'s top floors are marginally <span class="vis">visible</span>, bounding it from below. The photographer noted capturing Cap Sici&eacute; the following dawn "thanks to a big refraction," independently confirming k crossed 0.19 overnight, exactly the nocturnal-inversion regime long-range survey work describes.</p>
+  <p>A one-parameter &chi;&sup2; fit lands at <b>k&nbsp;=&nbsp;0.126, &chi;&sup2;&nbsp;=&nbsp;0.18 over 3 degrees of freedom</b>. Two more features then act as out-of-sample checks pointing opposite ways: <b>Cap Sici&eacute;</b> (358&nbsp;m, 284&nbsp;km) needs k&nbsp;&ge;&nbsp;0.19 to clear the curve and is duly <span class="hid">absent</span> (bounding k from above), while <b>Super Rouvi&egrave;re</b>'s top floors are marginally <span class="vis">visible</span> (bounding it from below). The photographer noted capturing Cap Sici&eacute; the following dawn "thanks to a big refraction," independently confirming k crossed 0.19 overnight, exactly the nocturnal-inversion regime long-range survey work describes.</p>
 
   <h2>The hidden-height signature</h2>
   <p>Plotted against distance, the truncation is a clean parabola rising from the 201.5&nbsp;km horizon. A flat surface predicts the flat line at zero: nothing hidden, at any distance. The photograph shows the curve.</p>
@@ -172,7 +172,7 @@
   </div>
 
   <h2>Every landmark, hidden vs visible at k = 0.126</h2>
-  <p>The concealment height is how much of each target sits behind the curve at its distance; the rest is what shows. The table is recomputable &mdash; the spreadsheet below lets you change k in one cell and watch every row move.</p>
+  <p>The concealment height is how much of each target sits behind the curve at its distance; the rest is what shows. The table is recomputable: the spreadsheet below lets you change k in one cell and every row updates.</p>
   <div class="tblwrap">
   <table>
     <tr><th>Target</th><th>D (km)</th><th>Az (&deg;)</th><th>Top (m)</th><th>Hidden (m)</th><th>Visible (m)</th><th>Status</th></tr>
@@ -194,11 +194,11 @@
   </div>
 
   <div class="note">
-    <b>Why this is not a fudge factor.</b> k was fitted <em>once</em>, globally, to four simultaneous measurements across 70&nbsp;km of distance and 33&deg; of azimuth, with three degrees of freedom left over and every residual under a pixel. No target got its own coefficient; no value was revised after a prediction failed. The single revision in the whole analysis corrected an input elevation (Super Rouvi&egrave;re's base), not k. The solved 0.126 sits inside the plain-air band controlled surveys report for elevated, settled-evening paths, far from the &minus;4 to +16 chaos of the ground-grazing layer &mdash; and the same photograph documents, in the author's dawn frames, the k&nbsp;&gt;&nbsp;0.19 inversion a few hours later.
+    <b>Why this is not a fudge factor.</b> k was fitted <em>once</em>, globally, to four simultaneous measurements across 70&nbsp;km of distance and 33&deg; of azimuth, with three degrees of freedom left over and every residual under a pixel. No target got its own coefficient; no value was revised after a prediction failed. The single revision in the whole analysis corrected an input elevation (Super Rouvi&egrave;re's base), not k. The solved 0.126 sits inside the plain-air band controlled surveys report for elevated, settled-evening paths, far from the &minus;4 to +16 chaos of the ground-grazing layer. The same photograph documents, in the author's dawn frames, the k&nbsp;&gt;&nbsp;0.19 inversion a few hours later.
   </div>
 
   <h2>What would falsify it</h2>
-  <p>The falsifiable content is the distance law. A flat surface predicts zero hidden height for every target at every distance: the full 224&nbsp;m of Notre-Dame de la Garde (25&nbsp;px at this plate scale, not the 6&nbsp;px observed), complete turbine masts down to a visible shoreline, and Cap Sici&eacute; in plain view. What the image shows instead is truncation growing with the square of the distance beyond 201.5&nbsp;km &mdash; 12&nbsp;m missing at 215&nbsp;km, 180&nbsp;m at 253&nbsp;km, 305&nbsp;m at 268&nbsp;km, 470&nbsp;m at 284&nbsp;km &mdash; the specific (D&nbsp;&minus;&nbsp;&radic;(2R&prime;H))&sup2;/2R&prime; signature, reproduced across the whole frame by one number. For refraction alone to mimic that on a flat surface, the air would have to bend light upward with a curvature tuned to imitate a quadratic distance law identically in every direction, and then reverse overnight to reveal Cap Sici&eacute; at dawn. No measured atmospheric profile behaves that way.</p>
+  <p>The falsifiable content is the distance law. A flat surface predicts zero hidden height for every target at every distance: the full 224&nbsp;m of Notre-Dame de la Garde (25&nbsp;px at this plate scale, not the 6&nbsp;px observed), complete turbine masts down to a visible shoreline, and Cap Sici&eacute; in plain view. What the image shows instead is truncation growing with the square of the distance beyond 201.5&nbsp;km (12&nbsp;m missing at 215&nbsp;km, 180&nbsp;m at 253&nbsp;km, 305&nbsp;m at 268&nbsp;km, 470&nbsp;m at 284&nbsp;km), the specific (D&nbsp;&minus;&nbsp;&radic;(2R&prime;H))&sup2;/2R&prime; signature, reproduced across the whole frame by one number. For refraction alone to mimic that on a flat surface, the air would have to bend light upward with a curvature tuned to imitate a quadratic distance law identically in every direction, and then reverse overnight to reveal Cap Sici&eacute; at dawn. No measured atmospheric profile behaves that way.</p>
   <p>And the analysis is open to refutation on its own terms: a demonstrably identified feature standing clearly visible <em>below</em> the k&nbsp;=&nbsp;0.126 concealment line at its distance, or a re-measurement of the four fit features yielding pixel heights outside the stated errors, would break the solution. The pixel coordinates, the formulas, the geodesic geometry, and a recomputable spreadsheet are all provided below so anyone can check the work.</p>
 
   <h2>How this connects to the experiment</h2>
@@ -207,24 +207,24 @@
   <h2>Data, code, and the source image</h2>
   <p>Everything needed to reproduce or contest the result. The photograph itself is <b>not hosted here</b>; view it at the source links.</p>
   <div class="dl">
-    <a href="data/geometry.json" download>geometry.json &mdash; distances, azimuths, per-k hidden heights</a>
-    <a href="data/kfit.json" download>kfit.json &mdash; fit inputs &amp; results</a>
-    <a href="data/Canigou_hidden_vs_visible.xlsx" download>hidden_vs_visible.xlsx &mdash; change k, everything recomputes</a>
+    <a href="data/geometry.json" download>geometry.json: distances, azimuths, per-k hidden heights</a>
+    <a href="data/kfit.json" download>kfit.json: fit inputs &amp; results</a>
+    <a href="data/Canigou_hidden_vs_visible.xlsx" download>hidden_vs_visible.xlsx: change k, everything recomputes</a>
   </div>
   <div class="dl">
-    <a href="scripts/geometry.py" download>geometry.py &mdash; geodesic + effective-radius model</a>
+    <a href="scripts/geometry.py" download>geometry.py: geodesic + effective-radius model</a>
     <a href="scripts/render_overlay.py" download>render_overlay.py</a>
     <a href="scripts/render_heat.py" download>render_heat.py</a>
   </div>
   <div class="dl">
-    <a href="https://beyondrange.wordpress.com/2019/09/12/canigo-pyriness-notre-dame-de-la-garde-marseille-252-kms/" target="_blank" rel="noopener">View the panorama &mdash; Beyond Horizons &nearr;</a>
-    <a href="https://www.klape.fr/panoramas" target="_blank" rel="noopener">Photographer's galleries &mdash; klape.fr &nearr;</a>
+    <a href="https://beyondrange.wordpress.com/2019/09/12/canigo-pyriness-notre-dame-de-la-garde-marseille-252-kms/" target="_blank" rel="noopener">View the panorama: Beyond Horizons &nearr;</a>
+    <a href="https://www.klape.fr/panoramas" target="_blank" rel="noopener">Photographer's galleries: klape.fr &nearr;</a>
   </div>
 
   <h2>Selected references</h2>
   <div class="refs">
     <p>Bomford, G. (1980). <em>Geodesy</em> (4th ed.). Oxford University Press.</p>
-    <p>Bret, M. (2019, September 12). <em>252&nbsp;km &mdash; Canig&oacute;, Pyrenees to Marseille</em>. Beyond Horizons. https://beyondrange.wordpress.com/2019/09/12/canigo-pyriness-notre-dame-de-la-garde-marseille-252-kms/</p>
+    <p>Bret, M. (2019, September 12). <em>252&nbsp;km: Canig&oacute;, Pyrenees to Marseille</em>. Beyond Horizons. https://beyondrange.wordpress.com/2019/09/12/canigo-pyriness-notre-dame-de-la-garde-marseille-252-kms/</p>
     <p>Farr, T. G., et al. (2007). The Shuttle Radar Topography Mission. <em>Reviews of Geophysics, 45</em>(2), RG2004. https://doi.org/10.1029/2005RG000183</p>
     <p>Friedli, E., Presl, R., &amp; Wieser, A. (2019). Influence of atmospheric refraction on terrestrial laser scanning at long range. <em>JISDM</em>, Athens.</p>
     <p>Hirt, C., et al. (2010). Monitoring of the refraction coefficient in the lower atmosphere. <em>Journal of Geophysical Research: Atmospheres, 115</em>(D21), D21102. https://doi.org/10.1029/2010JD014067</p>
