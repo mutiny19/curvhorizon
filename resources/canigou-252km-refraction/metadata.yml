@@ -2,7 +2,7 @@ slug: "canigou-252km-refraction"
 page: "canigou-252km-refraction.html"
 title: "Canigou 252 km: Refraction Analysis"
 type: resource
-description: "Solves the atmospheric refraction coefficient (k = 0.126) directly from a 252 km near-infrared panorama of Marseille seen from the Canigou, over four independent targets, and reads each landmark's hidden height against the curve. A worked case of measuring refraction rather than assuming it."
+description: "Solves for the atmospheric refraction coefficient (k = 0.126) from a 252 km near-infrared panorama of Marseille seen from the Canigou, over four independent targets, and reads each landmark's hidden height against the curve. A worked case of deriving the coefficient from the image, over-determined and falsifiable, rather than assuming it."
 related_experiment: "laser-experiment"
 contributor: "ReplicationBench"
 tags: [geodesy, optics, refraction, long-distance-observation, case-study]
